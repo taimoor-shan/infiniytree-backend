@@ -3793,6 +3793,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mikro-orm/migrations@npm:7.1.5":
+  version: 7.1.5
+  resolution: "@mikro-orm/migrations@npm:7.1.5"
+  dependencies:
+    "@mikro-orm/sql": 7.1.5
+  peerDependencies:
+    "@mikro-orm/core": 7.1.5
+  checksum: 2d48c147d6b3ed1845cbeb2414a3a7140dbea131064c8c00e4f4f591cb99e0a561f0b491c0cb96ea151f9b1f1cb22cf7fb3fccaafe00b7397f7d3f599845cb55
+  languageName: node
+  linkType: hard
+
 "@mikro-orm/postgresql@npm:6.6.14":
   version: 6.6.14
   resolution: "@mikro-orm/postgresql@npm:6.6.14"
@@ -3805,6 +3816,17 @@ __metadata:
   peerDependencies:
     "@mikro-orm/core": ^6.0.0
   checksum: e24c463d97951008a706c6e17ed5fdcb8b04e323a9ac4f6a87ca9416c5baebc954d33d6019accd4042e393a3990ed0ac8baea62e04d8c6d0871ecc4f39a536ef
+  languageName: node
+  linkType: hard
+
+"@mikro-orm/sql@npm:7.1.5":
+  version: 7.1.5
+  resolution: "@mikro-orm/sql@npm:7.1.5"
+  dependencies:
+    kysely: 0.29.2
+  peerDependencies:
+    "@mikro-orm/core": 7.1.5
+  checksum: 4d4018add436fe900a79a9226270d5f842de82b31852765662cb691d4a91e4f065676d82ab3e828229660bc33a5c045ef7fc8ba7edfd31f61d83c7e6ff83e18a
   languageName: node
   linkType: hard
 
@@ -13694,6 +13716,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kysely@npm:0.29.2":
+  version: 0.29.2
+  resolution: "kysely@npm:0.29.2"
+  checksum: 4addcb68d2763337dda5c267c6cb1d6ad2155d6e2e9c357dba8705fbf0e1160e764e17fdc6ad17185cffcb88ada0386822b1980df0cad389f768bebf264f88e3
+  languageName: node
+  linkType: hard
+
 "leven@npm:^3.1.0":
   version: 3.1.0
   resolution: "leven@npm:3.1.0"
@@ -14106,7 +14135,7 @@ __metadata:
     "@mikro-orm/cli": 6.6.14
     "@mikro-orm/core": 6.6.14
     "@mikro-orm/knex": 6.6.14
-    "@mikro-orm/migrations": 6.6.14
+    "@mikro-orm/migrations": 7.1.5
     "@mikro-orm/postgresql": 6.6.14
     "@swc/core": ^1.7.28
     "@swc/jest": ^0.2.36
