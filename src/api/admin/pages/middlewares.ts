@@ -33,7 +33,7 @@ export const CreatePageSchema = z.object({
   seo_description: z.string().optional().nullable(),
   status: z.enum(["draft", "published"]).optional(),
   is_public: z.boolean().optional(),
-  metadata: z.record(z.unknown()).optional().nullable(),
+  metadata: z.record(z.string(), z.unknown()).optional().nullable(),
 })
 
 export type CreatePageSchema = z.infer<typeof CreatePageSchema>
@@ -48,7 +48,7 @@ export const UpdatePageSchema = z.object({
   seo_description: z.string().optional().nullable(),
   status: z.enum(["draft", "published"]).optional(),
   is_public: z.boolean().optional(),
-  metadata: z.record(z.unknown()).optional().nullable(),
+  metadata: z.record(z.string(), z.unknown()).optional().nullable(),
 })
 
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>
