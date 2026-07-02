@@ -14135,7 +14135,7 @@ __metadata:
     resend: ^6.12.2
     ts-node: ^10.9.2
     typescript: ^5.6.2
-    ulid: ^2.3.0
+    ulid: ^3.0.2
     vite: ^5.2.11
   languageName: unknown
   linkType: soft
@@ -17366,6 +17366,15 @@ __metadata:
   bin:
     ulid: bin/cli.js
   checksum: 5972e374548161a69c9778833246c6ceed37f9a754dbd389a9fbe6f91364282079ed79423ada3b7c89769ad9c22e551e63e95b08ecd3226153733d1adc559349
+  languageName: node
+  linkType: hard
+
+"ulid@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "ulid@npm:3.0.2"
+  bin:
+    ulid: dist/cli.js
+  checksum: b3322b2a0bc1b5e3ea6c946fbfd7600faab1665b1a84471f56fd8ec5950c821ca62e4de202c323f74071951ec41933058016ab63e039a082a91388318afd833d
   languageName: node
   linkType: hard
 
