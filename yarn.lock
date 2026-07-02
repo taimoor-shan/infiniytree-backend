@@ -16156,17 +16156,17 @@ __metadata:
   linkType: hard
 
 "resend@npm:^6.12.2":
-  version: 6.12.2
-  resolution: "resend@npm:6.12.2"
+  version: 6.16.0
+  resolution: "resend@npm:6.16.0"
   dependencies:
     postal-mime: 2.7.4
-    svix: 1.90.0
+    standardwebhooks: 1.0.0
   peerDependencies:
     "@react-email/render": "*"
   peerDependenciesMeta:
     "@react-email/render":
       optional: true
-  checksum: ba7ce0e087655b690b5d51dc6ccfdce58c49809032570c8ee2e9b119186a55ef4bb8dc9987d3b1883778ade48d861d77a32bc51e6560346673063bea7c948152
+  checksum: 93e810c5118d5bfcba6bb00150e763f8fb7e169eaf2a0f2a9cd538a83429d88800d049ec413043db9eb541321e45dc409cd9ddbaaf9f520e8a47646b21baea3c
   languageName: node
   linkType: hard
 
@@ -16990,16 +16990,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svix@npm:1.90.0":
-  version: 1.90.0
-  resolution: "svix@npm:1.90.0"
-  dependencies:
-    standardwebhooks: 1.0.0
-    uuid: ^10.0.0
-  checksum: 3fecb82831288937301c51be050d1da6194f8b89f22699ea3728d6f57c7008583e8f1dd36d203c716237254cd624c736b009d0e578e787f7494c05f2bce05b08
-  languageName: node
-  linkType: hard
-
 "swap-case@npm:^2.0.2":
   version: 2.0.2
   resolution: "swap-case@npm:2.0.2"
@@ -17536,15 +17526,6 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "uuid@npm:10.0.0"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 4b81611ade2885d2313ddd8dc865d93d8dccc13ddf901745edca8f86d99bc46d7a330d678e7532e7ebf93ce616679fb19b2e3568873ac0c14c999032acb25869
   languageName: node
   linkType: hard
 
