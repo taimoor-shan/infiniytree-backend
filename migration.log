@@ -1,0 +1,471 @@
+[32minfo[39m:    redisUrl not found. A fake redis instance will be used.
+[32minfo[39m:    Using flag MEDUSA_FF_TRANSLATION from project config with value true
+[32minfo[39m:    No link to load from /Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/draft-order/.medusa/server/src/links. skipped.
+[32minfo[39m:    Running migrations...
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: stock_location
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: inventory
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: product
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: pricing
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: promotion
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: customer
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: sales_channel
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: cart
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: region
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: api_key
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: store
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: tax
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: currency
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: payment
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: order
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: settings
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: translation
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: auth
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: user
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: fulfillment
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: notification
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: cache
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: event_bus
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: workflows
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: locking
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: file
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[32minfo[39m:    
+[32minfo[39m:    
+[32minfo[39m:    MODULE: page
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+MikroORM failed to connect to the database. Retrying...
+{}
+[31merror[39m:   Some migrations failed to run: Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?
+Error: Some migrations failed to run: Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?, Error: Bad [36m@mikro-orm/knex[39m version [33m6.4.16[39m.
+All official @mikro-orm/* packages need to have the exact same version as @mikro-orm/core ([32m6.6.12[39m).
+Only exceptions are packages that don't live in the 'mikro-orm' repository: nestjs, sql-highlighter, mongo-highlighter.
+Maybe you want to check, or regenerate your yarn.lock or package-lock.json file?
+    at applyMigration (/Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/modules-sdk/src/medusa-app.ts:607:15)
+    at async runMigrations (/Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/modules-sdk/src/medusa-app.ts:634:5)
+    at async MedusaAppMigrateUp (/Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/modules-sdk/src/medusa-app.ts:716:3)
+    at async MedusaAppLoader.runModulesMigrations (/Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/framework/src/medusa-app-loader.ts:192:7)
+    at async migrate (/Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/medusa/src/commands/db/migrate.ts:82:3)
+    at async main (/Users/macbookpro/Documents/Work/practice/medusa-towels/medus-amono/backend/node_modules/@medusajs/medusa/src/commands/db/migrate.ts:140:22)
