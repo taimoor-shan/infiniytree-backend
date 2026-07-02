@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY || process.env.SENDGRID_API
 
 export const ContactSchema = z.object({
   name: z.string().min(2, "Name is required"),
-  email: z.string().email("Invalid email address"),
+  email: z.email({ error: "Invalid email address" }),
   subject: z.string().min(5, "Subject is required"),
   message: z.string().min(10, "Message is too short"),
 });
