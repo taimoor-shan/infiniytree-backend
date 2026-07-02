@@ -1,10 +1,9 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
-import translate from "google-translate-api-x"
+import { TranslationService } from "../../services/translation-providers"
+import type { TranslatableField } from "../../services/translation-providers/provider"
 
-export type TranslatableField = {
-  key: string // e.g., "title", "description", "metadata.care_instructions"
-  text: string
-}
+// Re-export for consumers (translate-product workflow)
+export type { TranslatableField }
 
 export type TranslateTextInput = {
   fields: TranslatableField[]
@@ -21,44 +20,45 @@ export const translateTextStep = createStep(
   "translate-text",
   async (input: TranslateTextInput, { container }) => {
     const logger = container.resolve("logger")
-    
-    // Extract base locale codes (e.g. en-US -> en)
-    const sourceLocale = (input.sourceLocale || "en").split("-")[0]
-    let targetLocale = input.targetLocale.split("-")[0]
-    
+
+    const sourceLocale = input.sourceLocale || "en"
+    const targetLocale = input.targetLocale
+
+    // Skip if source and target are the same
     if (sourceLocale === targetLocale) {
       return new StepResponse<TranslateTextOutput>({
         translations: {},
-        targetLocale: input.targetLocale
+        targetLocale: input.targetLocale,
       })
     }
-    
-    logger.info(`Translating ${input.fields.length} fields to ${targetLocale} via Google Translate`)
-    
-    const translations: Record<string, string> = {}
-    
-    // Process translations sequentially to avoid overwhelming the scraper
-    for (const field of input.fields) {
-      if (!field.text) continue;
-      
-      try {
-        const res = await translate(field.text, {
-          from: sourceLocale,
-          to: targetLocale,
-          forceBatch: false,
-        })
-        
-        if (res && res.text) {
-          translations[field.key] = res.text
-        }
-      } catch (e: any) {
-        logger.error(`Error translating field '${field.key}': ${e.message}`)
-      }
+
+    logger.info(
+      `Translating ${input.fields.length} fields from ${sourceLocale} to ${targetLocale}`
+    )
+
+    try {
+      const service = new TranslationService()
+      const { translations, durationMs } = await service.translate(
+        input.fields,
+        sourceLocale,
+        targetLocale,
+        logger
+      )
+
+      logger.info(
+        `Translated ${Object.keys(translations).length}/${input.fields.length} fields ` +
+        `to ${targetLocale} in ${durationMs}ms`
+      )
+
+      return new StepResponse<TranslateTextOutput>({
+        translations,
+        targetLocale: input.targetLocale,
+      })
+    } catch (e: any) {
+      logger.error(
+        `Translation to ${targetLocale} failed: ${e.message}`
+      )
+      throw e
     }
-    
-    return new StepResponse<TranslateTextOutput>({
-      translations,
-      targetLocale: input.targetLocale
-    })
   }
 )
