@@ -7,6 +7,7 @@ export type UpdatePageStepInput = {
   data: {
     title?: string
     slug?: string
+    locale?: string
     content?: string | null
     excerpt?: string | null
     featured_image?: string | null

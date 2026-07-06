@@ -5,6 +5,7 @@ import PageModuleService from "../../modules/page/service"
 export type CreatePageStepInput = {
   title: string
   slug: string
+  locale?: string
   content?: string | null
   excerpt?: string | null
   featured_image?: string | null

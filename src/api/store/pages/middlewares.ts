@@ -16,10 +16,19 @@ export const GetStorePagesSchema = z.object({
   ),
 })
 
+export const GetStorePageBySlugSchema = z.object({
+  locale: z.string().optional(),
+})
+
 export const pageStoreMiddlewares: MiddlewareRoute[] = [
   {
     matcher: "/store/pages",
     method: "GET",
     middlewares: [validateAndTransformQuery(GetStorePagesSchema, {})],
+  },
+  {
+    matcher: "/store/pages/:slug",
+    method: "GET",
+    middlewares: [validateAndTransformQuery(GetStorePageBySlugSchema, {})],
   },
 ]

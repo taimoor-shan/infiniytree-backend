@@ -26,6 +26,7 @@ export const GetAdminPagesSchema = paginationSchema.merge(
 export const CreatePageSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
+  locale: z.string().optional(),
   content: z.string().optional().nullable(),
   excerpt: z.string().optional().nullable(),
   featured_image: z.string().optional().nullable(),
@@ -41,6 +42,7 @@ export type CreatePageSchema = z.infer<typeof CreatePageSchema>
 export const UpdatePageSchema = z.object({
   title: z.string().min(1).optional(),
   slug: z.string().min(1).optional(),
+  locale: z.string().optional(),
   content: z.string().optional().nullable(),
   excerpt: z.string().optional().nullable(),
   featured_image: z.string().optional().nullable(),

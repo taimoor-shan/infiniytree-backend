@@ -26,6 +26,7 @@ type Page = {
   id: string
   title: string
   slug: string
+  locale?: string
   content?: string | null
   excerpt?: string | null
   featured_image?: string | null
@@ -57,6 +58,9 @@ const columns = [
   columnHelper.accessor("slug", {
     header: "Slug",
   }),
+  columnHelper.accessor("locale", {
+    header: "Locale",
+  }),
   columnHelper.accessor("status", {
     header: "Status",
   }),
@@ -73,6 +77,7 @@ const columns = [
 type PageFormState = {
   title: string
   slug: string
+  locale: string
   content: string
   excerpt: string
   featured_image: string
@@ -85,6 +90,7 @@ type PageFormState = {
 const initialFormState: PageFormState = {
   title: "",
   slug: "",
+  locale: "en",
   content: "",
   excerpt: "",
   featured_image: "",
@@ -137,6 +143,7 @@ const PagesRoute = () => {
     setFormState({
       title: page.title || "",
       slug: page.slug || "",
+      locale: page.locale || "en",
       content: page.content || "",
       excerpt: page.excerpt || "",
       featured_image: page.featured_image || "",
@@ -356,6 +363,27 @@ const PageForm = ({
             setFormState({ ...formState, slug: e.target.value })
           }
         />
+      </div>
+      <div className="flex flex-col gap-y-2">
+        <Text size="small" leading="compact" weight="plus">
+          Locale
+        </Text>
+        <Select
+          value={formState.locale}
+          onValueChange={(value) =>
+            setFormState({ ...formState, locale: value })
+          }
+        >
+          <Select.Trigger>
+            <Select.Value />
+          </Select.Trigger>
+          <Select.Content>
+            <Select.Item value="en">English (en)</Select.Item>
+            <Select.Item value="de-AT">German - Austria (de-AT)</Select.Item>
+            <Select.Item value="de-DE">German - Germany (de-DE)</Select.Item>
+            <Select.Item value="hu-HU">Hungarian (hu-HU)</Select.Item>
+          </Select.Content>
+        </Select>
       </div>
       <div className="flex flex-col gap-y-2">
         <Text size="small" leading="compact" weight="plus">

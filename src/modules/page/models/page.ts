@@ -4,6 +4,7 @@ const Page = model.define("page", {
   id: model.id().primaryKey(),
   title: model.text(),
   slug: model.text(),
+  locale: model.text().default("en"),
   content: model.text().nullable(),
   excerpt: model.text().nullable(),
   featured_image: model.text().nullable(),
