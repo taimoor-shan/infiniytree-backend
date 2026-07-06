@@ -33,7 +33,7 @@
     "@medusajs/medusa": "2.17.2",
     "@mikro-orm/core": "6.6.14",
     "@mikro-orm/knex": "6.6.14",
-    "@mikro-orm/migrations": "6.6.14",
+    "@mikro-orm/migrations": "7.1.5",
     "@mikro-orm/postgresql": "6.6.14",
     "@tiptap/core": "^2.11.7",
     "@tiptap/extension-link": "^2.11.7",
