@@ -43,7 +43,7 @@
     "@tiptap/extension-table-row": "^2.11.7",
     "@tiptap/extension-underline": "^2.11.7",
     "@tiptap/pm": "^2.11.7",
-    "@tiptap/react": "^2.11.7",
+    "@tiptap/react": "^3.27.1",
     "@tiptap/starter-kit": "^2.11.7",
     "awilix": "^8.0.1",
     "google-translate-api-x": "^10.7.2",
