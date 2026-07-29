@@ -83,12 +83,16 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: "@medusajs/medusa/notification-sendgrid",
-            id: "sendgrid",
+            resolve: "./src/modules/resend",
+            id: "resend",
             options: {
               channels: ["email"],
-              api_key: process.env.SENDGRID_API_KEY,
-              from: process.env.SENDGRID_FROM,
+              api_key: process.env.RESEND_API_KEY,
+              from: process.env.RESEND_FROM,
+              // Optional SendGrid fallback (for safety during transition)
+              sendgrid_api_key: process.env.SENDGRID_API_KEY || undefined,
+              sendgrid_from: process.env.SENDGRID_FROM || undefined,
+              storefront_url: process.env.STOREFRONT_PUBLIC_URL,
             },
           },
         ],
