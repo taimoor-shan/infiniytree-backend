@@ -4003,6 +4003,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mikro-orm/migrations@npm:7.1.8":
+  version: 7.1.8
+  resolution: "@mikro-orm/migrations@npm:7.1.8"
+  dependencies:
+    "@mikro-orm/sql": 7.1.8
+  peerDependencies:
+    "@mikro-orm/core": 7.1.8
+  checksum: 1f15c07e3e8dceaa4f7f3579060197edb89487c2b215c5224e679644640fefde3d56e43b04b6712545eac18f344eed78a610766503fe7234ae0e50c48fb9a15c
+  languageName: node
+  linkType: hard
+
 "@mikro-orm/postgresql@npm:6.6.14":
   version: 6.6.14
   resolution: "@mikro-orm/postgresql@npm:6.6.14"
@@ -4015,6 +4026,17 @@ __metadata:
   peerDependencies:
     "@mikro-orm/core": ^6.0.0
   checksum: e24c463d97951008a706c6e17ed5fdcb8b04e323a9ac4f6a87ca9416c5baebc954d33d6019accd4042e393a3990ed0ac8baea62e04d8c6d0871ecc4f39a536ef
+  languageName: node
+  linkType: hard
+
+"@mikro-orm/sql@npm:7.1.8":
+  version: 7.1.8
+  resolution: "@mikro-orm/sql@npm:7.1.8"
+  dependencies:
+    kysely: 0.29.4
+  peerDependencies:
+    "@mikro-orm/core": 7.1.8
+  checksum: 1e569cba67a7277ce76cace97598ef504d96c8eb79cf887a17070ca587f057cfa975bdb53b64f2811a56080aaa02bb2f9bd7e2c0648599230a804460429807a4
   languageName: node
   linkType: hard
 
@@ -14653,6 +14675,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kysely@npm:0.29.4":
+  version: 0.29.4
+  resolution: "kysely@npm:0.29.4"
+  checksum: a23988c66789d7cfad5a092867fa66317f7d1bc58492478b749614f181627a919dea0b9b96f73a034b8b48716808b33c4fef4fc615d5abf9487f6156fbcb6959
+  languageName: node
+  linkType: hard
+
 "leac@npm:^0.6.0":
   version: 0.6.0
   resolution: "leac@npm:0.6.0"
@@ -15099,7 +15128,7 @@ __metadata:
     "@mikro-orm/cli": 6.6.14
     "@mikro-orm/core": 6.6.14
     "@mikro-orm/knex": 6.6.14
-    "@mikro-orm/migrations": 6.6.14
+    "@mikro-orm/migrations": 7.1.8
     "@mikro-orm/postgresql": 6.6.14
     "@react-email/components": ^1.0.12
     "@sendgrid/mail": ^8.1.6
