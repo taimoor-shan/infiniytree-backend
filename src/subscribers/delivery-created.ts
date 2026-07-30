@@ -1,5 +1,6 @@
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
+import { buildOrderAccessUrl } from "../utils/order-url"
 
 interface DeliveryCreatedEventData {
   id: string
@@ -50,6 +51,19 @@ export default async function deliveryCreatedHandler({
       return
     }
 
+    const orderMeta = ((order as any).metadata || {}) as Record<string, unknown>
+    const storefrontUrl = process.env.STOREFRONT_PUBLIC_URL || "https://infinytree.com"
+    const orderUrl = await buildOrderAccessUrl(
+      {
+        id: order.id,
+        display_id: (order as any).display_id,
+        customer_id: (order as any).customer_id,
+        metadata: orderMeta,
+      },
+      storefrontUrl,
+      container
+    )
+
     await notificationService.createNotifications({
       to: order.email,
       channel: "email",
@@ -58,6 +72,7 @@ export default async function deliveryCreatedHandler({
         order_id: order.id,
         display_id: (order as any).display_id,
         fulfillment_id: event.data.id,
+        order_url: orderUrl,
       },
       trigger_type: "delivery.created",
       resource_id: order.id,

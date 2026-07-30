@@ -7,6 +7,7 @@ export interface OrderShippedEmailProps {
   tracking_numbers?: string[]
   tracking_url?: string
   fulfillment_id?: string
+  order_url?: string
   storefront_url?: string
   subject?: string
 }
@@ -18,10 +19,11 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
     tracking_url,
     storefront_url = "https://infinytree.com",
     order_id,
+    order_url,
   } = props
 
   const orderNumber = display_id || order_id?.slice(-8) || "—"
-  const detailsUrl = `${storefront_url}/account/orders/details/${order_id}`
+  const detailsUrl = order_url || `${storefront_url}/account/orders/details/${order_id}`
 
   return (
     <EmailLayout preview={`Your Infinytree order #${orderNumber} has shipped! 📦`}>
@@ -66,27 +68,29 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
         )}
       </p>
 
-      <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
-        <tr>
-          <td align="center">
-            <a
-              href={tracking_url || detailsUrl}
-              style={{
-                display: "inline-block",
-                padding: "14px 36px",
-                backgroundColor: "#2d4a3e",
-                color: "#ffffff",
-                fontSize: "15px",
-                textDecoration: "none",
-                borderRadius: "4px",
-                fontWeight: 500,
-              }}
-            >
-              {tracking_url ? "Track Shipment" : "View Order Status"}
-            </a>
-          </td>
-        </tr>
-      </table>
+      {(tracking_url || order_url) ? (
+        <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
+          <tr>
+            <td align="center">
+              <a
+                href={tracking_url || order_url}
+                style={{
+                  display: "inline-block",
+                  padding: "14px 36px",
+                  backgroundColor: "#2d4a3e",
+                  color: "#ffffff",
+                  fontSize: "15px",
+                  textDecoration: "none",
+                  borderRadius: "4px",
+                  fontWeight: 500,
+                }}
+              >
+                {tracking_url ? "Track Shipment" : "View Order Status"}
+              </a>
+            </td>
+          </tr>
+        </table>
+      ) : null}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
         Questions about your shipment? Contact us at{" "}

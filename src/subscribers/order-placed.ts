@@ -1,5 +1,6 @@
 import { Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
+import { generateAccessToken, buildOrderAccessUrl } from "../utils/order-url"
 
 export default async function orderPlacedHandler({
   event,
@@ -31,6 +32,8 @@ export default async function orderPlacedHandler({
         "shipping_total",
         "discount_total",
         "tax_total",
+        "customer_id",
+        "metadata",
       ],
     })
 
@@ -51,6 +54,36 @@ export default async function orderPlacedHandler({
     })
 
     const payment = (order as any).payment_collections?.[0]?.payments?.[0]
+
+    // Generate access token for guest order tracking
+    const storefrontUrl = process.env.STOREFRONT_PUBLIC_URL || "https://infinytree.com"
+    const existingMetadata = ((order as any).metadata || {}) as Record<string, unknown>
+    const { rawToken, tokenHash } = generateAccessToken()
+
+    try {
+      await orderService.updateOrders(order.id, {
+        metadata: {
+          ...existingMetadata,
+          order_access_token: rawToken,
+          order_access_token_hash: tokenHash,
+        },
+      })
+      logger.info(`[order-placed] Access token stored for order ${order.id}`)
+    } catch (err: any) {
+      logger.warn(`[order-placed] Failed to store access token for ${order.id}: ${err.message}`)
+    }
+
+    const orderUrl = await buildOrderAccessUrl(
+      {
+        id: order.id,
+        display_id: (order as any).display_id,
+        customer_id: (order as any).customer_id,
+        metadata: { ...existingMetadata, order_access_token: rawToken },
+      },
+      storefrontUrl,
+      container
+    )
+
     // decorCartTotals returns BigNumber instances; extract the raw numeric_
     // value so they survive JSON serialization into the notification.
     const toNum = (v: any): number => {
@@ -89,6 +122,7 @@ export default async function orderPlacedHandler({
             amount: toNum(payment.amount),
           }
         : undefined,
+      order_url: orderUrl,
     }
 
     // ── Debug: inspect converted orderData ────────────────────────

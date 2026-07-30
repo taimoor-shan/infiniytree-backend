@@ -33,6 +33,7 @@ export interface OrderConfirmedEmailProps {
     provider_id: string
     amount: number
   }
+  order_url?: string
   storefront_url?: string
   subject?: string
 }
@@ -53,6 +54,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
     discount_total,
     tax_total,
     payment_method,
+    order_url,
     storefront_url = "https://infinytree.com",
     created_at,
   } = props
@@ -331,28 +333,34 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
         </>
       )}
 
-      {/* CTA */}
-      <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "16px" }}>
-        <tr>
-          <td align="center">
-            <a
-              href={`${storefront_url}/order/${id}/confirmed`}
-              style={{
-                display: "inline-block",
-                padding: "12px 32px",
-                backgroundColor: "#2d4a3e",
-                color: "#ffffff",
-                fontSize: "14px",
-                textDecoration: "none",
-                borderRadius: "4px",
-                fontWeight: 500,
-              }}
-            >
-              View Your Order
-            </a>
-          </td>
-        </tr>
-      </table>
+      {/* CTA — registered users only */}
+      {order_url ? (
+        <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "16px" }}>
+          <tr>
+            <td align="center">
+              <a
+                href={order_url}
+                style={{
+                  display: "inline-block",
+                  padding: "12px 32px",
+                  backgroundColor: "#2d4a3e",
+                  color: "#ffffff",
+                  fontSize: "14px",
+                  textDecoration: "none",
+                  borderRadius: "4px",
+                  fontWeight: 500,
+                }}
+              >
+                View Your Order
+              </a>
+            </td>
+          </tr>
+        </table>
+      ) : (
+        <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
+          Your order is being processed. You will receive updates by email as your order progresses.
+        </p>
+      )}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
         If you have any questions, reply to this email or contact us at{" "}

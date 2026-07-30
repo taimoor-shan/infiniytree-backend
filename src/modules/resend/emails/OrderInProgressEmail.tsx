@@ -4,6 +4,7 @@ import { EmailLayout } from "./layout"
 export interface OrderInProgressEmailProps {
   order_id: string
   display_id?: string | number
+  order_url?: string
   storefront_url?: string
   subject?: string
 }
@@ -13,9 +14,11 @@ export function OrderInProgressEmail(props: OrderInProgressEmailProps) {
     display_id,
     storefront_url = "https://infinytree.com",
     order_id,
+    order_url,
   } = props
 
   const orderNumber = display_id || order_id?.slice(-8) || "—"
+  const detailsUrl = order_url || `${storefront_url}/account/orders/details/${order_id}`
 
   return (
     <EmailLayout preview={`Your Infinytree order #${orderNumber} is in progress`}>
@@ -30,27 +33,33 @@ export function OrderInProgressEmail(props: OrderInProgressEmailProps) {
         We'll notify you as soon as your order has been dispatched.
       </p>
 
-      <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
-        <tr>
-          <td align="center">
-            <a
-              href={`${storefront_url}/account/orders/details/${order_id}`}
-              style={{
-                display: "inline-block",
-                padding: "14px 36px",
-                backgroundColor: "#2d4a3e",
-                color: "#ffffff",
-                fontSize: "15px",
-                textDecoration: "none",
-                borderRadius: "4px",
-                fontWeight: 500,
-              }}
-            >
-              View Order Status
-            </a>
-          </td>
-        </tr>
-      </table>
+      {order_url ? (
+        <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
+          <tr>
+            <td align="center">
+              <a
+                href={order_url}
+                style={{
+                  display: "inline-block",
+                  padding: "14px 36px",
+                  backgroundColor: "#2d4a3e",
+                  color: "#ffffff",
+                  fontSize: "15px",
+                  textDecoration: "none",
+                  borderRadius: "4px",
+                  fontWeight: 500,
+                }}
+              >
+                View Order Status
+              </a>
+            </td>
+          </tr>
+        </table>
+      ) : (
+        <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
+          You will receive updates by email as your order progresses through our workshop.
+        </p>
+      )}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
         Questions? Contact us at{" "}
