@@ -19,10 +19,45 @@ export default async function orderPlacedHandler({
         "items.variant",
         "items.variant.product",
         "shipping_address",
-        "payment_collections",
-        "payment_collections.payments",
+        "summary",
+      ],
+      select: [
+        "email",
+        "display_id",
+        "created_at",
+        "currency_code",
+        "total",
+        "subtotal",
+        "shipping_total",
+        "discount_total",
+        "tax_total",
       ],
     })
+
+    // ── Debug: inspect raw values from retrieveOrder ──────────────
+    logger.info("[order-placed] Raw order fields:", {
+      id: order.id,
+      email: order.email,
+      display_id: (order as any).display_id,
+      currency_code: order.currency_code,
+      total_raw: (order as any).total,
+      subtotal_raw: (order as any).subtotal,
+      shipping_total_raw: (order as any).shipping_total,
+      discount_total_raw: (order as any).discount_total,
+      tax_total_raw: (order as any).tax_total,
+      items_count: order.items?.length,
+      has_payment_collections: !!(order as any).payment_collections?.length,
+      has_summary: !!(order as any).summary,
+    })
+
+    const payment = (order as any).payment_collections?.[0]?.payments?.[0]
+    // decorCartTotals returns BigNumber instances; extract the raw numeric_
+    // value so they survive JSON serialization into the notification.
+    const toNum = (v: any): number => {
+      if (v == null) return 0
+      if (typeof v === "number") return v
+      return Number(v?.numeric_ ?? v) || 0
+    }
 
     const orderData = {
       id: order.id,
@@ -35,31 +70,62 @@ export default async function orderPlacedHandler({
       currency_code: order.currency_code,
       items: order.items?.map((item: any) => ({
         title: item.title,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
+        quantity: toNum(item.quantity),
+        unit_price: toNum(item.unit_price),
         thumbnail: item.thumbnail,
         product: item.variant?.product
           ? { title: item.variant.product.title }
           : undefined,
       })),
       shipping_address: order.shipping_address,
-      total: (order as any).total,
-      subtotal: (order as any).subtotal,
-      shipping_total: (order as any).shipping_total,
-      discount_total: (order as any).discount_total,
-      tax_total: (order as any).tax_total,
+      total: toNum((order as any).total),
+      subtotal: toNum((order as any).subtotal),
+      shipping_total: toNum((order as any).shipping_total),
+      discount_total: toNum((order as any).discount_total),
+      tax_total: toNum((order as any).tax_total),
+      payment_method: payment
+        ? {
+            provider_id: payment.provider_id,
+            amount: toNum(payment.amount),
+          }
+        : undefined,
     }
 
-    // 1. Send confirmation to customer
-    await notificationService.createNotifications({
-      to: order.email,
-      channel: "email",
-      template: "order-confirmed",
-      data: orderData,
-      trigger_type: "order.placed",
-      resource_id: order.id,
-      resource_type: "order",
+    // ── Debug: inspect converted orderData ────────────────────────
+    logger.info("[order-placed] Converted orderData:", {
+      id: orderData.id,
+      email: orderData.email,
+      display_id: orderData.display_id,
+      currency_code: orderData.currency_code,
+      total: orderData.total,
+      subtotal: orderData.subtotal,
+      shipping_total: orderData.shipping_total,
+      discount_total: orderData.discount_total,
+      tax_total: orderData.tax_total,
+      items: orderData.items?.map((i: any) => ({
+        title: i.title,
+        qty: i.quantity,
+        unit_price: i.unit_price,
+      })),
+      has_payment_method: !!orderData.payment_method,
     })
+
+    // 1. Send confirmation to customer
+    const to = order.email
+    if (!to) {
+      logger.error("[order-placed] Customer email is empty — skipping customer notification")
+    } else {
+      await notificationService.createNotifications({
+        to,
+        channel: "email",
+        template: "order-confirmed",
+        data: orderData,
+        trigger_type: "order.placed",
+        resource_id: order.id,
+        resource_type: "order",
+      })
+      logger.info(`[order-placed] Customer notification queued for ${to}`)
+    }
 
     // 2. Send notification to shop owner
     const shopEmail = process.env.SHOP_OWNER_EMAIL || "info@infinytree.com"
@@ -72,9 +138,10 @@ export default async function orderPlacedHandler({
       resource_id: order.id,
       resource_type: "order",
     })
+    logger.info(`[order-placed] Admin notification queued for ${shopEmail}`)
   } catch (error: any) {
     logger.error(
-      `Failed to send order confirmation for order ${event.data.id}: ${error.message}`
+      `[order-placed] Failed for order ${event.data.id}: ${error.message}`
     )
   }
 }

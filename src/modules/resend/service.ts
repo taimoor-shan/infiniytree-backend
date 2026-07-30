@@ -16,6 +16,9 @@ import { PasswordResetEmail } from "./emails/PasswordResetEmail"
 import { EmailVerificationEmail } from "./emails/EmailVerificationEmail"
 import { ShippingUpdateEmail } from "./emails/ShippingUpdateEmail"
 import { OrderTransferEmail } from "./emails/OrderTransferEmail"
+import { OrderInProgressEmail } from "./emails/OrderInProgressEmail"
+import { OrderShippedEmail } from "./emails/OrderShippedEmail"
+import { OrderDeliveredEmail } from "./emails/OrderDeliveredEmail"
 
 export type ResendNotificationServiceOptions = {
   api_key: string
@@ -37,8 +40,11 @@ const TEMPLATES: Record<string, React.ComponentType<any>> = {
   "welcome": WelcomeEmail,
   "password-reset": PasswordResetEmail,
   "email-verification": EmailVerificationEmail,
-  "shipping-update": ShippingUpdateEmail,
   "order-transfer": OrderTransferEmail,
+  "shipping-update": ShippingUpdateEmail,
+  "order-in-progress": OrderInProgressEmail,
+  "order-shipped": OrderShippedEmail,
+  "order-delivered": OrderDeliveredEmail,
 }
 
 export class ResendNotificationService extends AbstractNotificationProviderService {
@@ -217,6 +223,9 @@ export class ResendNotificationService extends AbstractNotificationProviderServi
       "email-verification": "Verify Your Email — Infinytree",
       "shipping-update": "Your Infinytree Order Has Shipped! 📦",
       "order-transfer": "Order Transfer Request — Infinytree",
+      "order-in-progress": "Your Infinytree Order is In Progress",
+      "order-shipped": "Your Infinytree Order Has Shipped! 📦",
+      "order-delivered": "Your Infinytree Order Has Been Delivered! 🎉",
     }
     return subjects[template] || "Infinytree"
   }

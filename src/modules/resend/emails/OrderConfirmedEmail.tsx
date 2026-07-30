@@ -29,6 +29,10 @@ export interface OrderConfirmedEmailProps {
   shipping_total?: number
   discount_total?: number
   tax_total?: number
+  payment_method?: {
+    provider_id: string
+    amount: number
+  }
   storefront_url?: string
   subject?: string
 }
@@ -48,6 +52,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
     shipping_total,
     discount_total,
     tax_total,
+    payment_method,
     storefront_url = "https://infinytree.com",
     created_at,
   } = props
@@ -301,12 +306,37 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
         </>
       )}
 
+      {/* Payment Method */}
+      {props.payment_method && (
+        <>
+          <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
+            Payment
+          </h3>
+          <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
+            {props.payment_method.provider_id === "pp_paypal_paypal"
+              ? "PayPal"
+              : props.payment_method.provider_id === "pp_stripe_applepay"
+                ? "Apple Pay"
+                : props.payment_method.provider_id === "pp_stripe_googlepay"
+                  ? "Google Pay"
+                  : props.payment_method.provider_id === "pp_stripe-ideal_stripe"
+                    ? "iDeal"
+                    : props.payment_method.provider_id === "pp_stripe-bancontact_stripe"
+                      ? "Bancontact"
+                      : props.payment_method.provider_id === "pp_system_default"
+                        ? "Bank Transfer"
+                        : "Credit Card"}{" "}
+            — {formatPrice(props.payment_method.amount)}
+          </p>
+        </>
+      )}
+
       {/* CTA */}
       <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "16px" }}>
         <tr>
           <td align="center">
             <a
-              href={`${storefront_url}/account/orders`}
+              href={`${storefront_url}/order/${id}/confirmed`}
               style={{
                 display: "inline-block",
                 padding: "12px 32px",
