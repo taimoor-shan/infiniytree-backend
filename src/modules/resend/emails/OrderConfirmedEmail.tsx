@@ -83,7 +83,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
         Thank You for Your Order! 🌿
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-        Your order has been confirmed and is being processed. Here is a summary of your purchase:
+        Our team will review and will contact you within 48 hours (working days). Here is a summary of your purchase:
       </p>
 
       {/* Order Meta */}

@@ -51,9 +51,9 @@
     "google-translate-api-x": "^10.7.2",
     "minio": "^8.0.6",
     "pg": "^8.13.0",
-    "react-email": "^6.9.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-email": "^6.9.1",
     "resend": "^6.12.2",
     "ulid": "^2.3.0"
   },

@@ -112,7 +112,17 @@ export default async function orderPlacedHandler({
       })),
       shipping_address: order.shipping_address,
       total: toNum((order as any).total),
-      subtotal: toNum((order as any).subtotal),
+      subtotal:
+        order.items?.reduce(
+          (sum: number, item: any) =>
+            sum + toNum(item.unit_price) * toNum(item.quantity),
+          0
+        ) ??
+        toNum(
+          (order as any).subtotal ??
+            (order as any).summary?.subtotal ??
+            0
+        ),
       shipping_total: toNum((order as any).shipping_total),
       discount_total: toNum((order as any).discount_total),
       tax_total: toNum((order as any).tax_total),
