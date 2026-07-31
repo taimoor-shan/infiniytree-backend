@@ -16206,10 +16206,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postal-mime@npm:2.7.4":
-  version: 2.7.4
-  resolution: "postal-mime@npm:2.7.4"
-  checksum: a30e896a4b9b24f710c3ea2b1e340f3fee75743a9dc71cbccc365019e57a96c9f07ee9b276fc7832f5167ea7fbdeb817aab18ac70384691a128376960e8ae444
+"postal-mime@npm:2.7.5":
+  version: 2.7.5
+  resolution: "postal-mime@npm:2.7.5"
+  checksum: a2e3a35d51ca6be19fbac936bf8e7c25a644f5aea6a504a942fc44ad7a202bff6dd7698233b6f4ee9e550ffb00bce7b2b35fbee9a6607febdfebc897c03138ca
   languageName: node
   linkType: hard
 
@@ -17303,17 +17303,17 @@ __metadata:
   linkType: hard
 
 "resend@npm:^6.12.2":
-  version: 6.12.2
-  resolution: "resend@npm:6.12.2"
+  version: 6.18.1
+  resolution: "resend@npm:6.18.1"
   dependencies:
-    postal-mime: 2.7.4
-    svix: 1.90.0
+    postal-mime: 2.7.5
+    standardwebhooks: 1.0.0
   peerDependencies:
     "@react-email/render": "*"
   peerDependenciesMeta:
     "@react-email/render":
       optional: true
-  checksum: ba7ce0e087655b690b5d51dc6ccfdce58c49809032570c8ee2e9b119186a55ef4bb8dc9987d3b1883778ade48d861d77a32bc51e6560346673063bea7c948152
+  checksum: d11d84bc1f7838ed0489031e9704ccd9a0af625bcae7dbf41f068787fdbd2203664e30eb7ca4d08d4c363baa778450c6b56a8f7c7633c98779bbfc18e1af34bb
   languageName: node
   linkType: hard
 
@@ -18206,16 +18206,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svix@npm:1.90.0":
-  version: 1.90.0
-  resolution: "svix@npm:1.90.0"
-  dependencies:
-    standardwebhooks: 1.0.0
-    uuid: ^10.0.0
-  checksum: 3fecb82831288937301c51be050d1da6194f8b89f22699ea3728d6f57c7008583e8f1dd36d203c716237254cd624c736b009d0e578e787f7494c05f2bce05b08
-  languageName: node
-  linkType: hard
-
 "swap-case@npm:^2.0.2":
   version: 2.0.2
   resolution: "swap-case@npm:2.0.2"
@@ -18796,15 +18786,6 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "uuid@npm:10.0.0"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 4b81611ade2885d2313ddd8dc865d93d8dccc13ddf901745edca8f86d99bc46d7a330d678e7532e7ebf93ce616679fb19b2e3568873ac0c14c999032acb25869
   languageName: node
   linkType: hard
 
