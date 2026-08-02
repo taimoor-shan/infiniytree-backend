@@ -3,6 +3,7 @@ import { PAGE_MODULE } from "../../../../modules/page"
 import PageModuleService from "../../../../modules/page/service"
 import deletePageWorkflow from "../../../../workflows/delete-page"
 import updatePageWorkflow from "../../../../workflows/update-page"
+import { revalidateStorefrontCache } from "../../../../utils/revalidate-cache"
 import { UpdatePageSchema } from "../middlewares"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -27,6 +28,10 @@ export async function POST(
     },
   })
 
+  const logger = req.scope.resolve("logger")
+  // Invalidate storefront pages cache
+  await revalidateStorefrontCache(["pages"], logger)
+
   return res.status(200).json({ page: result.page })
 }
 
@@ -36,6 +41,10 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await deletePageWorkflow(req.scope).run({
     input: { id },
   })
+
+  const logger = req.scope.resolve("logger")
+  // Invalidate storefront pages cache
+  await revalidateStorefrontCache(["pages"], logger)
 
   return res.status(200).json({ id })
 }

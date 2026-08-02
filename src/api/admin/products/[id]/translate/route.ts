@@ -5,6 +5,7 @@ import {
 import { Modules } from "@medusajs/framework/utils"
 import { ITranslationModuleService } from "@medusajs/types"
 import { translateProductWorkflow } from "../../../../../workflows/translate-product"
+import { revalidateStorefrontCache } from "../../../../../utils/revalidate-cache"
 
 /**
  * Fetch all configured locale codes from Medusa's translation module.
@@ -125,6 +126,11 @@ export async function POST(
     `Failed: [${failed.map((f) => f.locale).join(", ")}], ` +
     `Duration: ${durationMs}ms`
   )
+
+  // Invalidate storefront products cache when translations change
+  if (completed.length > 0) {
+    await revalidateStorefrontCache(["products", "variants"], logger)
+  }
 
   res.status(200).json({
     completed,

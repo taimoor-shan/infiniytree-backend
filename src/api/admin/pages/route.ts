@@ -2,6 +2,7 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { PAGE_MODULE } from "../../../modules/page"
 import PageModuleService from "../../../modules/page/service"
 import createPageWorkflow from "../../../workflows/create-page"
+import { revalidateStorefrontCache } from "../../../utils/revalidate-cache"
 import { CreatePageSchema } from "./middlewares"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -39,6 +40,10 @@ export async function POST(
   const { result } = await createPageWorkflow(req.scope).run({
     input: req.validatedBody,
   })
+
+  const logger = req.scope.resolve("logger")
+  // Invalidate storefront pages cache
+  await revalidateStorefrontCache(["pages"], logger)
 
   return res.status(200).json({ page: result.page })
 }
