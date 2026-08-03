@@ -1,5 +1,6 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator } from "../i18n"
 
 export interface ShippingUpdateEmailProps {
   order_id: string
@@ -9,6 +10,7 @@ export interface ShippingUpdateEmailProps {
   order_url?: string
   storefront_url?: string
   subject?: string
+  locale?: string
 }
 
 export function ShippingUpdateEmail(props: ShippingUpdateEmailProps) {
@@ -18,25 +20,26 @@ export function ShippingUpdateEmail(props: ShippingUpdateEmailProps) {
     storefront_url = "https://infinytree.com",
     order_id,
     order_url,
+    locale = "en",
   } = props
 
+  const t = createTranslator(locale)
   const orderNumber = display_id || order_id?.slice(-8) || "—"
 
   return (
-    <EmailLayout preview={`Your Infinytree order #${orderNumber} has shipped! 📦`}>
+    <EmailLayout preview={t("email.shippingUpdate.preview", { orderNumber })} locale={locale}>
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Your Order Has Shipped! 📦
+        {t("email.shippingUpdate.heading")}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 16px", lineHeight: "1.6" }}>
-        Great news — your Infinytree order <strong>#{orderNumber}</strong> is on its way!
-        Your handmade artificial plants are carefully packaged and heading to you now.
+        {t("email.shippingUpdate.body", { orderNumber })}
       </p>
 
       {/* Tracking Numbers */}
       {tracking_numbers && tracking_numbers.length > 0 && (
         <>
           <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-            Tracking Information
+            {t("email.shippingUpdate.trackingLabel")}
           </h3>
           <table
             cellPadding="0"
@@ -67,8 +70,7 @@ export function ShippingUpdateEmail(props: ShippingUpdateEmailProps) {
 
       {!tracking_numbers?.length && (
         <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-          Tracking information will be available in your account once the carrier updates
-          the shipment status.
+          {t("email.shippingUpdate.noTracking")}
         </p>
       )}
 
@@ -90,7 +92,7 @@ export function ShippingUpdateEmail(props: ShippingUpdateEmailProps) {
                   fontWeight: 500,
                 }}
               >
-                Track Your Order
+                {t("email.shippingUpdate.trackOrder")}
               </a>
             </td>
           </tr>
@@ -98,7 +100,7 @@ export function ShippingUpdateEmail(props: ShippingUpdateEmailProps) {
       ) : null}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        Questions about your shipment? Contact us at{" "}
+        {t("email.common.questionsAboutShipment")}{" "}
         <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
           info@infinytree.com
         </a>

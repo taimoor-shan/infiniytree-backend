@@ -1,4 +1,5 @@
 import React from "react"
+import { createTranslator } from "../i18n"
 
 /**
  * Shared email layout for all Infinytree transactional emails.
@@ -7,9 +8,12 @@ import React from "react"
 export interface EmailLayoutProps {
   children: React.ReactNode
   preview?: string
+  locale?: string
 }
 
-export function EmailLayout({ children, preview }: EmailLayoutProps) {
+export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
+  const t = createTranslator(locale)
+
   return (
     <html>
       <head>
@@ -127,7 +131,7 @@ export function EmailLayout({ children, preview }: EmailLayoutProps) {
                   lineHeight: "1.5",
                 }}
               >
-                Infinytree — Artificial Handmade Plants That Last Forever
+                {t("email.layout.tagline")}
               </p>
               <p
                 style={{
@@ -137,8 +141,7 @@ export function EmailLayout({ children, preview }: EmailLayoutProps) {
                   lineHeight: "1.5",
                 }}
               >
-                You are receiving this email because it relates to your
-                interaction with Infinytree.
+                {t("email.layout.footerNote")}
               </p>
             </td>
           </tr>

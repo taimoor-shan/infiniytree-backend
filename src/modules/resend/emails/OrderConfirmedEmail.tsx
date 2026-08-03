@@ -1,5 +1,7 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator, resolveLocale } from "../i18n"
+import { formatPrice } from "../i18n/money"
 
 export interface OrderConfirmedEmailProps {
   id: string
@@ -38,6 +40,21 @@ export interface OrderConfirmedEmailProps {
   vat_number?: string
   storefront_url?: string
   subject?: string
+  locale?: string
+}
+
+const PAYMENT_PROVIDER_MAP: Record<string, string> = {
+  pp_paypal_paypal: "email.payment.paypal",
+  pp_stripe_applepay: "email.payment.applepay",
+  pp_stripe_googlepay: "email.payment.googlepay",
+  "pp_stripe-ideal_stripe": "email.payment.ideal",
+  "pp_stripe-bancontact_stripe": "email.payment.bancontact",
+  pp_system_default: "email.payment.bankTransfer",
+}
+
+function getPaymentLabel(providerId: string, t: (key: string) => string): string {
+  const key = PAYMENT_PROVIDER_MAP[providerId]
+  return key ? t(key) : t("email.payment.creditCard")
 }
 
 /**
@@ -59,33 +76,35 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
     order_url,
     storefront_url = "https://infinytree.com",
     created_at,
+    locale = "en",
   } = props
+
+  const t = createTranslator(locale)
+  const resolvedLocale = resolveLocale(locale)
 
   const orderNumber = display_id || id?.slice(-8) || "—"
   const orderDate = created_at
-    ? new Date(created_at).toLocaleDateString("en-US", {
+    ? new Date(created_at).toLocaleDateString(resolvedLocale, {
         year: "numeric",
         month: "long",
         day: "numeric",
       })
     : "—"
 
-  const formatPrice = (amount?: number) =>
-    amount != null
-      ? new Intl.NumberFormat("de-DE", {
-          style: "currency",
-          currency: currency_code.toUpperCase(),
-        }).format(amount / 100)
-      : "—"
+  const fmt = (amount?: number) =>
+    amount != null ? formatPrice(amount, currency_code, resolvedLocale) : "—"
 
   return (
-    <EmailLayout preview={`Order #${orderNumber} confirmed — thank you for your purchase!`}>
+    <EmailLayout
+      preview={t("email.orderConfirmed.preview", { orderNumber })}
+      locale={locale}
+    >
       {/* Heading */}
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Thank You for Your Order! 🌿
+        {t("email.orderConfirmed.heading")}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-        Our team will review and will contact you within 48 hours (working days). Here is a summary of your purchase:
+        {t("email.orderConfirmed.intro")}
       </p>
 
       {/* Order Meta */}
@@ -93,7 +112,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
         <tr>
           <td style={{ paddingRight: "24px", verticalAlign: "top" }}>
             <p style={{ fontSize: "12px", color: "#999", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              Order Number
+              {t("email.orderConfirmed.orderNumberLabel")}
             </p>
             <p style={{ fontSize: "15px", color: "#333", margin: 0, fontWeight: 600 }}>
               #{orderNumber}
@@ -101,7 +120,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
           </td>
           <td style={{ verticalAlign: "top" }}>
             <p style={{ fontSize: "12px", color: "#999", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              Date
+              {t("email.orderConfirmed.dateLabel")}
             </p>
             <p style={{ fontSize: "15px", color: "#333", margin: 0 }}>
               {orderDate}
@@ -112,7 +131,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
 
       {/* Items Table */}
       <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 12px", fontWeight: 400 }}>
-        Items
+        {t("email.orderConfirmed.itemsLabel")}
       </h3>
       <table
         cellPadding="0"
@@ -135,7 +154,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                 fontWeight: 400,
               }}
             >
-              Product
+              {t("email.orderConfirmed.product")}
             </th>
             <th
               style={{
@@ -149,7 +168,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                 fontWeight: 400,
               }}
             >
-              Qty
+              {t("email.orderConfirmed.qty")}
             </th>
             <th
               style={{
@@ -163,7 +182,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                 fontWeight: 400,
               }}
             >
-              Price
+              {t("email.orderConfirmed.price")}
             </th>
           </tr>
         </thead>
@@ -200,7 +219,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                   textAlign: "right",
                 }}
               >
-                {formatPrice(item.unit_price * item.quantity)}
+                {fmt(item.unit_price * item.quantity)}
               </td>
             </tr>
           ))}
@@ -218,33 +237,41 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
         <tbody>
           {subtotal != null && (
             <tr>
-              <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>Subtotal</td>
+              <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>
+                {t("email.orderConfirmed.subtotal")}
+              </td>
               <td style={{ fontSize: "14px", color: "#333", textAlign: "right", padding: "3px 0" }}>
-                {formatPrice(subtotal)}
+                {fmt(subtotal)}
               </td>
             </tr>
           )}
           {shipping_total != null && (
             <tr>
-              <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>Shipping</td>
+              <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>
+                {t("email.orderConfirmed.shipping")}
+              </td>
               <td style={{ fontSize: "14px", color: "#333", textAlign: "right", padding: "3px 0" }}>
-                {shipping_total === 0 ? "Free" : formatPrice(shipping_total)}
+                {shipping_total === 0 ? t("email.orderConfirmed.free") : fmt(shipping_total)}
               </td>
             </tr>
           )}
           {discount_total != null && discount_total > 0 && (
             <tr>
-              <td style={{ fontSize: "14px", color: "#d44", padding: "3px 0" }}>Discount</td>
+              <td style={{ fontSize: "14px", color: "#d44", padding: "3px 0" }}>
+                {t("email.orderConfirmed.discount")}
+              </td>
               <td style={{ fontSize: "14px", color: "#d44", textAlign: "right", padding: "3px 0" }}>
-                −{formatPrice(discount_total)}
+                −{fmt(discount_total)}
               </td>
             </tr>
           )}
           {tax_total != null && (
             <tr>
-              <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>Tax</td>
+              <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>
+                {t("email.orderConfirmed.tax")}
+              </td>
               <td style={{ fontSize: "14px", color: "#333", textAlign: "right", padding: "3px 0" }}>
-                {formatPrice(tax_total)}
+                {fmt(tax_total)}
               </td>
             </tr>
           )}
@@ -258,7 +285,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                 borderTop: "2px solid #e8e8e4",
               }}
             >
-              Total
+              {t("email.orderConfirmed.total")}
             </td>
             <td
               style={{
@@ -270,7 +297,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                 borderTop: "2px solid #e8e8e4",
               }}
             >
-              {formatPrice(total)}
+              {fmt(total)}
             </td>
           </tr>
         </tbody>
@@ -280,7 +307,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
       {shipping_address && (
         <>
           <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-            Shipping Address
+            {t("email.orderConfirmed.shippingAddress")}
           </h3>
           <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
             {shipping_address.first_name} {shipping_address.last_name}
@@ -293,7 +320,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
             {props.vat_number && (
               <>
                 <br />
-                VAT: {props.vat_number}
+                {t("email.orderConfirmed.vat")}: {props.vat_number}
               </>
             )}
             <br />
@@ -326,23 +353,11 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
       {props.payment_method && (
         <>
           <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-            Payment
+            {t("email.orderConfirmed.payment")}
           </h3>
           <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-            {props.payment_method.provider_id === "pp_paypal_paypal"
-              ? "PayPal"
-              : props.payment_method.provider_id === "pp_stripe_applepay"
-                ? "Apple Pay"
-                : props.payment_method.provider_id === "pp_stripe_googlepay"
-                  ? "Google Pay"
-                  : props.payment_method.provider_id === "pp_stripe-ideal_stripe"
-                    ? "iDeal"
-                    : props.payment_method.provider_id === "pp_stripe-bancontact_stripe"
-                      ? "Bancontact"
-                      : props.payment_method.provider_id === "pp_system_default"
-                        ? "Bank Transfer"
-                        : "Credit Card"}{" "}
-            — {formatPrice(props.payment_method.amount)}
+            {getPaymentLabel(props.payment_method.provider_id, t)}{" "}
+            — {fmt(props.payment_method.amount)}
           </p>
         </>
       )}
@@ -365,19 +380,19 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                   fontWeight: 500,
                 }}
               >
-                View Your Order
+                {t("email.orderConfirmed.viewOrder")}
               </a>
             </td>
           </tr>
         </table>
       ) : (
         <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-          Your order is being processed. You will receive updates by email as your order progresses.
+          {t("email.orderConfirmed.processingNote")}
         </p>
       )}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        If you have any questions, reply to this email or contact us at{" "}
+        {t("email.orderConfirmed.contactPrefix")}{" "}
         <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
           info@infinytree.com
         </a>

@@ -1,5 +1,6 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator } from "../i18n"
 
 export interface EmailVerificationEmailProps {
   code: string
@@ -7,6 +8,7 @@ export interface EmailVerificationEmailProps {
   expires_at?: string
   storefront_url?: string
   subject?: string
+  locale?: string
 }
 
 export function EmailVerificationEmail(props: EmailVerificationEmailProps) {
@@ -14,18 +16,19 @@ export function EmailVerificationEmail(props: EmailVerificationEmailProps) {
     code,
     entity_id,
     storefront_url = "https://infinytree.com",
+    locale = "en",
   } = props
 
+  const t = createTranslator(locale)
   const verifyLink = `${storefront_url}/account/verify?email=${encodeURIComponent(entity_id)}&code=${encodeURIComponent(code)}`
 
   return (
-    <EmailLayout preview="Verify your email for Infinytree">
+    <EmailLayout preview={t("email.emailVerification.preview")} locale={locale}>
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Verify Your Email
+        {t("email.emailVerification.heading")}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 16px", lineHeight: "1.6" }}>
-        Thanks for signing up! Please verify your email address to complete your
-        registration.
+        {t("email.emailVerification.body")}
       </p>
 
       {/* Verification Code */}
@@ -75,19 +78,18 @@ export function EmailVerificationEmail(props: EmailVerificationEmailProps) {
                 fontWeight: 500,
               }}
             >
-              Verify Email
+              {t("email.emailVerification.verifyButton")}
             </a>
           </td>
         </tr>
       </table>
 
       <p style={{ fontSize: "13px", color: "#888", margin: "0 0 8px", lineHeight: "1.5" }}>
-        Enter this code on the verification page, or click the button above. The code
-        will expire after 24 hours.
+        {t("email.emailVerification.codeNote")}
       </p>
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        If you didn&apos;t create an account, you can safely ignore this email.
+        {t("email.emailVerification.ignoreNote")}
       </p>
     </EmailLayout>
   )

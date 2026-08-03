@@ -73,6 +73,7 @@ export default async function deliveryCreatedHandler({
         display_id: (order as any).display_id,
         fulfillment_id: event.data.id,
         order_url: orderUrl,
+        locale: (order as any)?.locale || "en",
       },
       trigger_type: "delivery.created",
       resource_id: order.id,

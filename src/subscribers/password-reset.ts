@@ -26,6 +26,7 @@ export default async function passwordResetHandler({
         token: event.data.token,
         entity_id: event.data.entity_id,
         actor_type: event.data.actor_type,
+        locale: (event.data.metadata as any)?.locale || "en",
       },
       trigger_type: "auth.password_reset",
     })

@@ -21,6 +21,7 @@ export default async function customerCreatedHandler({
       data: {
         first_name: customer.first_name,
         email: customer.email,
+        locale: (customer as any)?.metadata?.locale || "en",
       },
       trigger_type: "customer.created",
       resource_id: customer.id,

@@ -9,6 +9,9 @@ import type { CreateEmailOptions } from "resend"
 import { renderToString } from "react-dom/server"
 import React from "react"
 
+// I18n
+import { translate } from "./i18n"
+
 // Email templates
 import { OrderConfirmedEmail } from "./emails/OrderConfirmedEmail"
 import { WelcomeEmail } from "./emails/WelcomeEmail"
@@ -116,15 +119,17 @@ export class ResendNotificationService extends AbstractNotificationProviderServi
         )
       }
       try {
+        const locale = (notification.data as any)?.locale || "en"
         const props = {
           ...(notification.data as Record<string, unknown>),
           storefront_url: this.config_.storefrontUrl,
+          locale,
         }
         html = renderToString(React.createElement(Component, props))
-        // Extract subject from data or use template name fallback
+        // Extract subject from data or use locale-aware fallback
         subject =
           (notification.data as any)?.subject ||
-          this.getDefaultSubject(notification.template)
+          this.getDefaultSubject(notification.template, locale)
       } catch (err: any) {
         throw new MedusaError(
           MedusaError.Types.UNEXPECTED_STATE,
@@ -215,18 +220,19 @@ export class ResendNotificationService extends AbstractNotificationProviderServi
     }
   }
 
-  private getDefaultSubject(template: string): string {
-    const subjects: Record<string, string> = {
-      "order-confirmed": "Your Infinytree Order is Confirmed! 🌿",
-      "welcome": "Welcome to Infinytree! 🌱",
-      "password-reset": "Reset Your Password — Infinytree",
-      "email-verification": "Verify Your Email — Infinytree",
-      "shipping-update": "Your Infinytree Order Has Shipped! 📦",
-      "order-transfer": "Order Transfer Request — Infinytree",
-      "order-in-progress": "Your Infinytree Order is In Progress",
-      "order-shipped": "Your Infinytree Order Has Shipped! 📦",
-      "order-delivered": "Your Infinytree Order Has Been Delivered! 🎉",
+  private getDefaultSubject(template: string, locale: string): string {
+    const subjectKeys: Record<string, string> = {
+      "order-confirmed": "email.subject.orderConfirmed",
+      "welcome": "email.subject.welcome",
+      "password-reset": "email.subject.passwordReset",
+      "email-verification": "email.subject.emailVerification",
+      "shipping-update": "email.subject.shippingUpdate",
+      "order-transfer": "email.subject.orderTransfer",
+      "order-in-progress": "email.subject.orderInProgress",
+      "order-shipped": "email.subject.orderShipped",
+      "order-delivered": "email.subject.orderDelivered",
     }
-    return subjects[template] || "Infinytree"
+    const key = subjectKeys[template]
+    return key ? translate(key, locale) : "Infinytree"
   }
 }

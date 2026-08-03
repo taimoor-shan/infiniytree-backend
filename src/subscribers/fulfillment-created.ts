@@ -71,6 +71,7 @@ export default async function fulfillmentCreatedHandler({
         display_id: (order as any).display_id,
         fulfillment_id: event.data.fulfillment_id,
         order_url: orderUrl,
+        locale: (order as any)?.locale || "en",
       },
       trigger_type: "order.fulfillment_created",
       resource_id: order.id,

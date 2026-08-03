@@ -30,6 +30,7 @@ export default async function emailVerificationHandler({
         code: event.data.code,
         entity_id: event.data.entity_id,
         expires_at: event.data.expires_at,
+        locale: (event.data.metadata as any)?.locale || "en",
       },
       trigger_type: "auth.verification_requested",
     })

@@ -1,5 +1,6 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator } from "../i18n"
 
 export interface OrderShippedEmailProps {
   order_id: string
@@ -10,6 +11,7 @@ export interface OrderShippedEmailProps {
   order_url?: string
   storefront_url?: string
   subject?: string
+  locale?: string
 }
 
 export function OrderShippedEmail(props: OrderShippedEmailProps) {
@@ -20,25 +22,25 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
     storefront_url = "https://infinytree.com",
     order_id,
     order_url,
+    locale = "en",
   } = props
 
+  const t = createTranslator(locale)
   const orderNumber = display_id || order_id?.slice(-8) || "—"
-  const detailsUrl = order_url || `${storefront_url}/account/orders/details/${order_id}`
 
   return (
-    <EmailLayout preview={`Your Infinytree order #${orderNumber} has shipped! 📦`}>
+    <EmailLayout preview={t("email.orderShipped.preview", { orderNumber })} locale={locale}>
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Your Order Has Shipped! 📦
+        {t("email.orderShipped.heading")}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 16px", lineHeight: "1.6" }}>
-        Your Infinytree order is on its way. You can follow its journey using the
-        tracking information below.
+        {t("email.orderShipped.body")}
       </p>
 
       {tracking_numbers && tracking_numbers.length > 0 && (
         <>
           <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-            Tracking Information
+            {t("email.orderShipped.trackingLabel")}
           </h3>
           <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "16px" }}>
             {tracking_numbers.map((tn, i) => (
@@ -62,9 +64,9 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
       )}
 
       <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-        Estimated delivery: <strong>3–10 business days</strong> within Europe.
+        {t("email.orderShipped.deliveryEstimate", { range: t("email.orderShipped.deliveryRange") })}
         {!tracking_numbers?.length && (
-          <> Tracking information will appear here once the carrier updates the shipment status.</>
+          <> {t("email.orderShipped.noTrackingNote")}</>
         )}
       </p>
 
@@ -85,7 +87,7 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
                   fontWeight: 500,
                 }}
               >
-                {tracking_url ? "Track Shipment" : "View Order Status"}
+                {tracking_url ? t("email.orderShipped.trackShipment") : t("email.orderShipped.viewStatus")}
               </a>
             </td>
           </tr>
@@ -93,7 +95,7 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
       ) : null}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        Questions about your shipment? Contact us at{" "}
+        {t("email.common.questionsAboutShipment")}{" "}
         <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
           info@infinytree.com
         </a>

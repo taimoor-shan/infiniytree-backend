@@ -1,5 +1,6 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator } from "../i18n"
 
 export interface PasswordResetEmailProps {
   token: string
@@ -7,6 +8,7 @@ export interface PasswordResetEmailProps {
   actor_type?: string
   storefront_url?: string
   subject?: string
+  locale?: string
 }
 
 export function PasswordResetEmail(props: PasswordResetEmailProps) {
@@ -14,18 +16,19 @@ export function PasswordResetEmail(props: PasswordResetEmailProps) {
     token,
     entity_id,
     storefront_url = "https://infinytree.com",
+    locale = "en",
   } = props
 
+  const t = createTranslator(locale)
   const resetLink = `${storefront_url}/account/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(entity_id)}`
 
   return (
-    <EmailLayout preview="Reset your Infinytree password">
+    <EmailLayout preview={t("email.passwordReset.preview")} locale={locale}>
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Reset Your Password
+        {t("email.passwordReset.heading")}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 16px", lineHeight: "1.6" }}>
-        We received a request to reset the password for your Infinytree account. Click the
-        button below to create a new password:
+        {t("email.passwordReset.body")}
       </p>
 
       {/* Reset Button */}
@@ -45,14 +48,14 @@ export function PasswordResetEmail(props: PasswordResetEmailProps) {
                 fontWeight: 500,
               }}
             >
-              Reset Password
+              {t("email.passwordReset.resetButton")}
             </a>
           </td>
         </tr>
       </table>
 
       <p style={{ fontSize: "14px", color: "#555", margin: "0 0 8px", lineHeight: "1.6" }}>
-        Or copy and paste this link into your browser:
+        {t("email.passwordReset.orPaste")}
       </p>
       <p
         style={{
@@ -67,12 +70,11 @@ export function PasswordResetEmail(props: PasswordResetEmailProps) {
       </p>
 
       <p style={{ fontSize: "13px", color: "#888", margin: "0 0 8px", lineHeight: "1.5" }}>
-        If you didn&apos;t request a password reset, you can safely ignore this email.
-        The link will expire after 24 hours.
+        {t("email.passwordReset.ignoreNote")}
       </p>
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        Questions? Reach out at{" "}
+        {t("email.common.questionsReachOut")}{" "}
         <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
           info@infinytree.com
         </a>

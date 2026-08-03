@@ -93,6 +93,7 @@ export default async function shipmentCreatedHandler({
         tracking_url: trackingUrl,
         fulfillment_id: fulfillment.id,
         order_url: orderUrl,
+        locale: (order as any)?.locale || "en",
       },
       trigger_type: "shipment.created",
       resource_id: order.id,

@@ -53,6 +53,7 @@ export default async function orderTransferHandler({
         order_id: order.id,
         token: transferAction.details.token,
         original_email: transferAction.details.original_email,
+        locale: (order as any)?.locale || "en",
       },
       trigger_type: "order.transfer_requested",
       resource_id: order.id,

@@ -34,6 +34,7 @@ export default async function orderPlacedHandler({
         "tax_total",
         "customer_id",
         "metadata",
+        "locale",
       ],
     })
 
@@ -98,6 +99,7 @@ export default async function orderPlacedHandler({
       id: order.id,
       display_id: (order as any).display_id,
       email: order.email,
+      locale: (order as any)?.locale || "en",
       customer_name: order.shipping_address
         ? `${order.shipping_address.first_name || ""} ${order.shipping_address.last_name || ""}`.trim()
         : "Guest",

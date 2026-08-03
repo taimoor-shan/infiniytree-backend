@@ -1,5 +1,6 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator } from "../i18n"
 
 export interface OrderInProgressEmailProps {
   order_id: string
@@ -7,6 +8,7 @@ export interface OrderInProgressEmailProps {
   order_url?: string
   storefront_url?: string
   subject?: string
+  locale?: string
 }
 
 export function OrderInProgressEmail(props: OrderInProgressEmailProps) {
@@ -15,22 +17,22 @@ export function OrderInProgressEmail(props: OrderInProgressEmailProps) {
     storefront_url = "https://infinytree.com",
     order_id,
     order_url,
+    locale = "en",
   } = props
 
+  const t = createTranslator(locale)
   const orderNumber = display_id || order_id?.slice(-8) || "—"
-  const detailsUrl = order_url || `${storefront_url}/account/orders/details/${order_id}`
 
   return (
-    <EmailLayout preview={`Your Infinytree order #${orderNumber} is in progress`}>
+    <EmailLayout preview={t("email.orderInProgress.preview", { orderNumber })} locale={locale}>
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Your Order is In Progress
+        {t("email.orderInProgress.heading")}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 16px", lineHeight: "1.6" }}>
-        Our team has begun preparing your handcrafted botanical piece. Every composition
-        is individually assembled and carefully inspected before it leaves our workshop.
+        {t("email.orderInProgress.body1")}
       </p>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-        We'll notify you as soon as your order has been dispatched.
+        {t("email.orderInProgress.body2")}
       </p>
 
       {order_url ? (
@@ -50,19 +52,19 @@ export function OrderInProgressEmail(props: OrderInProgressEmailProps) {
                   fontWeight: 500,
                 }}
               >
-                View Order Status
+                {t("email.orderInProgress.viewStatus")}
               </a>
             </td>
           </tr>
         </table>
       ) : (
         <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-          You will receive updates by email as your order progresses through our workshop.
+          {t("email.orderInProgress.noUpdates")}
         </p>
       )}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        Questions? Contact us at{" "}
+        {t("email.common.questions")}{" "}
         <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
           info@infinytree.com
         </a>

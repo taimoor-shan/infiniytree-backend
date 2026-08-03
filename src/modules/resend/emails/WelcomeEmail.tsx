@@ -1,30 +1,30 @@
 import React from "react"
 import { EmailLayout } from "./layout"
+import { createTranslator } from "../i18n"
 
 export interface WelcomeEmailProps {
   first_name?: string
   email?: string
   storefront_url?: string
   subject?: string
+  locale?: string
 }
 
 export function WelcomeEmail(props: WelcomeEmailProps) {
-  const { first_name, storefront_url = "https://infinytree.com" } = props
+  const { first_name, storefront_url = "https://infinytree.com", locale = "en" } = props
   const name = first_name || "there"
+  const t = createTranslator(locale)
 
   return (
-    <EmailLayout preview={`Welcome to Infinytree, ${name}! 🌱`}>
+    <EmailLayout preview={t("email.welcome.preview", { name })} locale={locale}>
       <h2 style={{ fontSize: "22px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
-        Welcome to Infinytree, {name}! 🌱
+        {t("email.welcome.heading", { name })}
       </h2>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 16px", lineHeight: "1.6" }}>
-        We&apos;re thrilled to have you join our community of plant lovers. At Infinytree,
-        we craft beautiful artificial plants that bring the warmth of nature into your
-        home — without the maintenance.
+        {t("email.welcome.body1")}
       </p>
       <p style={{ fontSize: "15px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
-        Handmade with care, each piece is designed to look as natural as the real thing,
-        lasting forever with zero watering, zero sunlight, and zero fuss.
+        {t("email.welcome.body2")}
       </p>
 
       {/* CTAs */}
@@ -46,7 +46,7 @@ export function WelcomeEmail(props: WelcomeEmailProps) {
                 width: "100%",
               }}
             >
-              Browse Collections
+              {t("email.welcome.browseCollections")}
             </a>
           </td>
           <td style={{ paddingLeft: "12px" }}>
@@ -66,14 +66,14 @@ export function WelcomeEmail(props: WelcomeEmailProps) {
                 width: "100%",
               }}
             >
-              Your Account
+              {t("email.welcome.yourAccount")}
             </a>
           </td>
         </tr>
       </table>
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>
-        Questions? Reach out at{" "}
+        {t("email.common.questionsReachOut")}{" "}
         <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
           info@infinytree.com
         </a>
