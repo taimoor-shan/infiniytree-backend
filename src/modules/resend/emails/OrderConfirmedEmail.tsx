@@ -17,6 +17,7 @@ export interface OrderConfirmedEmailProps {
   shipping_address?: {
     first_name?: string
     last_name?: string
+    company?: string
     address_1?: string
     address_2?: string
     city?: string
@@ -34,6 +35,7 @@ export interface OrderConfirmedEmailProps {
     amount: number
   }
   order_url?: string
+  vat_number?: string
   storefront_url?: string
   subject?: string
 }
@@ -282,6 +284,18 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
           </h3>
           <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
             {shipping_address.first_name} {shipping_address.last_name}
+            {shipping_address.company && (
+              <>
+                <br />
+                {shipping_address.company}
+              </>
+            )}
+            {props.vat_number && (
+              <>
+                <br />
+                VAT: {props.vat_number}
+              </>
+            )}
             <br />
             {shipping_address.address_1}
             {shipping_address.address_2 && (

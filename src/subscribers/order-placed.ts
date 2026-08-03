@@ -84,6 +84,8 @@ export default async function orderPlacedHandler({
       container
     )
 
+    const vatNumber = ((order.shipping_address as any)?.metadata?.vat_number as string) || undefined
+
     // decorCartTotals returns BigNumber instances; extract the raw numeric_
     // value so they survive JSON serialization into the notification.
     const toNum = (v: any): number => {
@@ -111,6 +113,8 @@ export default async function orderPlacedHandler({
           : undefined,
       })),
       shipping_address: order.shipping_address,
+      company: order.shipping_address?.company,
+      vat_number: vatNumber,
       total: toNum((order as any).total),
       subtotal:
         order.items?.reduce(
