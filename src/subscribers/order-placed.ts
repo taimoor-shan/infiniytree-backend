@@ -1,6 +1,7 @@
 import { Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
 import { generateAccessToken, buildOrderAccessUrl } from "../utils/order-url"
+import { getBankDetails } from "../utils/bank-details"
 
 export default async function orderPlacedHandler({
   event,
@@ -139,6 +140,8 @@ export default async function orderPlacedHandler({
           }
         : undefined,
       order_url: orderUrl,
+      bank_details: getBankDetails((order as any).display_id),
+      invoice_url: `${process.env.BACKEND_PUBLIC_URL || "http://localhost:9000"}/store/orders/guest/${(order as any).display_id}/invoice?token=${rawToken}`,
     }
 
     // ── Debug: inspect converted orderData ────────────────────────

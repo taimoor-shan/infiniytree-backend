@@ -63,7 +63,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   const salesChannelModuleService = container.resolve(Modules.SALES_CHANNEL);
   const storeModuleService = container.resolve(Modules.STORE);
 
-  const countries = ["gb", "de", "dk", "se", "fr", "es", "it"];
+  const countries = ["de", "at", "hu"];
 
   logger.info("Seeding store data...");
   const [store] = await storeModuleService.listStores();
@@ -111,29 +111,62 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
   logger.info("Seeding region data...");
-  const { result: regionResult } = await createRegionsWorkflow(container).run({
-    input: {
-      regions: [
-        {
-          name: "Europe",
-          currency_code: "eur",
-          countries,
-          payment_providers: ["pp_system_default"],
-        },
-      ],
-    },
-  });
-  const region = regionResult[0];
-  logger.info("Finished seeding regions.");
+
+  // Idempotent: reuse existing region if already created
+  const regionModuleService = container.resolve(Modules.REGION)
+  const existingRegions = await regionModuleService.listRegions(
+    { name: "Europe" },
+    { select: ["id", "name", "currency_code"] }
+  )
+
+  let region: any
+
+  if (existingRegions.length > 0) {
+    region = existingRegions[0]
+    logger.info("[seed] Region 'Europe' already exists — reusing")
+  } else {
+    const { result: regionResult } = await createRegionsWorkflow(container).run({
+      input: {
+        regions: [
+          {
+            name: "Europe",
+            currency_code: "eur",
+            countries,
+            payment_providers: ["pp_system_default"],
+          },
+        ],
+      },
+    })
+    region = regionResult[0]
+    logger.info("[seed] Region 'Europe' created")
+  }
 
   logger.info("Seeding tax regions...");
-  await createTaxRegionsWorkflow(container).run({
-    input: countries.map((country_code) => ({
-      country_code,
-      provider_id: "tp_system",
-    })),
-  });
-  logger.info("Finished seeding tax regions.");
+
+  // Idempotent: skip if tax regions already exist
+  const taxModuleService = container.resolve(Modules.TAX)
+  const existingTaxRegions = await taxModuleService.listTaxRegions(
+    {},
+    { select: ["id", "country_code"] }
+  )
+  const existingTaxCodes = new Set(
+    (existingTaxRegions as any[]).map((tr: any) => tr.country_code?.toLowerCase())
+  )
+  const missingTaxCountries = countries.filter(
+    (c) => !existingTaxCodes.has(c.toLowerCase())
+  )
+
+  if (missingTaxCountries.length > 0) {
+    await createTaxRegionsWorkflow(container).run({
+      input: missingTaxCountries.map((country_code) => ({
+        country_code,
+        provider_id: "tp_system",
+      })),
+    })
+    logger.info(`[seed] Tax regions created for: ${missingTaxCountries.join(", ")}`)
+  } else {
+    logger.info("[seed] All tax regions already exist — skipping")
+  }
 
   logger.info("Seeding stock location data...");
   const { result: stockLocationResult } = await createStockLocationsWorkflow(
@@ -193,45 +226,98 @@ export default async function seedDemoData({ container }: ExecArgs) {
     shippingProfile = shippingProfileResult[0];
   }
 
-  const fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
-    name: "European Warehouse delivery",
-    type: "shipping",
-    service_zones: [
-      {
-        name: "Europe",
-        geo_zones: [
-          {
-            country_code: "gb",
-            type: "country",
-          },
-          {
-            country_code: "de",
-            type: "country",
-          },
-          {
-            country_code: "dk",
-            type: "country",
-          },
-          {
-            country_code: "se",
-            type: "country",
-          },
-          {
-            country_code: "fr",
-            type: "country",
-          },
-          {
-            country_code: "es",
-            type: "country",
-          },
-          {
-            country_code: "it",
-            type: "country",
-          },
-        ],
-      },
-    ],
-  });
+  // Idempotent: skip if fulfillment set already exists
+  const { data: existingSets } = await query.graph({
+    entity: "fulfillment_set",
+    fields: ["id", "name", "service_zones.id", "service_zones.name"],
+    filters: { name: "European Warehouse delivery" },
+  })
+
+  let fulfillmentSet: any
+  let hungaryZone: any
+  let europeZone: any
+
+  if (existingSets.length > 0) {
+    const hasHungaryZone = existingSets[0].service_zones.some(
+      (z: any) => z.name === "Hungary"
+    )
+    if (hasHungaryZone) {
+      logger.info(
+        "[seed] Fulfillment set 'European Warehouse delivery' already matches — skipping"
+      )
+      fulfillmentSet = existingSets[0]
+      hungaryZone = fulfillmentSet.service_zones.find(
+        (z: any) => z.name === "Hungary"
+      )
+      europeZone = fulfillmentSet.service_zones.find(
+        (z: any) => z.name === "Europe"
+      )
+    } else {
+      // Old structure — delete all shipping options, zones, then the set itself
+      logger.info(
+        "[seed] Found old fulfillment set structure — replacing with HU/EU zones..."
+      )
+      const oldSetId = existingSets[0].id
+      const oldZones = existingSets[0].service_zones || []
+
+      // Delete shipping options linked to old zones
+      const oldOptions = await fulfillmentModuleService.listShippingOptions({
+        service_zone_id: oldZones.map((z: any) => z.id),
+      })
+      for (const opt of oldOptions) {
+        await fulfillmentModuleService.deleteShippingOptions(opt.id)
+        logger.info(`[seed]   Deleted old shipping option: ${(opt as any).name}`)
+      }
+
+      // Delete old service zones
+      for (const zone of oldZones) {
+        await fulfillmentModuleService.deleteServiceZones(zone.id)
+        logger.info(`[seed]   Deleted old service zone: ${zone.name}`)
+      }
+
+      // Delete old fulfillment set
+      await fulfillmentModuleService.deleteFulfillmentSets(oldSetId)
+      logger.info("[seed] Old fulfillment set deleted")
+    }
+  }
+
+  if (!fulfillmentSet) {
+    fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
+      name: "European Warehouse delivery",
+      type: "shipping",
+      service_zones: [
+        {
+          name: "Hungary",
+          geo_zones: [
+            {
+              country_code: "hu",
+              type: "country",
+            },
+          ],
+        },
+        {
+          name: "Europe",
+          geo_zones: [
+            {
+              country_code: "de",
+              type: "country",
+            },
+            {
+              country_code: "at",
+              type: "country",
+            },
+          ],
+        },
+      ],
+    })
+
+    hungaryZone = fulfillmentSet.service_zones.find(
+      (z: any) => z.name === "Hungary"
+    )!
+    europeZone = fulfillmentSet.service_zones.find(
+      (z: any) => z.name === "Europe"
+    )!
+  }
 
   await link.create({
     [Modules.STOCK_LOCATION]: {
@@ -242,13 +328,24 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
 
-  await createShippingOptionsWorkflow(container).run({
+  // Idempotent: skip shipping options if they already exist
+  const existingOptions = await fulfillmentModuleService.listShippingOptions({
+    shipping_profile_id: shippingProfile.id,
+  })
+
+  if (existingOptions.length > 0) {
+    logger.info(
+      `[seed] ${existingOptions.length} shipping options already exist — skipping`
+    )
+  } else {
+    await createShippingOptionsWorkflow(container).run({
     input: [
+      // ── Hungary ──────────────────────────────────────────
       {
         name: "Standard Shipping",
         price_type: "flat",
         provider_id: "manual_manual",
-        service_zone_id: fulfillmentSet.service_zones[0].id,
+        service_zone_id: hungaryZone.id,
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Standard",
@@ -257,16 +354,12 @@ export default async function seedDemoData({ container }: ExecArgs) {
         },
         prices: [
           {
-            currency_code: "usd",
-            amount: 10,
-          },
-          {
             currency_code: "eur",
-            amount: 10,
+            amount: 49,
           },
           {
             region_id: region.id,
-            amount: 10,
+            amount: 49,
           },
         ],
         rules: [
@@ -286,7 +379,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
         name: "Express Shipping",
         price_type: "flat",
         provider_id: "manual_manual",
-        service_zone_id: fulfillmentSet.service_zones[0].id,
+        service_zone_id: hungaryZone.id,
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Express",
@@ -295,16 +388,81 @@ export default async function seedDemoData({ container }: ExecArgs) {
         },
         prices: [
           {
-            currency_code: "usd",
-            amount: 10,
-          },
-          {
             currency_code: "eur",
-            amount: 10,
+            amount: 69,
           },
           {
             region_id: region.id,
-            amount: 10,
+            amount: 69,
+          },
+        ],
+        rules: [
+          {
+            attribute: "enabled_in_store",
+            value: "true",
+            operator: "eq",
+          },
+          {
+            attribute: "is_return",
+            value: "false",
+            operator: "eq",
+          },
+        ],
+      },
+      // ── Europe (Germany + Austria) ───────────────────────
+      {
+        name: "Standard Shipping",
+        price_type: "flat",
+        provider_id: "manual_manual",
+        service_zone_id: europeZone.id,
+        shipping_profile_id: shippingProfile.id,
+        type: {
+          label: "Standard",
+          description: "Ship in 2-3 days.",
+          code: "standard",
+        },
+        prices: [
+          {
+            currency_code: "eur",
+            amount: 149,
+          },
+          {
+            region_id: region.id,
+            amount: 149,
+          },
+        ],
+        rules: [
+          {
+            attribute: "enabled_in_store",
+            value: "true",
+            operator: "eq",
+          },
+          {
+            attribute: "is_return",
+            value: "false",
+            operator: "eq",
+          },
+        ],
+      },
+      {
+        name: "Express Shipping",
+        price_type: "flat",
+        provider_id: "manual_manual",
+        service_zone_id: europeZone.id,
+        shipping_profile_id: shippingProfile.id,
+        type: {
+          label: "Express",
+          description: "Ship in 24 hours.",
+          code: "express",
+        },
+        prices: [
+          {
+            currency_code: "eur",
+            amount: 199,
+          },
+          {
+            region_id: region.id,
+            amount: 199,
           },
         ],
         rules: [
@@ -322,6 +480,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
       },
     ],
   });
+  }
   logger.info("Finished seeding fulfillment data.");
 
   await linkSalesChannelsToStockLocationWorkflow(container).run({

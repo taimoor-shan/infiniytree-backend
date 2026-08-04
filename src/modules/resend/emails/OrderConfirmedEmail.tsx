@@ -37,10 +37,18 @@ export interface OrderConfirmedEmailProps {
     amount: number
   }
   order_url?: string
+  invoice_url?: string
   vat_number?: string
   storefront_url?: string
   subject?: string
   locale?: string
+  bank_details?: {
+    bankName: string
+    iban: string
+    bic: string
+    beneficiary: string
+    reference: string
+  }
 }
 
 const PAYMENT_PROVIDER_MAP: Record<string, string> = {
@@ -74,9 +82,11 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
     tax_total,
     payment_method,
     order_url,
+    invoice_url,
     storefront_url = "https://infinytree.com",
     created_at,
     locale = "en",
+    bank_details,
   } = props
 
   const t = createTranslator(locale)
@@ -355,11 +365,112 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
           <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 8px", fontWeight: 400 }}>
             {t("email.orderConfirmed.payment")}
           </h3>
-          <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
+          <p style={{ fontSize: "14px", color: "#555", margin: "0 0 8px", lineHeight: "1.6" }}>
             {getPaymentLabel(props.payment_method.provider_id, t)}{" "}
             — {fmt(props.payment_method.amount)}
           </p>
+          <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
+            {t("email.orderConfirmed.paymentStatus")}:{" "}
+            <span style={{ fontWeight: 500 }}>
+              {props.payment_method.provider_id === "pp_system_default"
+                ? t("email.orderConfirmed.paymentAwaiting")
+                : t("email.orderConfirmed.paymentReceived")}
+            </span>
+          </p>
         </>
+      )}
+
+      {/* Bank Transfer Instructions */}
+      {props.payment_method?.provider_id === "pp_system_default" && bank_details && (
+        <>
+          <h3 style={{ fontSize: "16px", color: "#2d4a3e", margin: "0 0 12px", fontWeight: 400 }}>
+            {t("email.orderConfirmed.bankTransfer.heading")}
+          </h3>
+          <table
+            cellPadding="0"
+            cellSpacing="0"
+            border={0}
+            width="100%"
+            style={{
+              marginBottom: "24px",
+              border: "1px solid #e8e8e4",
+              borderRadius: "4px",
+              padding: "16px",
+            }}
+          >
+            <tbody>
+              <tr>
+                <td style={{ fontSize: "13px", color: "#888", padding: "4px 0", width: "120px" }}>
+                  {t("email.orderConfirmed.bankTransfer.bank")}
+                </td>
+                <td style={{ fontSize: "14px", color: "#333", padding: "4px 0", fontWeight: 500 }}>
+                  {bank_details.bankName}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: "13px", color: "#888", padding: "4px 0" }}>
+                  {t("email.orderConfirmed.bankTransfer.iban")}
+                </td>
+                <td style={{ fontSize: "14px", color: "#333", padding: "4px 0", fontWeight: 500 }}>
+                  {bank_details.iban}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: "13px", color: "#888", padding: "4px 0" }}>
+                  {t("email.orderConfirmed.bankTransfer.bic")}
+                </td>
+                <td style={{ fontSize: "14px", color: "#333", padding: "4px 0", fontWeight: 500 }}>
+                  {bank_details.bic}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: "13px", color: "#888", padding: "4px 0" }}>
+                  {t("email.orderConfirmed.bankTransfer.beneficiary")}
+                </td>
+                <td style={{ fontSize: "14px", color: "#333", padding: "4px 0", fontWeight: 500 }}>
+                  {bank_details.beneficiary}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ fontSize: "13px", color: "#888", padding: "4px 0" }}>
+                  {t("email.orderConfirmed.bankTransfer.reference")}
+                </td>
+                <td style={{ fontSize: "14px", color: "#333", padding: "4px 0", fontWeight: 500 }}>
+                  {bank_details.reference}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p style={{ fontSize: "13px", color: "#888", margin: "0 0 24px", fontStyle: "italic" }}>
+            {t("email.orderConfirmed.bankTransfer.note")}
+          </p>
+        </>
+      )}
+
+      {/* Invoice Download */}
+      {invoice_url && (
+        <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
+          <tr>
+            <td align="center">
+              <a
+                href={invoice_url}
+                style={{
+                  display: "inline-block",
+                  padding: "12px 32px",
+                  backgroundColor: "#f0f0ee",
+                  color: "#2d4a3e",
+                  fontSize: "14px",
+                  textDecoration: "none",
+                  borderRadius: "4px",
+                  fontWeight: 500,
+                  border: "1px solid #e8e8e4",
+                }}
+              >
+                📄 {t("email.orderConfirmed.downloadInvoice")}
+              </a>
+            </td>
+          </tr>
+        </table>
       )}
 
       {/* CTA — registered users only */}
