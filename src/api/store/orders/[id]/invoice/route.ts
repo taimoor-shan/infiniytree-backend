@@ -25,7 +25,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         "currency_code",
         "total",
         "subtotal",
+        "item_subtotal",
         "shipping_total",
+        "shipping_subtotal",
         "discount_total",
         "tax_total",
         "metadata",
@@ -37,6 +39,10 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       if (typeof v === "number") return v
       return Number(v?.numeric_ ?? v) || 0
     }
+
+    // ── Step 0: Debug — verify item_subtotal / shipping_subtotal availability ──
+    logger.info("[invoice-debug] item_subtotal:", (order as any).item_subtotal, "shipping_subtotal:", (order as any).shipping_subtotal)
+    logger.info("[invoice-debug] subtotal:", (order as any).subtotal, "shipping_total:", (order as any).shipping_total)
 
     const vatNumber =
       ((order.shipping_address as any)?.metadata?.vat_number as string) || undefined
@@ -57,11 +63,14 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           : undefined,
       })),
       total: toNum((order as any).total),
-      subtotal: toNum((order as any).subtotal ?? (order as any).summary?.subtotal),
-      shipping_total: toNum((order as any).shipping_total),
+      subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),
+      shipping_total: toNum((order as any).shipping_subtotal ?? (order as any).shipping_total),
       discount_total: toNum((order as any).discount_total),
       tax_total: toNum((order as any).tax_total),
       vat_number: vatNumber,
+      // New net fields for InvoiceDocument
+      item_subtotal: toNum((order as any).item_subtotal),
+      shipping_subtotal: toNum((order as any).shipping_subtotal),
     }
 
     const pdfBuffer = await generateInvoiceBuffer(orderData)

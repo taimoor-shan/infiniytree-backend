@@ -30,7 +30,9 @@ export default async function orderPlacedHandler({
         "currency_code",
         "total",
         "subtotal",
+        "item_subtotal",
         "shipping_total",
+        "shipping_subtotal",
         "discount_total",
         "tax_total",
         "customer_id",
@@ -47,7 +49,9 @@ export default async function orderPlacedHandler({
       currency_code: order.currency_code,
       total_raw: (order as any).total,
       subtotal_raw: (order as any).subtotal,
+      item_subtotal_raw: (order as any).item_subtotal,
       shipping_total_raw: (order as any).shipping_total,
+      shipping_subtotal_raw: (order as any).shipping_subtotal,
       discount_total_raw: (order as any).discount_total,
       tax_total_raw: (order as any).tax_total,
       items_count: order.items?.length,
@@ -119,18 +123,8 @@ export default async function orderPlacedHandler({
       company: order.shipping_address?.company,
       vat_number: vatNumber,
       total: toNum((order as any).total),
-      subtotal:
-        order.items?.reduce(
-          (sum: number, item: any) =>
-            sum + toNum(item.unit_price) * toNum(item.quantity),
-          0
-        ) ??
-        toNum(
-          (order as any).subtotal ??
-            (order as any).summary?.subtotal ??
-            0
-        ),
-      shipping_total: toNum((order as any).shipping_total),
+      subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),
+      shipping_total: toNum((order as any).shipping_subtotal ?? (order as any).shipping_total),
       discount_total: toNum((order as any).discount_total),
       tax_total: toNum((order as any).tax_total),
       payment_method: payment

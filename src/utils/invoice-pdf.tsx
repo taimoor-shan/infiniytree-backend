@@ -45,7 +45,9 @@ export interface InvoiceOrderData {
   }>
   total?: number
   subtotal?: number
+  item_subtotal?: number
   shipping_total?: number
+  shipping_subtotal?: number
   discount_total?: number
   tax_total?: number
   vat_number?: string
@@ -143,8 +145,9 @@ function InvoiceDocument({
     (order.shipping_address?.metadata?.vat_number as string) ||
     undefined
   const isHU = order.shipping_address?.country_code?.toLowerCase() === "hu"
-  const subtotal = order.subtotal ?? 0
-  const shipping = order.shipping_total ?? 0
+  // Prefer Medusa's computed net fields; fall back to legacy fields for backward compat
+  const subtotal = order.item_subtotal ?? order.subtotal ?? 0
+  const shipping = order.shipping_subtotal ?? order.shipping_total ?? 0
   const discount = order.discount_total ?? 0
   const tax = order.tax_total ?? 0
   const total = order.total ?? 0

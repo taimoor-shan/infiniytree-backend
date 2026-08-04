@@ -55,7 +55,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         "currency_code",
         "total",
         "subtotal",
+        "item_subtotal",
         "shipping_total",
+        "shipping_subtotal",
         "discount_total",
         "tax_total",
         "metadata",
@@ -87,11 +89,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           : undefined,
       })),
       total: toNum((order as any).total),
-      subtotal: toNum((order as any).subtotal ?? (order as any).summary?.subtotal),
-      shipping_total: toNum((order as any).shipping_total),
+      subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),
+      shipping_total: toNum((order as any).shipping_subtotal ?? (order as any).shipping_total),
       discount_total: toNum((order as any).discount_total),
       tax_total: toNum((order as any).tax_total),
       vat_number: vatNumber,
+      item_subtotal: toNum((order as any).item_subtotal),
+      shipping_subtotal: toNum((order as any).shipping_subtotal),
     }
 
     const pdfBuffer = await generateInvoiceBuffer(orderData)
