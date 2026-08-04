@@ -40,7 +40,7 @@ export default async function seedTaxData({ container }: ExecArgs) {
   const countryCodes = new Set<string>()
   for (const region of regions) {
     for (const country of region.countries || []) {
-      countryCodes.add(country.iso_2!.toLowerCase())
+      countryCodes.add(country!.iso_2!.toLowerCase())
     }
   }
 
@@ -56,7 +56,7 @@ export default async function seedTaxData({ container }: ExecArgs) {
 
   // Get all default tax rates directly from the tax_rate table
   const allDefaultRates = await taxModuleService.listTaxRates(
-    { is_default: true },
+    { is_default: true } as any,
     { select: ["id", "rate", "code", "tax_region_id"] }
   )
 

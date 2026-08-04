@@ -39,7 +39,8 @@ class MinioFileProviderService extends AbstractFileProviderService {
   static identifier = 'minio-file'
   protected readonly config_: MinioServiceConfig
   protected readonly logger_: Logger
-  protected client: Client
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected client: any
   protected readonly bucket: string
   protected readonly useSSL: boolean
 
@@ -86,7 +87,8 @@ class MinioFileProviderService extends AbstractFileProviderService {
     this.logger_.info(`MinIO service initialized with bucket: ${this.bucket}, endpoint: ${endPoint}, port: ${port}, SSL: ${useSSL}`)
 
     // Initialize Minio client with parsed settings
-    this.client = new Client({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.client = new (Client as any)({
       endPoint: endPoint,
       port: port,
       useSSL: useSSL,

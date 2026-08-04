@@ -262,7 +262,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
       // Delete shipping options linked to old zones
       const oldOptions = await fulfillmentModuleService.listShippingOptions({
-        service_zone_id: oldZones.map((z: any) => z.id),
+        service_zone: oldZones.map((z: any) => z.id) as any,
       })
       for (const opt of oldOptions) {
         await fulfillmentModuleService.deleteShippingOptions(opt.id)

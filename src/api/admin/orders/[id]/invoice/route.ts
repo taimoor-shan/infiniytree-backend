@@ -44,7 +44,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const orderData: InvoiceOrderData = {
       id: order.id,
       display_id: (order as any).display_id,
-      created_at: order.created_at,
+      created_at: order.created_at?.toString(),
       currency_code: order.currency_code,
       email: order.email,
       shipping_address: order.shipping_address as any,

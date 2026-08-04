@@ -4,14 +4,16 @@
  */
 
 import React from "react"
-import {
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {
   Document,
   Page,
   Text,
   View,
   StyleSheet,
   renderToBuffer,
-} from "@react-pdf/renderer"
+}: Record<string, any> = require("@react-pdf/renderer")
 import { getBankDetails } from "./bank-details"
 
 // ---------------------------------------------------------------------------
@@ -306,6 +308,6 @@ export async function generateInvoiceBuffer(
   const displayId = order.display_id || order.id?.slice(-8)
   const bankDetails = getBankDetails(displayId)
   return renderToBuffer(
-    React.createElement(InvoiceDocument, { order, bankDetails })
+    React.createElement(InvoiceDocument, { order, bankDetails }) as unknown as React.ReactElement
   )
 }
