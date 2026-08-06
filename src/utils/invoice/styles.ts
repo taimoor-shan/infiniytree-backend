@@ -78,7 +78,6 @@ export const s = StyleSheet.create({
 
   companyLegal: {
     fontSize: typography.sizes.lg,
-    color: colors.secondary,
     marginBottom: 2,
   },
 
