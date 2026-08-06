@@ -24,13 +24,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         "created_at",
         "currency_code",
         "total",
-        "subtotal",
         "item_subtotal",
+        "subtotal",
         "shipping_total",
         "shipping_subtotal",
         "discount_total",
         "tax_total",
-        "metadata",
       ],
     })
 
@@ -54,9 +53,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         title: item.title,
         quantity: toNum(item.quantity),
         unit_price: toNum(item.unit_price),
-        product: item.variant?.product
-          ? { title: item.variant.product.title }
-          : undefined,
+        product: item.product_title
+          ? { title: item.product_title }
+          : (item.variant?.product
+            ? { title: item.variant.product.title }
+            : undefined),
+        variant: item.variant_title
+          ? { title: item.variant_title, sku: item.variant_sku }
+          : (item.variant
+            ? { title: item.variant.title, sku: item.variant.sku }
+            : undefined),
       })),
       total: toNum((order as any).total),
       subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),

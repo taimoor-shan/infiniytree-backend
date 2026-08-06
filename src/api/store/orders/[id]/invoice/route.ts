@@ -24,13 +24,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         "created_at",
         "currency_code",
         "total",
-        "subtotal",
         "item_subtotal",
+        "subtotal",
         "shipping_total",
         "shipping_subtotal",
         "discount_total",
         "tax_total",
-        "metadata",
       ],
     })
 
@@ -40,9 +39,17 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return Number(v?.numeric_ ?? v) || 0
     }
 
-    // ── Step 0: Debug — verify item_subtotal / shipping_subtotal availability ──
-    logger.info("[invoice-debug] item_subtotal:", (order as any).item_subtotal, "shipping_subtotal:", (order as any).shipping_subtotal)
-    logger.info("[invoice-debug] subtotal:", (order as any).subtotal, "shipping_total:", (order as any).shipping_total)
+    // ── Debug: verify variant data availability ──
+    if ((order as any).items?.length > 0) {
+      const firstItem = (order as any).items[0]
+      logger.info("[invoice-debug] first item keys:", Object.keys(firstItem).join(", "))
+      logger.info("[invoice-debug] first item title:", firstItem.title)
+      logger.info("[invoice-debug] first item has variant:", !!firstItem.variant)
+      if (firstItem.variant) {
+        logger.info("[invoice-debug] first item variant title:", firstItem.variant.title)
+        logger.info("[invoice-debug] first item variant sku:", firstItem.variant.sku)
+      }
+    }
 
     const vatNumber =
       ((order.shipping_address as any)?.metadata?.vat_number as string) || undefined
@@ -58,9 +65,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         title: item.title,
         quantity: toNum(item.quantity),
         unit_price: toNum(item.unit_price),
-        product: item.variant?.product
-          ? { title: item.variant.product.title }
-          : undefined,
+        product: item.product_title
+          ? { title: item.product_title }
+          : (item.variant?.product
+            ? { title: item.variant.product.title }
+            : undefined),
+        variant: item.variant_title
+          ? { title: item.variant_title, sku: item.variant_sku }
+          : (item.variant
+            ? { title: item.variant.title, sku: item.variant.sku }
+            : undefined),
       })),
       total: toNum((order as any).total),
       subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),
@@ -71,6 +85,11 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       // New net fields for InvoiceDocument
       item_subtotal: toNum((order as any).item_subtotal),
       shipping_subtotal: toNum((order as any).shipping_subtotal),
+    }
+
+    // ── Debug: verify mapped orderData before sending ──
+    if (orderData.items && orderData.items.length > 0) {
+      logger.info("[invoice-debug] mapped orderData first item:", JSON.stringify(orderData.items[0]))
     }
 
     const pdfBuffer = await generateInvoiceBuffer(orderData)

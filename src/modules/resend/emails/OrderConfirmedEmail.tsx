@@ -15,6 +15,7 @@ export interface OrderConfirmedEmailProps {
     unit_price: number
     thumbnail?: string
     product?: { title: string }
+    variant?: { title?: string; sku?: string }
   }>
   shipping_address?: {
     first_name?: string
@@ -208,6 +209,18 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
                 }}
               >
                 {item.product?.title || item.title || "Product"}
+                {item.variant?.title ? (
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "12px",
+                      color: "#888",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {item.variant.title}
+                  </span>
+                ) : null}
               </td>
               <td
                 style={{

@@ -31,6 +31,22 @@ if (fs.existsSync(envPath)) {
   );
 }
 
+// Copy runtime assets (fonts + static media) into the built server.
+// In production, process.chdir(.medusa/server) is called before Medusa starts,
+// so assets must live under .medusa/server/ for process.cwd()-relative resolution.
+const copyDirIfExists = (srcName) => {
+  const src = path.join(process.cwd(), srcName)
+  const dest = path.join(MEDUSA_SERVER_PATH, srcName)
+  if (!fs.existsSync(src)) {
+    console.log(`postBuild: skipping ${srcName} (not found)`)
+    return
+  }
+  fs.cpSync(src, dest, { recursive: true })
+  console.log(`postBuild: copied ${srcName}/ → .medusa/server/${srcName}/`)
+}
+copyDirIfExists('fonts')
+copyDirIfExists('static')
+
 // Install dependencies
 console.log('Installing dependencies in .medusa/server...');
 execSync('yarn install --frozen-lockfile', { 

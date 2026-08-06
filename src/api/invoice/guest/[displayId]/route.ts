@@ -1,8 +1,8 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { MedusaError, Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
-import { hashToken } from "../../../../../../utils/order-url"
-import { generateInvoiceBuffer, InvoiceOrderData } from "../../../../../../utils/invoice-pdf"
+import { hashToken } from "../../../../utils/order-url"
+import { generateInvoiceBuffer, InvoiceOrderData } from "../../../../utils/invoice-pdf"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve("query") as any
@@ -54,13 +54,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         "created_at",
         "currency_code",
         "total",
-        "subtotal",
         "item_subtotal",
+        "subtotal",
         "shipping_total",
         "shipping_subtotal",
         "discount_total",
         "tax_total",
-        "metadata",
       ],
     })
 
@@ -69,6 +68,19 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       if (typeof v === "number") return v
       return Number(v?.numeric_ ?? v) || 0
     }
+
+    // Debug: inspect raw order totals
+    logger.info("[invoice-guest-debug] Raw order totals:", {
+      total: (order as any).total,
+      total_type: typeof (order as any).total,
+      subtotal: (order as any).subtotal,
+      item_subtotal: (order as any).item_subtotal,
+      shipping_total: (order as any).shipping_total,
+      shipping_subtotal: (order as any).shipping_subtotal,
+      discount_total: (order as any).discount_total,
+      tax_total: (order as any).tax_total,
+      total_keys: Object.keys(order as any).join(", "),
+    })
 
     const vatNumber =
       ((order.shipping_address as any)?.metadata?.vat_number as string) || undefined
@@ -84,9 +96,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         title: item.title,
         quantity: toNum(item.quantity),
         unit_price: toNum(item.unit_price),
-        product: item.variant?.product
-          ? { title: item.variant.product.title }
-          : undefined,
+        product: item.product_title
+          ? { title: item.product_title }
+          : (item.variant?.product
+            ? { title: item.variant.product.title }
+            : undefined),
+        variant: item.variant_title
+          ? { title: item.variant_title, sku: item.variant_sku }
+          : (item.variant
+            ? { title: item.variant.title, sku: item.variant.sku }
+            : undefined),
       })),
       total: toNum((order as any).total),
       subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),

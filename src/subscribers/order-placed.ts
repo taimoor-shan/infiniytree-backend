@@ -115,9 +115,16 @@ export default async function orderPlacedHandler({
         quantity: toNum(item.quantity),
         unit_price: toNum(item.unit_price),
         thumbnail: item.thumbnail,
-        product: item.variant?.product
-          ? { title: item.variant.product.title }
-          : undefined,
+        product: item.product_title
+          ? { title: item.product_title }
+          : (item.variant?.product
+            ? { title: item.variant.product.title }
+            : undefined),
+        variant: item.variant_title
+          ? { title: item.variant_title, sku: item.variant_sku }
+          : (item.variant
+            ? { title: item.variant.title, sku: item.variant.sku }
+            : undefined),
       })),
       shipping_address: order.shipping_address,
       company: order.shipping_address?.company,
@@ -135,7 +142,7 @@ export default async function orderPlacedHandler({
         : undefined,
       order_url: orderUrl,
       bank_details: getBankDetails((order as any).display_id),
-      invoice_url: `${process.env.BACKEND_PUBLIC_URL || "http://localhost:9000"}/store/orders/guest/${(order as any).display_id}/invoice?token=${rawToken}`,
+      invoice_url: `${process.env.BACKEND_PUBLIC_URL || "http://localhost:9000"}/invoice/guest/${(order as any).display_id}?token=${rawToken}`,
     }
 
     // ── Debug: inspect converted orderData ────────────────────────
