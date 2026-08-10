@@ -94,6 +94,8 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
   const resolvedLocale = resolveLocale(locale)
 
   const orderNumber = display_id || id?.slice(-8) || "—"
+  const isHU = shipping_address?.country_code?.toLowerCase() === "hu"
+  const vatLabel = isHU ? "VAT (27%)" : "VAT (0%)"
   const orderDate = created_at
     ? new Date(created_at).toLocaleDateString(resolvedLocale, {
         year: "numeric",
@@ -291,7 +293,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
           {tax_total != null && (
             <tr>
               <td style={{ fontSize: "14px", color: "#555", padding: "3px 0" }}>
-                {t("email.orderConfirmed.tax")}
+                {vatLabel}
               </td>
               <td style={{ fontSize: "14px", color: "#333", textAlign: "right", padding: "3px 0" }}>
                 {fmt(tax_total)}

@@ -47,6 +47,11 @@ const copyDirIfExists = (srcName) => {
 copyDirIfExists('fonts')
 copyDirIfExists('static')
 
+// Invoice PDF assets (git-tracked logo) — copied so the __dirname-based
+// fallback in src/utils/invoice/fonts.ts resolves in production, where
+// compiled code lives at .medusa/server/src/.
+copyDirIfExists('src/utils/invoice/assets')
+
 // Install dependencies
 console.log('Installing dependencies in .medusa/server...');
 execSync('yarn install --frozen-lockfile', { 

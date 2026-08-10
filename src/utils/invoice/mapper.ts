@@ -10,6 +10,7 @@ import path from "path"
 import {
   toNum,
   fmt,
+  fmtAmount,
   fmtDate,
   dueDate,
   getDisplayId,
@@ -47,6 +48,7 @@ export function mapOrderToInvoice(
   bankDetails: BankDetails & { reference: string }
 ): InvoiceViewModel {
   const currency = order.currency_code || "eur"
+  const isHuf = currency.toLowerCase() === "huf"
   const displayId = getDisplayId(order)
   const { subtotal, shipping, discount, tax, total } = getTotals(order)
   console.log("[mapper-debug] getTotals result:", { subtotal, shipping, discount, tax, total })
@@ -81,8 +83,8 @@ export function mapOrderToInvoice(
       subtitle: item.variant?.title || (item as any).variant_title || undefined,
       sku: item.variant?.sku || (item as any).variant_sku || undefined,
       quantity: qty,
-      unitPrice: fmt(price, currency),
-      total: fmt(price * qty, currency),
+      unitPrice: isHuf ? fmtAmount(price, currency) : fmt(price, currency),
+      total: isHuf ? fmtAmount(price * qty, currency) : fmt(price * qty, currency),
       image: PLACEHOLDER_IMAGE,
     }
   })
@@ -105,6 +107,7 @@ export function mapOrderToInvoice(
   const payment = {
     bank: bankDetails.bankName,
     iban: bankDetails.iban,
+    ibanLabel: currency.toLowerCase() === "huf" ? "IBAN HUF" : "IBAN EUR",
     bic: bankDetails.bic,
     beneficiary: bankDetails.beneficiary,
     reference: bankDetails.reference,

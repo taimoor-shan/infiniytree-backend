@@ -141,7 +141,7 @@ export default async function orderPlacedHandler({
           }
         : undefined,
       order_url: orderUrl,
-      bank_details: getBankDetails((order as any).display_id),
+      bank_details: getBankDetails((order as any).display_id, order.currency_code),
       invoice_url: `${process.env.BACKEND_PUBLIC_URL || "http://localhost:9000"}/invoice/guest/${(order as any).display_id}?token=${rawToken}`,
     }
 

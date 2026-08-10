@@ -12,12 +12,31 @@ export function toNum(v: any): number {
   return Number(v) || 0
 }
 
-/** Format a number as currency (en-US, min 2 fraction digits, defaults to EUR). */
+/** ISO-4217 currencies with 0 minor units — no decimal places. */
+export const ZERO_DECIMAL_CURRENCIES = new Set([
+  "HUF", "JPY", "KRW", "TWD", "VND",
+  "CLP", "PYG", "UGX", "RWF", "UZS", "KES",
+])
+
+/** Format a number as currency (en-US, defaults to EUR). Zero-decimal currencies (HUF etc.) omit fraction digits. */
 export function fmt(amount: number, currency: string): string {
+  const c = (currency || "EUR").toUpperCase()
+  const zeroDecimals = ZERO_DECIMAL_CURRENCIES.has(c)
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: currency || "EUR",
-    minimumFractionDigits: 2,
+    currency: c,
+    minimumFractionDigits: zeroDecimals ? 0 : 2,
+    maximumFractionDigits: zeroDecimals ? 0 : 2,
+  }).format(amount)
+}
+
+/** Format a number WITHOUT the currency symbol/code — for product table cells where space is tight. */
+export function fmtAmount(amount: number, currency: string): string {
+  const c = (currency || "EUR").toUpperCase()
+  const zeroDecimals = ZERO_DECIMAL_CURRENCIES.has(c)
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: zeroDecimals ? 0 : 2,
+    maximumFractionDigits: zeroDecimals ? 0 : 2,
   }).format(amount)
 }
 

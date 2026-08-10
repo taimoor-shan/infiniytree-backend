@@ -43,7 +43,7 @@ export function Header({
 
         {/* RIGHT — INVOICE + Metadata */}
         <View style={s.invoiceColumn}>
-          <Text style={s.invoiceTitle}>PROFORMA INVOICE</Text>
+          <Text style={s.invoiceTitle}>PRO FORMA INVOICE</Text>
           <View style={s.goldDivider} />
 
           <View style={s.metaTable}>

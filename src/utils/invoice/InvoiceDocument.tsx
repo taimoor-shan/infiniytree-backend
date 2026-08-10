@@ -76,7 +76,7 @@ export async function generateInvoiceBuffer(
   order: InvoiceOrderData,
 ): Promise<Buffer> {
   const displayId = (order.display_id || order.id?.slice(-8) || "—").toString();
-  const bankDetails = getBankDetails(displayId);
+  const bankDetails = getBankDetails(displayId, order.currency_code);
   const invoice = mapOrderToInvoice(order, bankDetails);
 
   return renderToBuffer(

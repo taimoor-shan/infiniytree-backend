@@ -56,14 +56,22 @@ export const LOGO_DATA_URI: string = (() => {
   try {
     return getAssetDataUri("static/logo-full.png", "image/png")
   } catch {
-    // Fallback: try the committed copy in invoice assets
-    try {
-      const assetPath = path.join(__dirname, "assets", "logo-full.png")
-      if (fs.existsSync(assetPath)) {
-        const buf = fs.readFileSync(assetPath)
-        return `data:image/png;base64,${buf.toString("base64")}`
-      }
-    } catch { /* empty */ }
+    // Fallback: the git-tracked copy in invoice assets.
+    // Prod: cwd = .medusa/server and postBuild.js copies it to
+    //       src/utils/invoice/assets/ under the server root.
+    // Dev:  cwd = backend root, the file exists in the source tree.
+    const candidates = [
+      path.join(process.cwd(), "src", "utils", "invoice", "assets", "logo-full.png"),
+      path.join(__dirname, "assets", "logo-full.png"),
+    ]
+    for (const assetPath of candidates) {
+      try {
+        if (fs.existsSync(assetPath)) {
+          const buf = fs.readFileSync(assetPath)
+          return `data:image/png;base64,${buf.toString("base64")}`
+        }
+      } catch { /* try next candidate */ }
+    }
     console.warn("[invoice] Logo not found — header will render without logo.")
     return ""
   }

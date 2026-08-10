@@ -27,6 +27,7 @@ function PaymentRow({
 export function PaymentInformation({
   bank,
   iban,
+  ibanLabel,
   bic,
   beneficiary,
   reference,
@@ -38,7 +39,7 @@ export function PaymentInformation({
       <View style={s.paymentCard}>
         <PaymentRow label="Beneficiary" value={beneficiary} />
         <PaymentRow label="Bank" value={bank} />
-        <PaymentRow label="IBAN" value={iban} />
+        <PaymentRow label={ibanLabel} value={iban} />
         <PaymentRow label="BIC / SWIFT" value={bic} />
         <PaymentRow label="Reference" value={reference} />
       </View>

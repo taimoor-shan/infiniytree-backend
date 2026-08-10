@@ -264,12 +264,12 @@ export const s = StyleSheet.create({
   },
 
   priceColumn: {
-    width: 68,
+    width: 90,
     alignItems: "flex-end",
   },
 
   totalColumn: {
-    width: 82,
+    width: 110,
     alignItems: "flex-end",
   },
 

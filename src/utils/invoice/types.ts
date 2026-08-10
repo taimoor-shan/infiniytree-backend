@@ -93,6 +93,7 @@ export interface TotalsCardProps {
 export interface PaymentInformationProps {
   bank: string
   iban: string
+  ibanLabel: string
   bic: string
   beneficiary: string
   reference: string
