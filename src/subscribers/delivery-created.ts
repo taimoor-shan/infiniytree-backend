@@ -53,15 +53,13 @@ export default async function deliveryCreatedHandler({
 
     const orderMeta = ((order as any).metadata || {}) as Record<string, unknown>
     const storefrontUrl = process.env.STOREFRONT_PUBLIC_URL || "https://infinytree.com"
-    const orderUrl = await buildOrderAccessUrl(
+    const orderUrl = buildOrderAccessUrl(
       {
         id: order.id,
         display_id: (order as any).display_id,
-        customer_id: (order as any).customer_id,
         metadata: orderMeta,
       },
-      storefrontUrl,
-      container
+      storefrontUrl
     )
 
     await notificationService.createNotifications({

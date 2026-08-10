@@ -1,30 +1,21 @@
 import { createHash } from "crypto"
-import { Modules } from "@medusajs/framework/utils"
 
-export async function buildOrderAccessUrl(
+export function buildOrderAccessUrl(
   order: {
     id: string
     display_id?: string | number
-    customer_id?: string
     metadata?: Record<string, any>
   },
-  storefrontUrl: string,
-  container?: any
-): Promise<string> {
-  let hasAccount = false
+  storefrontUrl: string
+): string {
+  const rawToken = order.metadata?.order_access_token
+  const displayId = order.display_id || order.id?.slice(-8) || "—"
 
-  if (order.customer_id && container) {
-    try {
-      const customerService = container.resolve(Modules.CUSTOMER)
-      const customer = await customerService.retrieveCustomer(order.customer_id)
-      hasAccount = !!(customer as any).has_account
-    } catch {
-      // Can't look up customer — leave hasAccount false
-    }
-  }
+  if (!rawToken) return ""
 
-  if (!hasAccount) return ""
-  return `${storefrontUrl}/account/orders/details/${order.id}`
+  // Public guest URL — the storefront's country-code middleware handles
+  // redirecting to the correct /:countryCode prefix automatically.
+  return `${storefrontUrl}/order/guest/${displayId}?token=${encodeURIComponent(rawToken)}`
 }
 
 export function generateAccessToken(): {

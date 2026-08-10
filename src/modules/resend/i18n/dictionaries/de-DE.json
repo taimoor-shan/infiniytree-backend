@@ -36,7 +36,7 @@
   "email.orderConfirmed.viewOrder": "Bestellung ansehen",
   "email.orderConfirmed.processingNote": "Ihre Bestellung wird bearbeitet. Sie erhalten Updates per E-Mail, während Ihre Bestellung fortschreitet.",
   "email.orderConfirmed.contactPrefix": "Bei Fragen antworten Sie auf diese E-Mail oder kontaktieren Sie uns unter",
-  "email.orderConfirmed.downloadInvoice": "Rechnung herunterladen (PDF)",
+  "email.orderConfirmed.downloadInvoice": "Pro-forma-Rechnung herunterladen (PDF)",
   "email.orderConfirmed.bankTransfer.heading": "Bankverbindung",
   "email.orderConfirmed.bankTransfer.bank": "Bank",
   "email.orderConfirmed.bankTransfer.iban": "IBAN",

@@ -79,15 +79,13 @@ export default async function orderPlacedHandler({
       logger.warn(`[order-placed] Failed to store access token for ${order.id}: ${err.message}`)
     }
 
-    const orderUrl = await buildOrderAccessUrl(
+    const orderUrl = buildOrderAccessUrl(
       {
         id: order.id,
         display_id: (order as any).display_id,
-        customer_id: (order as any).customer_id,
         metadata: { ...existingMetadata, order_access_token: rawToken },
       },
-      storefrontUrl,
-      container
+      storefrontUrl
     )
 
     const vatNumber = ((order.shipping_address as any)?.metadata?.vat_number as string) || undefined
@@ -142,7 +140,7 @@ export default async function orderPlacedHandler({
         : undefined,
       order_url: orderUrl,
       bank_details: getBankDetails((order as any).display_id, order.currency_code),
-      invoice_url: `${process.env.BACKEND_PUBLIC_URL || "http://localhost:9000"}/invoice/guest/${(order as any).display_id}?token=${rawToken}`,
+      invoice_url: `${storefrontUrl}/api/invoice/${(order as any).display_id}?token=${rawToken}`,
     }
 
     // ── Debug: inspect converted orderData ────────────────────────

@@ -51,15 +51,13 @@ export default async function fulfillmentCreatedHandler({
       }
     }
 
-    const orderUrl = await buildOrderAccessUrl(
+    const orderUrl = buildOrderAccessUrl(
       {
         id: order.id,
         display_id: (order as any).display_id,
-        customer_id: (order as any).customer_id,
         metadata: orderMeta,
       },
-      storefrontUrl,
-      container
+      storefrontUrl
     )
 
     await notificationService.createNotifications({

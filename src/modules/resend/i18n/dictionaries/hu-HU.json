@@ -36,7 +36,7 @@
   "email.orderConfirmed.viewOrder": "Rendelés megtekintése",
   "email.orderConfirmed.processingNote": "Rendelése feldolgozás alatt áll. E-mailben értesítjük a rendelés állapotáról.",
   "email.orderConfirmed.contactPrefix": "Kérdése van? Válaszoljon erre az e-mailre, vagy lépjen kapcsolatba velünk:",
-  "email.orderConfirmed.downloadInvoice": "Számla letöltése (PDF)",
+  "email.orderConfirmed.downloadInvoice": "Pro forma számla letöltése (PDF)",
   "email.orderConfirmed.bankTransfer.heading": "Banki átutalás adatai",
   "email.orderConfirmed.bankTransfer.bank": "Bank",
   "email.orderConfirmed.bankTransfer.iban": "IBAN",
