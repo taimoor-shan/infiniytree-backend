@@ -10,14 +10,38 @@ type UploadResponse = {
   location?: string
 }
 
+type UploadKind = "image" | "video"
+
 type ImageUploadProps = {
   value: string
   onChange: (value: string) => void
+  kind?: UploadKind
 }
 
-const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
+const MAX_VIDEO_BYTES = 20 * 1024 * 1024
+
+const ACCEPT_BY_KIND: Record<UploadKind, string> = {
+  image: "image/*",
+  video: "video/mp4,video/webm",
+}
+
+const COPY_BY_KIND: Record<UploadKind, { drop: string; upload: string; paste: string }> = {
+  image: {
+    drop: "Drag and drop an image here, or upload a file.",
+    upload: "Upload image",
+    paste: "Or paste an image URL",
+  },
+  video: {
+    drop: "Drag and drop a video here, or upload a file.",
+    upload: "Upload video",
+    paste: "Or paste a video URL",
+  },
+}
+
+const ImageUpload = ({ value, onChange, kind = "image" }: ImageUploadProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const copy = COPY_BY_KIND[kind]
 
   const uploadImage = useMutation({
     mutationFn: async (file: File) => {
@@ -47,10 +71,10 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
       }
 
       onChange(url)
-      toast.success("Image uploaded")
+      toast.success(kind === "video" ? "Video uploaded" : "Image uploaded")
     },
     onError: (error: any) => {
-      toast.error(error?.message || "Failed to upload image")
+      toast.error(error?.message || `Failed to upload ${kind}`)
     },
   })
 
@@ -58,6 +82,12 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
     if (!file) {
       return
     }
+
+    if (kind === "video" && file.size > MAX_VIDEO_BYTES) {
+      toast.error(`Video must be 20 MB or smaller (${(file.size / 1024 / 1024).toFixed(1)} MB).`)
+      return
+    }
+
     uploadImage.mutate(file)
   }
 
@@ -86,7 +116,7 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
         onDrop={handleDrop}
       >
         <Text size="small" leading="compact" className="text-ui-fg-subtle">
-          Drag and drop an image here, or upload a file.
+          {copy.drop}
         </Text>
         <Button
           size="small"
@@ -96,12 +126,12 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
           disabled={uploadImage.isPending}
           isLoading={uploadImage.isPending}
         >
-          Upload image
+          {copy.upload}
         </Button>
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept={ACCEPT_BY_KIND[kind]}
           className="hidden"
           onChange={(event) => handleFile(event.target.files?.[0])}
         />
@@ -109,7 +139,7 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
 
       <div className="flex flex-col gap-y-2">
         <Text size="small" leading="compact" className="text-ui-fg-subtle">
-          Or paste an image URL
+          {copy.paste}
         </Text>
         <Input
           value={value}
@@ -120,11 +150,20 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
 
       {value && (
         <div className="flex items-center gap-x-3">
-          <img
-            src={value}
-            alt="Featured preview"
-            className="h-12 w-12 rounded-md border border-ui-border-base object-cover"
-          />
+          {kind === "video" ? (
+            <video
+              src={value}
+              muted
+              playsInline
+              className="h-12 w-12 rounded-md border border-ui-border-base object-cover"
+            />
+          ) : (
+            <img
+              src={value}
+              alt="Featured preview"
+              className="h-12 w-12 rounded-md border border-ui-border-base object-cover"
+            />
+          )}
           <Button
             size="small"
             variant="secondary"

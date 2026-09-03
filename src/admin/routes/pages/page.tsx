@@ -30,6 +30,7 @@ type Page = {
   content?: string | null
   excerpt?: string | null
   featured_image?: string | null
+  hero_video_url?: string | null
   seo_title?: string | null
   seo_description?: string | null
   status: "draft" | "published"
@@ -81,6 +82,7 @@ type PageFormState = {
   content: string
   excerpt: string
   featured_image: string
+  hero_video_url: string
   seo_title: string
   seo_description: string
   status: "draft" | "published"
@@ -94,6 +96,7 @@ const initialFormState: PageFormState = {
   content: "",
   excerpt: "",
   featured_image: "",
+  hero_video_url: "",
   seo_title: "",
   seo_description: "",
   status: "draft",
@@ -147,6 +150,7 @@ const PagesRoute = () => {
       content: page.content || "",
       excerpt: page.excerpt || "",
       featured_image: page.featured_image || "",
+      hero_video_url: page.hero_video_url || "",
       seo_title: page.seo_title || "",
       seo_description: page.seo_description || "",
       status: page.status || "draft",
@@ -166,6 +170,7 @@ const PagesRoute = () => {
         body: {
           ...payload,
           featured_image: payload.featured_image || null,
+          hero_video_url: payload.hero_video_url || null,
           excerpt: payload.excerpt || null,
           seo_title: payload.seo_title || null,
           seo_description: payload.seo_description || null,
@@ -190,6 +195,7 @@ const PagesRoute = () => {
         body: {
           ...payload,
           featured_image: payload.featured_image || null,
+          hero_video_url: payload.hero_video_url || null,
           excerpt: payload.excerpt || null,
           seo_title: payload.seo_title || null,
           seo_description: payload.seo_description || null,
@@ -395,6 +401,22 @@ const PageForm = ({
             setFormState({ ...formState, featured_image: value })
           }
         />
+      </div>
+      <div className="flex flex-col gap-y-2">
+        <Text size="small" leading="compact" weight="plus">
+          Hero video
+        </Text>
+        <ImageUpload
+          kind="video"
+          value={formState.hero_video_url}
+          onChange={(value) =>
+            setFormState({ ...formState, hero_video_url: value })
+          }
+        />
+        <Text size="small" leading="compact" className="text-ui-fg-subtle">
+          Optional. Plays muted in a loop on desktop. The featured image is used
+          as the poster and shown alone on mobile. MP4 or WebM, up to 20 MB.
+        </Text>
       </div>
       <div className="flex flex-col gap-y-2">
         <Text size="small" leading="compact" weight="plus">

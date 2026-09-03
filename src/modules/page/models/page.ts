@@ -8,6 +8,7 @@ const Page = model.define("page", {
   content: model.text().nullable(),
   excerpt: model.text().nullable(),
   featured_image: model.text().nullable(),
+  hero_video_url: model.text().nullable(),
   seo_title: model.text().nullable(),
   seo_description: model.text().nullable(),
   status: model.text().default("draft"),
