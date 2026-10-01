@@ -3,7 +3,9 @@ import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 export default async function orderEventsToMake({
   event,
 }: SubscriberArgs<{ id: string }>) {
-  await fetch(process.env.MAKE_ORDER_WEBHOOK_URL!, {
+  console.log("[Make] Received Medusa event:", event.name, event.data.id)
+
+  const response = await fetch(process.env.MAKE_ORDER_WEBHOOK_URL!, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,6 +16,12 @@ export default async function orderEventsToMake({
       order_id: event.data.id,
     }),
   })
+
+  console.log(
+    "[Make] Webhook response:",
+    response.status,
+    await response.text(),
+  )
 }
 
 export const config: SubscriberConfig = {
