@@ -32,3 +32,6 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 start.sh
+# yalc dev link of medusa-plugin-sales-commission (decide at merge: commit or publish)
+.yalc
+yalc.lock

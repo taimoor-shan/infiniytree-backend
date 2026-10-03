@@ -124,6 +124,15 @@ module.exports = defineConfig({
     },
 
   ],
+  plugins: [
+    {
+      resolve: "medusa-plugin-sales-commission",
+      options: {
+        timezone: "Europe/Budapest",
+        portal_url: process.env.SALES_PORTAL_URL,
+      },
+    },
+  ],
   admin: {
     vite: () => {
       return {

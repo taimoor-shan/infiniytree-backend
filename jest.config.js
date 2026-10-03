@@ -3,17 +3,22 @@ loadEnv("test", process.cwd());
 
 module.exports = {
   transform: {
-    "^.+\\.[jt]s$": [
+    "^.+\\.[jt]sx?$": [
       "@swc/jest",
       {
         jsc: {
-          parser: { syntax: "typescript", decorators: true },
+          parser: { syntax: "typescript", tsx: true, decorators: true },
+          transform: { react: { runtime: "automatic" } },
         },
       },
     ],
   },
   testEnvironment: "node",
-  moduleFileExtensions: ["js", "ts", "json"],
+  // tsx: the Resend notification provider imports .tsx email templates
+  moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json"],
+  moduleNameMapper: {
+    "^@react-pdf/renderer$": "<rootDir>/integration-tests/mocks/react-pdf.js",
+  },
   modulePathIgnorePatterns: ["dist/", "<rootDir>/.medusa/"],
   setupFiles: ["./integration-tests/setup.js"],
 };
