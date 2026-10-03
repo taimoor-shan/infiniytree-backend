@@ -22,6 +22,8 @@ export const createAdminHeaders = async (container: MedusaContainer) => {
 
   return {
     user,
+    /** What admin routes see as req.auth_context.actor_id */
+    actorId: apiKey.id,
     headers: { authorization: `Basic ${token}` },
   }
 }
