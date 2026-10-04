@@ -129,7 +129,12 @@ module.exports = defineConfig({
       resolve: "medusa-plugin-sales-commission",
       options: {
         timezone: "Europe/Budapest",
-        portal_url: process.env.SALES_PORTAL_URL,
+        // Base URL of the sales portal pages in the storefront
+        portal_url:
+          process.env.SALES_PORTAL_URL ||
+          (process.env.STOREFRONT_PUBLIC_URL
+            ? `${process.env.STOREFRONT_PUBLIC_URL}/sales-portal`
+            : undefined),
       },
     },
   ],
