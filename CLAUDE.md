@@ -1,6 +1,6 @@
 # CLAUDE.md — Infinytree Backend (Medusa v2)
 
-**Medusa version**: 2.17.2 | **Zod**: v4.2.0 | **MikroORM**: 6.6.14 | **Package manager**: Yarn 3.6.4
+**Medusa version**: 2.18.0 | **Zod**: v4.2.0 | **MikroORM**: 6.6.14 | **Package manager**: Yarn 3.6.4
 
 ---
 
@@ -127,9 +127,22 @@ The storefront (`../nfiniytree-storefront/`) depends on this backend for:
 
 ---
 
+## Sales Commission Plugin (`medusa-plugin-sales-commission`)
+
+Salespeople are assigned to customers at a per-client rate and earn commission on every paid order (plus Level 2 for the rep who referred them). It is a **separate Medusa plugin** in the sibling repo `../medusa-plugin-sales-commission` (see its README for rules, API and the Make.com hand-off), linked here with yalc and registered under `plugins` in `medusa-config.ts` (options: `timezone`, `portal_url`).
+
+- **Trigger** — `payment.captured`. Make.com captures the Medusa payment when Billingo reports the bank transfer (`POST /admin/payments/{id}/capture`), or an admin clicks Capture. No change to `src/subscribers/order-events-make.ts` is needed
+- **Voids** — `order.canceled` and full `payment.refunded`. A daily job re-runs both for the last 7 days
+- **Admin** — Sales Reps and Commission report screens, plus a "Sales rep" widget on the customer page
+- **Tests** — `integration-tests/http/sales-commission-*.spec.ts`. `jest.config.js` transforms `.tsx` (Resend email templates) and maps the ESM-only `@react-pdf/renderer` to `integration-tests/mocks/react-pdf.js`, which is what lets HTTP tests boot the app
+- **Develop** — run `npx medusa plugin:develop` in the plugin; after a plugin rebuild the dev server may serve a stale admin bundle: stop it, delete `node_modules/.vite`, start again
+- **Deploy** — `package.json` references the plugin as `file:.yalc/medusa-plugin-sales-commission`. `.yalc/` and `yalc.lock` are git-ignored for now. `postBuild.js` runs `yarn install` inside `.medusa/server`, where that path doesn't exist, so a production build needs one of: (a) commit `.yalc/` + `yalc.lock` and copy `.yalc` to `.medusa/server/.yalc` in `postBuild.js`, or (b) publish the plugin to a private registry and depend on its version. Decide before merging
+
+---
+
 ## Upgrade Notes (2.13.6 → 2.17.2)
 
-This backend was upgraded from Medusa 2.13.6 to 2.17.2 on 2026-07-02. Key breaking changes handled:
+This backend was upgraded from Medusa 2.13.6 to 2.17.2 on 2026-07-02 and has since moved to 2.18.0 (`package.json` `^2.18.0`, installed 2.18.0; the plugin pins `@medusajs/*` to exactly 2.18.0). Key breaking changes handled in the 2.17.2 upgrade:
 
 | Change | File(s) affected | Resolution |
 |--------|-----------------|------------|
