@@ -105,6 +105,64 @@ medusaIntegrationTestRunner({
       ])
     })
 
+    it("counts an order placed earlier on the day the client was assigned", async () => {
+      const buyer = await container.resolve(Modules.CUSTOMER).createCustomers({
+        email: "late-assign@greenoffice.example",
+        company_name: "Late Assign Kft.",
+      })
+      const order = await createOrder(container, buyer)
+      await api.post(
+        `/admin/customers/${buyer.id}/sales-rep-assignment`,
+        { sales_rep_id: peterId, commission_rate: 10 },
+        { headers }
+      )
+      await markOrderPaid(container, order.id)
+
+      const entries = await waitFor(async () => {
+        const found = await entriesOf(order.id)
+        return found.length === 2 && found
+      })
+
+      expect(entries.map((e) => [e.type, e.sales_rep_id, e.amount])).toEqual([
+        ["direct", peterId, 18],
+        ["level2", johnId, 9],
+      ])
+    })
+
+    it("counts Level 2 for an order placed earlier on the day the referral was set", async () => {
+      const createRep = async (name: string, email: string) =>
+        (await api.post("/admin/sales-reps", { name, email }, { headers })).data
+          .sales_rep.id
+      const annaId = await createRep("Anna Kiss", "anna@example.com")
+      const gaborId = await createRep("Gabor Toth", "gabor@example.com")
+      const buyer = await container.resolve(Modules.CUSTOMER).createCustomers({
+        email: "late-referral@greenoffice.example",
+        company_name: "Late Referral Kft.",
+      })
+      const order = await createOrder(container, buyer)
+      await api.post(
+        `/admin/customers/${buyer.id}/sales-rep-assignment`,
+        { sales_rep_id: gaborId, commission_rate: 10 },
+        { headers }
+      )
+      await api.post(
+        `/admin/sales-reps/${gaborId}/referral`,
+        { referrer_sales_rep_id: annaId, level2_rate: 5 },
+        { headers }
+      )
+      await markOrderPaid(container, order.id)
+
+      const entries = await waitFor(async () => {
+        const found = await entriesOf(order.id)
+        return found.length === 2 && found
+      })
+
+      expect(entries.map((e) => [e.type, e.sales_rep_id])).toEqual([
+        ["direct", gaborId],
+        ["level2", annaId],
+      ])
+    })
+
     it("records an order only once", async () => {
       const order = await createOrder(container, customer)
       await markOrderPaid(container, order.id)

@@ -4,6 +4,10 @@ import { createAdminHeaders } from "./helpers/admin-auth"
 
 jest.setTimeout(120 * 1000)
 
+// Independent of the plugin's own helper: sv-SE formats as "YYYY-MM-DD HH:mm:ss"
+const budapestClock = (date: Date | string) =>
+  new Date(date).toLocaleString("sv-SE", { timeZone: "Europe/Budapest" })
+
 medusaIntegrationTestRunner({
   inApp: true,
   env: {},
@@ -63,6 +67,16 @@ medusaIntegrationTestRunner({
         })
       )
       expect(data.history).toHaveLength(1)
+    })
+
+    it("takes effect from the start of the day in Budapest", async () => {
+      await assign({ sales_rep_id: peterId, commission_rate: 10 })
+
+      const { data } = await getAssignment()
+
+      expect(budapestClock(data.current.starts_at)).toBe(
+        `${budapestClock(new Date()).slice(0, 10)} 00:00:00`
+      )
     })
 
     it("closes the open assignment and opens a new one when the rate changes", async () => {

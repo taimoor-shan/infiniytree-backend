@@ -3,6 +3,10 @@ import { createAdminHeaders } from "./helpers/admin-auth"
 
 jest.setTimeout(120 * 1000)
 
+// Independent of the plugin's own helper: sv-SE formats as "YYYY-MM-DD HH:mm:ss"
+const budapestClock = (date: Date | string) =>
+  new Date(date).toLocaleString("sv-SE", { timeZone: "Europe/Budapest" })
+
 medusaIntegrationTestRunner({
   inApp: true,
   env: {},
@@ -49,6 +53,16 @@ medusaIntegrationTestRunner({
           referred: expect.objectContaining({ id: peterId, name: "Peter Nagy" }),
         }),
       ])
+    })
+
+    it("takes effect from the start of the day in Budapest", async () => {
+      await setReferrer(peterId, { referrer_sales_rep_id: johnId, level2_rate: 5 })
+
+      const { referral } = (await getRep(peterId)).data
+
+      expect(budapestClock(referral.starts_at)).toBe(
+        `${budapestClock(new Date()).slice(0, 10)} 00:00:00`
+      )
     })
 
     it("replaces the referrer and keeps the previous link on record", async () => {

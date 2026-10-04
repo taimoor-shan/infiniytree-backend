@@ -135,7 +135,7 @@ Salespeople are assigned to customers at a per-client rate and earn commission o
 - **Voids** — `order.canceled` and full `payment.refunded`. A daily job re-runs both for the last 7 days
 - **Admin** — Sales Reps and Commission report screens, plus a "Sales rep" widget on the customer page
 - **Tests** — `integration-tests/http/sales-commission-*.spec.ts`. `jest.config.js` transforms `.tsx` (Resend email templates) and maps the ESM-only `@react-pdf/renderer` to `integration-tests/mocks/react-pdf.js`, which is what lets HTTP tests boot the app
-- **Develop** — run `npx medusa plugin:develop` in the plugin; after a plugin rebuild the dev server may serve a stale admin bundle: stop it, delete `node_modules/.vite`, start again
+- **Develop** — run `npx medusa plugin:develop` in the plugin; after a plugin rebuild the admin can show the old UI (Vite's dependency cache, plus the browser's immutable copy of it): stop the dev server, delete `node_modules/.vite`, start it, then hard-reload the admin tab (Cmd/Ctrl+Shift+R)
 - **Deploy** — `package.json` references the plugin as `file:.yalc/medusa-plugin-sales-commission`. `.yalc/` and `yalc.lock` are git-ignored for now. `postBuild.js` runs `yarn install` inside `.medusa/server`, where that path doesn't exist, so a production build needs one of: (a) commit `.yalc/` + `yalc.lock` and copy `.yalc` to `.medusa/server/.yalc` in `postBuild.js`, or (b) publish the plugin to a private registry and depend on its version. Decide before merging
 
 ---
