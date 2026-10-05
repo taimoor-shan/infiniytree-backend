@@ -52,6 +52,10 @@ copyDirIfExists('static')
 // compiled code lives at .medusa/server/src/.
 copyDirIfExists('src/utils/invoice/assets')
 
+// Plugins vendored as tarballs: package.json points at ./vendor/<name>.tgz, and
+// the install below runs inside .medusa/server, where that path must resolve too.
+copyDirIfExists('vendor')
+
 // Install dependencies
 console.log('Installing dependencies in .medusa/server...');
 execSync('yarn install --frozen-lockfile', { 
