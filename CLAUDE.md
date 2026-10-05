@@ -1,6 +1,6 @@
 # CLAUDE.md — Infinytree Backend (Medusa v2)
 
-**Medusa version**: 2.17.2 | **Zod**: v4.2.0 | **MikroORM**: 6.6.14 | **Package manager**: Yarn 3.6.4
+**Medusa version**: 2.18.0 | **Zod**: v4.2.0 | **MikroORM**: 6.6.14 | **Package manager**: Yarn 3.6.4
 
 ---
 
@@ -127,9 +127,25 @@ The storefront (`../nfiniytree-storefront/`) depends on this backend for:
 
 ---
 
+## Sales Commission Plugin (`medusa-plugin-sales-commission`)
+
+Salespeople are assigned to customers at a per-client rate and earn commission on every paid order (plus Level 2 for the rep who referred them). It is a **separate Medusa plugin** in the sibling repo `../medusa-plugin-sales-commission` (see its README for rules, API and the Make.com hand-off), vendored here as a tarball (yalc for local development) and registered under `plugins` in `medusa-config.ts` (options: `timezone`, `portal_url`).
+
+- **Trigger** — `payment.captured`. Make.com captures the Medusa payment when Billingo reports the bank transfer (`POST /admin/payments/{id}/capture`), or an admin clicks Capture. No change to `src/subscribers/order-events-make.ts` is needed
+- **Voids** — `order.canceled` and full `payment.refunded`. A daily job re-runs both for the last 7 days
+- **Admin** — Sales Reps and Commission report screens, plus a "Sales rep" widget on the customer page
+- **Sales portal** — reps sign in with Medusa's own auth as the `sales_rep` actor (`/auth/sales_rep/emailpass`) and read their own numbers from the plugin's read-only `/sales-portal/*` API, called server-side by the storefront at `/<country>/sales-portal` (see the storefront's CLAUDE.md). An admin gives or ends access under Sales Reps → rep → Sales portal; the rep sets a first password with forgot-password. `PasswordResetEmail` links reps to `/sales-portal/reset-password` (`src/utils/password-reset-link.ts`). `portal_url` comes from `SALES_PORTAL_URL`, else `STOREFRONT_PUBLIC_URL` + `/sales-portal`
+- **Tests** — `integration-tests/http/sales-commission-*.spec.ts`. `jest.config.js` transforms `.tsx` (Resend email templates) and maps the ESM-only `@react-pdf/renderer` to `integration-tests/mocks/react-pdf.js`, which is what lets HTTP tests boot the app
+- **Develop** — run `npx medusa plugin:develop` in the plugin (yalc pushes each rebuild here; one-time `npx medusa plugin:add medusa-plugin-sales-commission`). yalc swaps the dependency for `file:.yalc/...`, so run `npx yalc retreat medusa-plugin-sales-commission` before committing. After a plugin rebuild the admin can show the old UI (Vite's dependency cache, plus the browser's immutable copy of it): stop the dev server, delete `node_modules/.vite`, start it, then hard-reload the admin tab (Cmd/Ctrl+Shift+R)
+- **Install / deploy** — the plugin is vendored: `package.json` points at `file:./vendor/medusa-plugin-sales-commission-<version>.tgz` (about 90 kB, committed), so the usual pull → `yarn install` → `yarn build` works with no registry or token. `src/scripts/postBuild.js` copies `vendor/` into `.medusa/server` so the install there resolves it too. `.yalc/` and `yalc.lock` stay git-ignored
+- **Migrations** — neither `yarn build` nor `medusa start` runs them. After a deploy that adds a migration (the plugin's 7 tables on first deploy), run `cd .medusa/server && npx medusa db:migrate` before restarting
+- **Release a new plugin version** — in the plugin repo: `npm version patch --no-git-tag-version`, then `npm run release:backend` (builds, packs into `vendor/`, updates `package.json` and `yarn.lock`). Commit those here, tag the plugin, deploy as above
+
+---
+
 ## Upgrade Notes (2.13.6 → 2.17.2)
 
-This backend was upgraded from Medusa 2.13.6 to 2.17.2 on 2026-07-02. Key breaking changes handled:
+This backend was upgraded from Medusa 2.13.6 to 2.17.2 on 2026-07-02 and has since moved to 2.18.0 (`package.json` `^2.18.0`, installed 2.18.0; the plugin pins `@medusajs/*` to exactly 2.18.0). Key breaking changes handled in the 2.17.2 upgrade:
 
 | Change | File(s) affected | Resolution |
 |--------|-----------------|------------|

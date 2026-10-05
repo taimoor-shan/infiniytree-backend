@@ -1,6 +1,7 @@
 import React from "react"
 import { EmailLayout } from "./layout"
 import { createTranslator } from "../i18n"
+import { passwordResetLink } from "../../../utils/password-reset-link"
 
 export interface PasswordResetEmailProps {
   token: string
@@ -15,12 +16,18 @@ export function PasswordResetEmail(props: PasswordResetEmailProps) {
   const {
     token,
     entity_id,
+    actor_type,
     storefront_url = "https://infinytree.com",
     locale = "en",
   } = props
 
   const t = createTranslator(locale)
-  const resetLink = `${storefront_url}/account/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(entity_id)}`
+  const resetLink = passwordResetLink({
+    storefront_url,
+    actor_type,
+    token,
+    email: entity_id,
+  })
 
   return (
     <EmailLayout preview={t("email.passwordReset.preview")} locale={locale}>
