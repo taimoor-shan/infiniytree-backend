@@ -79,6 +79,10 @@ medusaIntegrationTestRunner({
       it.each([
         ["no reason", { reason: "  ", amount: -5 }],
         ["a zero amount", { reason: "Partial return", amount: 0 }],
+        // Adjustments can't be deleted, so a bad one would stay in the report
+        ["a currency that doesn't exist", { reason: "Typo", amount: -5, currency_code: "xyz" }],
+        ["cents the currency doesn't have", { reason: "Rounding", amount: -5.005 }],
+        ["decimals in a whole-number currency", { reason: "Rounding", amount: -5.5, currency_code: "huf" }],
       ])("rejects an adjustment with %s", async (_, body) => {
         const error = await adjust({ currency_code: "eur", period, ...body }).catch(
           (e) => e.response
@@ -158,8 +162,13 @@ medusaIntegrationTestRunner({
         ])
       })
 
-      it("rejects a payout that isn't positive", async () => {
-        const error = await pay({ amount: 0 }).catch((e) => e.response)
+      it.each([
+        ["isn't positive", { amount: 0 }],
+        ["is in a currency that doesn't exist", { amount: 18, currency_code: "xyz" }],
+        ["has cents the currency doesn't have", { amount: 18.005 }],
+        ["has decimals in a whole-number currency", { amount: 1800.5, currency_code: "huf" }],
+      ])("rejects a payout that %s", async (_, body) => {
+        const error = await pay(body).catch((e) => e.response)
 
         expect(error.status).toBe(400)
       })
