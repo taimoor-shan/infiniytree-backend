@@ -88,10 +88,14 @@ medusaIntegrationTestRunner({
       )
 
     /** A login someone registered through Medusa's public register route */
-    const registerLogin = async (actor: string, email: string) => {
+    const registerLogin = async (
+      actor: string,
+      email: string,
+      password = PASSWORD
+    ) => {
       const { data } = await api.post(`/auth/${actor}/emailpass/register`, {
         email,
-        password: PASSWORD,
+        password,
       })
       return jwtPayload(data.token).auth_identity_id as string
     }
@@ -158,24 +162,89 @@ medusaIntegrationTestRunner({
     })
 
     describe("an email that already has a login", () => {
-      it("is refused when someone registered it before, so it can't be taken over", async () => {
-        await registerLogin("customer", "peter@example.com")
+      const OLD_PASSWORD = "old-registrant-password-1"
 
-        const response = await failure(grant())
+      it("is taken over when it was registered but never linked, and the old password stops working", async () => {
+        const identityId = await registerLogin(
+          "customer",
+          "peter@example.com",
+          OLD_PASSWORD
+        )
 
-        expect(response.status).toBe(400)
-        expect(response.data.message).toContain("already has a login")
-        expect(await portalOf()).toEqual({ status: "none" })
+        await grant()
+
+        const identity = await identityOf("peter@example.com")
+        expect(identity.id).toBe(identityId)
+        expect(identity.app_metadata).toEqual({ sales_rep_id: repId })
+        expect(await portalOf()).toEqual({ status: "active" })
+        expect(
+          (await failure(login("peter@example.com", OLD_PASSWORD))).status
+        ).toBe(401)
       })
 
-      it("is refused when it belongs to a shop customer", async () => {
+      it("lets the rep set their own password on a login that was taken over", async () => {
+        await registerLogin("customer", "peter@example.com", OLD_PASSWORD)
+        await grant()
+
+        await setPassword(
+          "peter@example.com",
+          await resetToken("peter@example.com")
+        )
+
+        expect(jwtPayload(await login("peter@example.com")).actor_id).toBe(repId)
+        expect(
+          (await failure(login("peter@example.com", OLD_PASSWORD))).status
+        ).toBe(401)
+      })
+
+      it("is taken over when it is what a deleted customer left behind", async () => {
+        const identityId = await registerLogin(
+          "customer",
+          "peter@example.com",
+          OLD_PASSWORD
+        )
+        const customer = await getContainer()
+          .resolve(Modules.CUSTOMER)
+          .createCustomers({ email: "peter@example.com", has_account: true })
+        await authModule().updateAuthIdentities({
+          id: identityId,
+          app_metadata: { customer_id: customer.id },
+        })
+        await api.delete(`/admin/customers/${customer.id}`, { headers })
+        // Medusa deletes the customer but keeps the login and its password
+        expect((await identityOf("peter@example.com")).app_metadata).toEqual({
+          customer_id: null,
+        })
+
+        await grant()
+
+        expect((await identityOf("peter@example.com")).app_metadata).toEqual({
+          customer_id: null,
+          sales_rep_id: repId,
+        })
+        expect(await portalOf()).toEqual({ status: "active" })
+        expect(
+          (await failure(login("peter@example.com", OLD_PASSWORD))).status
+        ).toBe(401)
+      })
+
+      it("is refused when it belongs to a shop customer, whose password keeps working", async () => {
         const identityId = await registerLogin("customer", "peter@example.com")
         await authModule().updateAuthIdentities({
           id: identityId,
           app_metadata: { customer_id: "cus_test" },
         })
 
-        expect((await failure(grant())).status).toBe(400)
+        const response = await failure(grant())
+
+        expect(response.status).toBe(400)
+        expect(response.data.message).toContain("already has a login")
+        expect(await portalOf()).toEqual({ status: "none" })
+        const customerLogin = await api.post("/auth/customer/emailpass", {
+          email: "peter@example.com",
+          password: PASSWORD,
+        })
+        expect(customerLogin.status).toBe(200)
       })
 
       it("is linked when it belongs to an admin, who keeps their password", async () => {
