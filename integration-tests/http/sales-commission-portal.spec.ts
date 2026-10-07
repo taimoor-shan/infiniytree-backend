@@ -211,6 +211,8 @@ medusaIntegrationTestRunner({
             adjustments: 0,
             total: 18,
             paid: 0,
+            opening: 0,
+            closing: 18,
             status: "unpaid",
           },
         ])
@@ -223,6 +225,84 @@ medusaIntegrationTestRunner({
         expect(
           (await failure(get("/sales-portal/summary?period=2026-13", tokens.peter))).status
         ).toBe(400)
+      })
+    })
+
+    describe("GET /sales-portal/balance", () => {
+      it("returns what the rep is owed, split into payable and not yet payable", async () => {
+        const { data } = await get("/sales-portal/balance", tokens.peter)
+
+        expect(data.approved_through).toBeNull()
+        expect(data.balances).toEqual([
+          expect.objectContaining({
+            currency_code: "eur",
+            earned: 18,
+            paid: 0,
+            payable: 0,
+            open_earned: 18,
+            to_recover: 0,
+          }),
+        ])
+        expect(data.pending).toEqual([])
+        expect(data.next_run).toBeNull()
+      })
+
+      it("shows each rep only their own balance", async () => {
+        const anna = await get("/sales-portal/balance", tokens.anna)
+        const john = await get("/sales-portal/balance", tokens.john)
+
+        expect(anna.data.balances[0].earned).toBe(27)
+        expect(john.data.balances[0].earned).toBe(9)
+      })
+
+      it("shows what unpaid orders would earn, without naming other reps' clients", async () => {
+        await createOrder(container, {
+          id: greenOffice.id,
+          email: "buyer@greenoffice.example",
+        })
+
+        const peter = await get("/sales-portal/balance", tokens.peter)
+        const john = await get("/sales-portal/balance", tokens.john)
+        const anna = await get("/sales-portal/balance", tokens.anna)
+        const johnStatement = await get(`/sales-portal/statement?period=${period}`, tokens.john)
+
+        expect(peter.data.pending).toEqual([{ currency_code: "eur", amount: 18, orders: 1 }])
+        expect(john.data.pending).toEqual([{ currency_code: "eur", amount: 9, orders: 1 }])
+        expect(anna.data.pending).toEqual([])
+        expect(johnStatement.data.pending).toEqual([
+          expect.objectContaining({
+            kind: "level2",
+            status: "pending",
+            referred_rep_name: "Peter Nagy",
+            client_name: null,
+            order_number: null,
+            balance: null,
+            amount: 9,
+          }),
+        ])
+        expect(JSON.stringify(johnStatement.data)).not.toContain("Green Office")
+      })
+
+      it("lists a rep's own unpaid orders by number and client", async () => {
+        const order = await createOrder(container, {
+          id: greenOffice.id,
+          email: "buyer@greenoffice.example",
+        })
+
+        const { data } = await get(`/sales-portal/statement?period=${period}`, tokens.peter)
+
+        expect(data.pending).toEqual([
+          expect.objectContaining({
+            kind: "commission",
+            status: "pending",
+            order_number: order.display_id,
+            client_name: "Green Office Kft.",
+            net_value: 180,
+            rate: 10,
+            amount: 18,
+            balance: null,
+          }),
+        ])
       })
     })
 
@@ -242,6 +322,11 @@ medusaIntegrationTestRunner({
             net_value: 180,
             rate: 10,
             amount: 18,
+            status: "earned",
+            balance: 18,
+            order_currency_code: null,
+            order_amount: null,
+            fx_rate: null,
             note: null,
           },
         ])
@@ -262,6 +347,11 @@ medusaIntegrationTestRunner({
             net_value: 180,
             rate: 5,
             amount: 9,
+            status: "earned",
+            balance: 9,
+            order_currency_code: null,
+            order_amount: null,
+            fx_rate: null,
             note: null,
           },
         ])
@@ -387,7 +477,11 @@ medusaIntegrationTestRunner({
         const { data } = await get("/sales-portal/statements", tokens.peter)
 
         expect(data.statements).toEqual([
-          { period, totals: [expect.objectContaining({ currency_code: "eur", direct: 18, total: 18 })] },
+          {
+            period,
+            approved: false,
+            totals: [expect.objectContaining({ currency_code: "eur", direct: 18, total: 18 })],
+          },
         ])
       })
 

@@ -112,6 +112,22 @@ medusaIntegrationTestRunner({
       expect(error.status).toBe(400)
     })
 
+    it("rejects a rep's own customer account, whatever the case of the email", async () => {
+      const own = await getContainer()
+        .resolve(Modules.CUSTOMER)
+        .createCustomers({ email: "Peter@Example.com", first_name: "Peter" })
+
+      const error = await assign(
+        { sales_rep_id: peterId, commission_rate: 10 },
+        own.id
+      ).catch((e) => e.response)
+
+      expect(error.status).toBe(400)
+      expect(error.data.message).toContain("can't be assigned their own customer account")
+      // Anyone else's account is fine for another rep
+      expect((await assign({ sales_rep_id: annaId, commission_rate: 10 }, own.id)).status).toBe(200)
+    })
+
     it.each([-1, 100.01])("rejects a rate of %p%%", async (rate) => {
       const error = await assign({ sales_rep_id: peterId, commission_rate: rate })
         .catch((e) => e.response)

@@ -135,6 +135,8 @@ medusaIntegrationTestRunner({
             adjustments: -5,
             total: 13,
             paid: 0,
+            opening: 0,
+            closing: 13,
             status: "unpaid",
           },
         ])
@@ -225,11 +227,11 @@ medusaIntegrationTestRunner({
           `commission-report-${period}.csv`
         )
         expect(header).toBe(
-          "Period,Sales rep,Email,Currency,Turnover,Level 2 turnover,Direct commission,Level 2 commission,Adjustments,Total,Paid,Status"
+          "Period,Sales rep,Email,Currency,Turnover,Level 2 turnover,Direct commission,Level 2 commission,Adjustments,Earned this month,Paid this month,Owed at start,Owed at end,Status"
         )
         expect(rows).toEqual([
-          `${period},John Smith,john@example.com,EUR,0,180,0,9,0,9,0,unpaid`,
-          `${period},Peter Nagy,peter@example.com,EUR,180,0,18,0,0,18,0,unpaid`,
+          `${period},John Smith,john@example.com,EUR,0,180,0,9,0,9,0,0,9,unpaid`,
+          `${period},Peter Nagy,peter@example.com,EUR,180,0,18,0,0,18,0,0,18,unpaid`,
         ])
       })
 

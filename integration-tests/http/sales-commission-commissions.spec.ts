@@ -236,7 +236,7 @@ medusaIntegrationTestRunner({
       ])
     })
 
-    it("keeps the commission on a partial refund", async () => {
+    it("keeps the entries on a partial refund and takes back the refunded share", async () => {
       const order = await createOrder(container, customer)
       const payment = await markOrderPaid(container, order.id)
       await waitFor(async () => (await entriesOf(order.id)).length === 2)
@@ -251,6 +251,17 @@ medusaIntegrationTestRunner({
       expect((await entriesOf(order.id)).map((e) => e.voided_at)).toEqual([
         null,
         null,
+      ])
+      // 50 of 241.30 was refunded: 20.7% of the 18 direct and the 9 Level 2
+      const adjustments = await waitFor(async () => {
+        const found = await container
+          .resolve("salesCommission")
+          .listCommissionAdjustments({ kind: "partial_refund" }, { order: { amount: "ASC" } })
+        return found.length === 2 && found
+      })
+      expect(adjustments.map((a) => [a.amount, a.currency_code])).toEqual([
+        [-3.73, "eur"],
+        [-1.86, "eur"],
       ])
     })
 

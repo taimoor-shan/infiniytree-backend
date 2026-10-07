@@ -135,6 +135,19 @@ module.exports = defineConfig({
           (process.env.STOREFRONT_PUBLIC_URL
             ? `${process.env.STOREFRONT_PUBLIC_URL}/sales-portal`
             : undefined),
+        // Euro-forint rates come from the ECB; set SALES_COMMISSION_FX_FETCH=false to stop fetching
+        fx_auto_fetch: process.env.SALES_COMMISSION_FX_FETCH !== "false",
+        // The day of the month the owner usually pays, shown to reps as the next run (1 to 28)
+        payout_day: Number(process.env.SALES_COMMISSION_PAYOUT_DAY) || undefined,
+        // How long an invite link works, in days
+        invite_days: Number(process.env.SALES_COMMISSION_INVITE_DAYS) || undefined,
+        // What the approval form starts with: Level 2 percent and months it lasts (0 = until ended)
+        level2_default_rate: process.env.SALES_COMMISSION_LEVEL2_RATE
+          ? Number(process.env.SALES_COMMISSION_LEVEL2_RATE)
+          : undefined,
+        level2_default_months: process.env.SALES_COMMISSION_LEVEL2_MONTHS
+          ? Number(process.env.SALES_COMMISSION_LEVEL2_MONTHS)
+          : undefined,
       },
     },
   ],
