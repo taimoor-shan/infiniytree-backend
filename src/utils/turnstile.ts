@@ -1,3 +1,9 @@
+import type {
+  MedusaNextFunction,
+  MedusaRequest,
+  MedusaResponse,
+} from "@medusajs/framework/http"
+
 const SITEVERIFY_URL =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 const MAX_TOKEN_LENGTH = 2048
@@ -107,4 +113,42 @@ export async function verifyTurnstile(
   }
 
   return { status: "rejected", codes }
+}
+
+/**
+ * Medusa middleware: turns away a request whose Turnstile token Cloudflare
+ * refuses. The storefront sends the token in the `x-turnstile-token` header.
+ * Does nothing when `TURNSTILE_SECRET_KEY` is not set.
+ */
+export async function requireTurnstile(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  next: MedusaNextFunction
+): Promise<void> {
+  const tokenHeader = req.headers["x-turnstile-token"]
+  const ipHeader = req.headers["cf-connecting-ip"]
+
+  const outcome = await verifyTurnstile(
+    Array.isArray(tokenHeader) ? tokenHeader[0] : tokenHeader,
+    {
+      secret: process.env.TURNSTILE_SECRET_KEY,
+      ip: Array.isArray(ipHeader) ? ipHeader[0] : ipHeader,
+    }
+  )
+
+  if (outcome.status === "rejected") {
+    res
+      .status(403)
+      .json({ type: "not_allowed", message: "Verification failed" })
+    return
+  }
+
+  if (outcome.status === "unavailable") {
+    // A visitor cannot cause this, so let the request through and say so.
+    req.scope
+      .resolve("logger")
+      .warn(`[turnstile] verification unavailable: ${outcome.reason}`)
+  }
+
+  next()
 }

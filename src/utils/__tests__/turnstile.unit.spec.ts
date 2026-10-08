@@ -1,4 +1,5 @@
-import { verifyTurnstile } from "../turnstile"
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { requireTurnstile, verifyTurnstile } from "../turnstile"
 
 const SITEVERIFY_URL =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify"
@@ -168,5 +169,139 @@ describe("verifyTurnstile", () => {
     })
 
     expect(outcome.status).toBe("unavailable")
+  })
+})
+
+describe("requireTurnstile", () => {
+  const realFetch = global.fetch
+  const logger = { warn: jest.fn() }
+
+  const makeReq = (headers: Record<string, string | string[]> = {}) =>
+    ({
+      headers,
+      scope: { resolve: jest.fn().mockReturnValue(logger) },
+    }) as unknown as MedusaRequest
+
+  const makeRes = () => {
+    const res = { status: jest.fn(), json: jest.fn() }
+    res.status.mockReturnValue(res)
+    res.json.mockReturnValue(res)
+    return res
+  }
+
+  /** Makes the global fetch answer like Cloudflare with `body`. */
+  const stubGlobalFetch = (body: unknown) => {
+    const fetchMock = jest.fn().mockResolvedValue({ json: async () => body })
+    global.fetch = fetchMock as unknown as typeof fetch
+    return fetchMock
+  }
+
+  beforeEach(() => {
+    process.env.TURNSTILE_SECRET_KEY = "the-secret"
+    logger.warn.mockClear()
+  })
+
+  afterEach(() => {
+    delete process.env.TURNSTILE_SECRET_KEY
+    global.fetch = realFetch
+  })
+
+  it("answers 403 and stops when Cloudflare refuses the token", async () => {
+    stubGlobalFetch({ success: false, "error-codes": ["invalid-input-response"] })
+    const res = makeRes()
+    const next = jest.fn()
+
+    await requireTurnstile(
+      makeReq({ "x-turnstile-token": "bad-token" }),
+      res as unknown as MedusaResponse,
+      next
+    )
+
+    expect(res.status).toHaveBeenCalledWith(403)
+    expect(res.json).toHaveBeenCalledWith({
+      type: "not_allowed",
+      message: "Verification failed",
+    })
+    expect(next).not.toHaveBeenCalled()
+  })
+
+  it("answers 403 without calling Cloudflare when the token header is missing", async () => {
+    const fetchMock = stubGlobalFetch({ success: true })
+    const res = makeRes()
+    const next = jest.fn()
+
+    await requireTurnstile(makeReq(), res as unknown as MedusaResponse, next)
+
+    expect(res.status).toHaveBeenCalledWith(403)
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(next).not.toHaveBeenCalled()
+  })
+
+  it("lets the request through when the token passes", async () => {
+    stubGlobalFetch({ success: true })
+    const res = makeRes()
+    const next = jest.fn()
+
+    await requireTurnstile(
+      makeReq({ "x-turnstile-token": "good-token" }),
+      res as unknown as MedusaResponse,
+      next
+    )
+
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(res.status).not.toHaveBeenCalled()
+  })
+
+  it("lets the request through, untouched, when no secret is configured", async () => {
+    delete process.env.TURNSTILE_SECRET_KEY
+    const fetchMock = stubGlobalFetch({ success: true })
+    const res = makeRes()
+    const next = jest.fn()
+
+    await requireTurnstile(makeReq(), res as unknown as MedusaResponse, next)
+
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(res.status).not.toHaveBeenCalled()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it("lets the request through and logs a warning when Cloudflare is unavailable", async () => {
+    global.fetch = jest
+      .fn()
+      .mockRejectedValue(new Error("socket hang up")) as unknown as typeof fetch
+    const res = makeRes()
+    const next = jest.fn()
+
+    await requireTurnstile(
+      makeReq({ "x-turnstile-token": "any-token" }),
+      res as unknown as MedusaResponse,
+      next
+    )
+
+    expect(next).toHaveBeenCalledTimes(1)
+    expect(res.status).not.toHaveBeenCalled()
+    expect(logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "[turnstile] verification unavailable: socket hang up"
+      )
+    )
+  })
+
+  it("reads the token and visitor IP from the headers, taking the first value of an array", async () => {
+    const fetchMock = stubGlobalFetch({ success: true })
+
+    await requireTurnstile(
+      makeReq({
+        "x-turnstile-token": ["first-token", "second-token"],
+        "cf-connecting-ip": ["203.0.113.9"],
+      }),
+      makeRes() as unknown as MedusaResponse,
+      jest.fn()
+    )
+
+    const body = fetchMock.mock.calls[0][1].body as URLSearchParams
+    expect(body.get("response")).toBe("first-token")
+    expect(body.get("remoteip")).toBe("203.0.113.9")
+    expect(body.get("secret")).toBe("the-secret")
   })
 })

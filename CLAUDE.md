@@ -146,6 +146,17 @@ Salespeople are assigned to customers at a per-client rate and earn commission o
 
 ---
 
+## Spam protection (Cloudflare Turnstile)
+
+`POST /store/contact` and `POST /store/notify-me` run `requireTurnstile` (`src/utils/turnstile.ts`) before body validation. The storefront sends the widget's token in the `x-turnstile-token` header; the middleware checks it against Cloudflare's siteverify endpoint with `TURNSTILE_SECRET_KEY` and answers `403 { type: "not_allowed" }` when it is missing, refused, expired or reused.
+
+- No `TURNSTILE_SECRET_KEY` → the check is off (local dev, tests, a half-finished deploy).
+- Cloudflare unreachable, slow (10 s) or reporting a bad secret → the request goes through and a `[turnstile]` warning is logged. A visitor cannot cause that.
+- Tokens are single-use. The storefront's account-form server actions verify their own tokens, so no token is verified twice. The `/auth/*` routes are not behind this check.
+- Tests: `yarn test:unit src/utils/__tests__/turnstile.unit.spec.ts`.
+- Cloudflare's test keys let you exercise the flow locally: secret `1x0000000000000000000000000000000AA` always passes, `2x0000000000000000000000000000000AA` always fails (storefront site key `1x00000000000000000000AA`).
+
+
 ## Upgrade Notes (2.13.6 → 2.17.2)
 
 This backend was upgraded from Medusa 2.13.6 to 2.17.2 on 2026-07-02 and has since moved to 2.18.0 (`package.json` `^2.18.0`, installed 2.18.0; the plugin pins `@medusajs/*` to exactly 2.18.0). Key breaking changes handled in the 2.17.2 upgrade:
