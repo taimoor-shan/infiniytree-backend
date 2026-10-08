@@ -159,5 +159,12 @@
   "email.repApplication.company": "Company or tax number",
   "email.repApplication.currency": "Payout currency requested",
   "email.repApplication.recruiter": "Recruited by",
-  "email.repApplication.button": "Review application"
+  "email.repApplication.button": "Review application",
+  "email.subject.adminInvite": "You're invited to the Infinytree admin",
+  "email.adminInvite.preview": "You've been invited to the Infinytree admin",
+  "email.adminInvite.heading": "You're invited to the Infinytree admin",
+  "email.adminInvite.body": "You've been invited to manage the Infinytree shop as an admin user. Accept the invitation to create your account and sign in.",
+  "email.adminInvite.button": "Accept invitation",
+  "email.adminInvite.expires": "This invitation is personal and works until {date}. After that, ask for it to be sent again.",
+  "email.adminInvite.ignore": "If you weren't expecting this invitation, you can safely ignore this email."
 }

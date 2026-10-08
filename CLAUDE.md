@@ -63,6 +63,7 @@ This is an **Infinytree Medusa v2 backend** with custom modules, translation sup
 - **Admin Extensions** — Custom admin route for Pages, rich text editor (TipTap), image upload (MinIO presigned), product translation widget, i18n translations
 - **Translation System** — Uses `google-translate-api-x` with `featureFlags.translation: true` in medusa-config. Product translation workflow + admin widget for on-demand translation
 - **Contact Form** — Posts to Resend (or SendGrid fallback) via `POST /store/contact` with Zod-validated body
+- **Admin Invites** — Medusa emits `invite.created` / `invite.resent` but sends no email itself, so `src/subscribers/admin-user-invite.ts` emails the invitee a link to the admin's accept page (`BACKEND_PUBLIC_URL` + admin path + `/invite?token=`; without `BACKEND_PUBLIC_URL` in production the link points at localhost). It goes out as finished HTML, so the token (which can create an admin account) stays out of the notification log. Invites work for 24 hours by default (user module option `valid_duration`); an expired or lost one is renewed with "Resend invite" under Settings → Users. Test: `integration-tests/http/admin-invites.spec.ts` (needs `DB_USERNAME` when the local Postgres has no `postgres` role)
 
 ### God Nodes (Top 15 by edge count)
 
