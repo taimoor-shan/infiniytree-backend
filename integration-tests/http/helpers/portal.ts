@@ -19,14 +19,19 @@ export const portalLogin = async ({
   headers,
   repId,
   email,
+  grant = true,
 }: {
   api: Api
   container: MedusaContainer
   headers: Record<string, string>
   repId: string
   email: string
+  /** False when the test gave the rep access itself already */
+  grant?: boolean
 }): Promise<string> => {
-  await api.post(`/admin/sales-reps/${repId}/portal-access`, {}, { headers })
+  if (grant) {
+    await api.post(`/admin/sales-reps/${repId}/portal-access`, {}, { headers })
+  }
 
   const { http } = container.resolve(
     ContainerRegistrationKeys.CONFIG_MODULE

@@ -12065,9 +12065,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-plugin-sales-commission@file:./vendor/medusa-plugin-sales-commission-0.2.0.tgz::locator=medusa-starter-default%40workspace%3A.":
-  version: 0.2.0
-  resolution: "medusa-plugin-sales-commission@file:./vendor/medusa-plugin-sales-commission-0.2.0.tgz::locator=medusa-starter-default%40workspace%3A."
+"medusa-plugin-sales-commission@file:./vendor/medusa-plugin-sales-commission-0.2.1.tgz::locator=medusa-starter-default%40workspace%3A.":
+  version: 0.2.1
+  resolution: "medusa-plugin-sales-commission@file:./vendor/medusa-plugin-sales-commission-0.2.1.tgz::locator=medusa-starter-default%40workspace%3A."
   peerDependencies:
     "@medusajs/admin-sdk": 2.18.0
     "@medusajs/cli": 2.18.0
@@ -12077,7 +12077,7 @@ __metadata:
     "@medusajs/medusa": 2.18.0
     "@medusajs/test-utils": 2.18.0
     "@medusajs/ui": 4.2.0
-  checksum: 0ad7d8691d0a0465e093cc95052c2adfaabb5800e3eed45e3a6feeb121ebc2d7ddc0fac44ae234586ea8da3036466f1b4eef166fbb6e9830c3ea94cdf0e35f13
+  checksum: 4dff591daa9e5ab7f4a6c2ee2d17f85e117e848654819ef838d458c9a154e6f333eae01c62a30aff1f145cc594c957a10b39af81f838a92dc6854ea4fcd861b4
   languageName: node
   linkType: hard
 
@@ -12121,7 +12121,7 @@ __metadata:
     awilix: ^8.0.1
     google-translate-api-x: ^10.7.2
     jest: ^29.7.0
-    medusa-plugin-sales-commission: "file:./vendor/medusa-plugin-sales-commission-0.2.0.tgz"
+    medusa-plugin-sales-commission: "file:./vendor/medusa-plugin-sales-commission-0.2.1.tgz"
     minio: ^8.0.6
     pg: ^8.13.0
     prop-types: ^15.8.1
