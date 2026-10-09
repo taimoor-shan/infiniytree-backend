@@ -127,16 +127,21 @@ export async function requireTurnstile(
 ): Promise<void> {
   const tokenHeader = req.headers["x-turnstile-token"]
   const ipHeader = req.headers["cf-connecting-ip"]
+  const token = Array.isArray(tokenHeader) ? tokenHeader[0] : tokenHeader
 
-  const outcome = await verifyTurnstile(
-    Array.isArray(tokenHeader) ? tokenHeader[0] : tokenHeader,
-    {
-      secret: process.env.TURNSTILE_SECRET_KEY,
-      ip: Array.isArray(ipHeader) ? ipHeader[0] : ipHeader,
-    }
-  )
+  const outcome = await verifyTurnstile(token, {
+    secret: process.env.TURNSTILE_SECRET_KEY,
+    ip: Array.isArray(ipHeader) ? ipHeader[0] : ipHeader,
+  })
 
   if (outcome.status === "rejected") {
+    // Bots land here all day, but so does every real visitor when the widget or
+    // the keys are misconfigured, so say why. Never the token itself.
+    req.scope
+      .resolve("logger")
+      .info(
+        `[turnstile] rejected (${token ? "token sent" : "no token"}): ${outcome.codes.join(", ") || "no error code"}`
+      )
     res
       .status(403)
       .json({ type: "not_allowed", message: "Verification failed" })

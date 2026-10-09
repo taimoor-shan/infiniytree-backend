@@ -174,7 +174,7 @@ describe("verifyTurnstile", () => {
 
 describe("requireTurnstile", () => {
   const realFetch = global.fetch
-  const logger = { warn: jest.fn() }
+  const logger = { warn: jest.fn(), info: jest.fn() }
 
   const makeReq = (headers: Record<string, string | string[]> = {}) =>
     ({
@@ -199,6 +199,7 @@ describe("requireTurnstile", () => {
   beforeEach(() => {
     process.env.TURNSTILE_SECRET_KEY = "the-secret"
     logger.warn.mockClear()
+    logger.info.mockClear()
   })
 
   afterEach(() => {
@@ -303,5 +304,70 @@ describe("requireTurnstile", () => {
     expect(body.get("response")).toBe("first-token")
     expect(body.get("remoteip")).toBe("203.0.113.9")
     expect(body.get("secret")).toBe("the-secret")
+  })
+
+  it("logs why a request was turned away, naming the codes but never the token", async () => {
+    stubGlobalFetch({ success: false, "error-codes": ["invalid-input-response"] })
+
+    await requireTurnstile(
+      makeReq({ "x-turnstile-token": "a-token-that-must-not-be-logged" }),
+      makeRes() as unknown as MedusaResponse,
+      jest.fn()
+    )
+
+    expect(logger.info).toHaveBeenCalledTimes(1)
+    expect(logger.info).toHaveBeenCalledWith(
+      "[turnstile] rejected (token sent): invalid-input-response"
+    )
+    expect(JSON.stringify(logger.info.mock.calls)).not.toContain(
+      "a-token-that-must-not-be-logged"
+    )
+  })
+
+  it("logs when the request carried no token at all", async () => {
+    stubGlobalFetch({ success: true })
+
+    await requireTurnstile(
+      makeReq(),
+      makeRes() as unknown as MedusaResponse,
+      jest.fn()
+    )
+
+    expect(logger.info).toHaveBeenCalledWith(
+      "[turnstile] rejected (no token): missing-input-response"
+    )
+  })
+
+  it("logs a refusal that names no code", async () => {
+    stubGlobalFetch({ success: false })
+
+    await requireTurnstile(
+      makeReq({ "x-turnstile-token": "any-token" }),
+      makeRes() as unknown as MedusaResponse,
+      jest.fn()
+    )
+
+    expect(logger.info).toHaveBeenCalledWith(
+      "[turnstile] rejected (token sent): no error code"
+    )
+  })
+
+  it("logs nothing when the request passes or the check is off", async () => {
+    stubGlobalFetch({ success: true })
+    await requireTurnstile(
+      makeReq({ "x-turnstile-token": "good-token" }),
+      makeRes() as unknown as MedusaResponse,
+      jest.fn()
+    )
+
+    delete process.env.TURNSTILE_SECRET_KEY
+    await requireTurnstile(
+      makeReq(),
+      makeRes() as unknown as MedusaResponse,
+      jest.fn()
+    )
+
+    expect(logger.info).not.toHaveBeenCalled()
+    expect(logger.warn).not.toHaveBeenCalled()
   })
 })

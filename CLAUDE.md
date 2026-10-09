@@ -152,6 +152,7 @@ Salespeople are assigned to customers at a per-client rate and earn commission o
 
 - No `TURNSTILE_SECRET_KEY` → the check is off (local dev, tests, a half-finished deploy).
 - Cloudflare unreachable, slow (10 s) or reporting a bad secret → the request goes through and a `[turnstile]` warning is logged. A visitor cannot cause that.
+- A refusal is logged at info level as `[turnstile] rejected (token sent|no token): <codes>` (never the token). Every visitor is refused when the widget or the keys are wrong, and this line is where it shows.
 - Tokens are single-use. The storefront's account-form server actions verify their own tokens, so no token is verified twice. The `/auth/*` routes are not behind this check.
 - Tests: `yarn test:unit src/utils/__tests__/turnstile.unit.spec.ts`.
 - Cloudflare's test keys let you exercise the flow locally: secret `1x0000000000000000000000000000000AA` always passes, `2x0000000000000000000000000000000AA` always fails (storefront site key `1x00000000000000000000AA`).
