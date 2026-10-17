@@ -8,8 +8,10 @@
 /node_modules
 yarn-error.log
 /graphify-out
-
+.codegraph
 .idea
+.cursor
+.superpowers
 
 coverage
 
