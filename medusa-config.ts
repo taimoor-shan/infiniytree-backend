@@ -135,6 +135,8 @@ module.exports = defineConfig({
           (process.env.STOREFRONT_PUBLIC_URL
             ? `${process.env.STOREFRONT_PUBLIC_URL}/sales-portal`
             : undefined),
+        // The shop's public address: a rep's client link is <address>/?ref=CODE
+        storefront_url: process.env.STOREFRONT_PUBLIC_URL,
         // Euro-forint rates come from the ECB; set SALES_COMMISSION_FX_FETCH=false to stop fetching
         fx_auto_fetch: process.env.SALES_COMMISSION_FX_FETCH !== "false",
         // The day of the month the owner usually pays, shown to reps as the next run (1 to 28)
