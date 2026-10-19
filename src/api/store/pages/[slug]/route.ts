@@ -67,8 +67,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   // 3. Try: another variant of the same language ("de-DE" → "de-AT"), so a
   //    page written once in German shows in every German-speaking market
-  //    instead of falling back to English.
-  if (lang !== "en") {
+  //    instead of falling back to English. Only a plain language code is
+  //    used, so a `%` or `_` in the query cannot widen the pattern.
+  if (lang !== "en" && /^[a-z]{2,3}$/i.test(lang)) {
     const { data: variantPages } = await query.graph({
       entity: "page",
       fields: baseFields,
