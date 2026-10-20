@@ -65,7 +65,27 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     }
   }
 
-  // 3. Fallback: English
+  // 3. Try: another variant of the same language ("de-DE" → "de-AT"), so a
+  //    page written once in German shows in every German-speaking market
+  //    instead of falling back to English. Only a plain language code is
+  //    used, so a `%` or `_` in the query cannot widen the pattern.
+  if (lang !== "en" && /^[a-z]{2,3}$/i.test(lang)) {
+    const { data: variantPages } = await query.graph({
+      entity: "page",
+      fields: baseFields,
+      filters: {
+        ...baseFilters,
+        locale: { $like: `${lang}-%` },
+      },
+      pagination: { take: 1, skip: 0, order: { locale: "ASC" } },
+    })
+
+    if (variantPages?.length) {
+      return res.json({ page: variantPages[0] })
+    }
+  }
+
+  // 4. Fallback: English
   if (requestedLocale !== "en") {
     const { data: enPages } = await query.graph({
       entity: "page",
@@ -82,7 +102,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     }
   }
 
-  // 4. Last resort: any page with this slug (regardless of locale)
+  // 5. Last resort: any page with this slug (regardless of locale)
   const { data: anyPages } = await query.graph({
     entity: "page",
     fields: baseFields,
