@@ -1,6 +1,6 @@
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { IOrderModuleService, IFulfillmentModuleService } from "@medusajs/framework/types"
-import { buildOrderAccessUrl } from "../utils/order-url"
+import { buildOrderAccessUrl, orderHasAccount } from "../utils/order-url"
 
 interface ShipmentCreatedEventData {
   id: string
@@ -53,7 +53,9 @@ export default async function shipmentCreatedHandler({
       return
     }
 
-    const order = await orderModule.retrieveOrder(linkEntry.order_id)
+    const order = await orderModule.retrieveOrder(linkEntry.order_id, {
+      relations: ["shipping_address"],
+    })
 
     logger.info(`[shipping-update] Order retrieved: id=${order.id}, email=${order.email || "MISSING"}, display_id=${(order as any).display_id || "MISSING"}`)
 
@@ -76,6 +78,9 @@ export default async function shipmentCreatedHandler({
         id: order.id,
         display_id: (order as any).display_id,
         metadata: orderMeta,
+        locale: (order as any).locale,
+        shipping_address: order.shipping_address,
+        has_account: await orderHasAccount(container, order),
       },
       storefrontUrl
     )

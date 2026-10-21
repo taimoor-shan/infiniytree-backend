@@ -1,6 +1,6 @@
 import { Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
-import { generateAccessToken, buildOrderAccessUrl } from "../utils/order-url"
+import { generateAccessToken, buildOrderAccessUrl, orderHasAccount } from "../utils/order-url"
 import { getBankDetails } from "../utils/bank-details"
 
 export default async function orderPlacedHandler({
@@ -84,6 +84,9 @@ export default async function orderPlacedHandler({
         id: order.id,
         display_id: (order as any).display_id,
         metadata: { ...existingMetadata, order_access_token: rawToken },
+        locale: (order as any).locale,
+        shipping_address: order.shipping_address,
+        has_account: await orderHasAccount(container, order),
       },
       storefrontUrl
     )

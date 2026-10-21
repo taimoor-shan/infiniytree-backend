@@ -1,6 +1,6 @@
 import { Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
-import { generateAccessToken, buildOrderAccessUrl } from "../utils/order-url"
+import { generateAccessToken, buildOrderAccessUrl, orderHasAccount } from "../utils/order-url"
 
 interface FulfillmentCreatedEventData {
   order_id: string
@@ -26,7 +26,7 @@ export default async function fulfillmentCreatedHandler({
 
   try {
     const order = await orderModule.retrieveOrder(event.data.order_id, {
-      relations: ["items"],
+      relations: ["items", "shipping_address"],
     })
 
     if (!order.email) {
@@ -56,6 +56,9 @@ export default async function fulfillmentCreatedHandler({
         id: order.id,
         display_id: (order as any).display_id,
         metadata: orderMeta,
+        locale: (order as any).locale,
+        shipping_address: order.shipping_address,
+        has_account: await orderHasAccount(container, order),
       },
       storefrontUrl
     )
