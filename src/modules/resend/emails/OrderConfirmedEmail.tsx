@@ -107,6 +107,9 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
   const fmt = (amount?: number) =>
     amount != null ? formatPrice(amount, currency_code, resolvedLocale) : "—"
 
+  // The address in the inspection notice is a link, so its sentence is split where {email} sits
+  const [reportBefore, reportAfter] = t("email.orderConfirmed.inspection.report").split("{email}")
+
   return (
     <EmailLayout
       preview={t("email.orderConfirmed.preview", { orderNumber })}
@@ -515,6 +518,47 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
         <p style={{ fontSize: "14px", color: "#555", margin: "0 0 24px", lineHeight: "1.6" }}>
           {t("email.orderConfirmed.processingNote")}
         </p>
+      )}
+
+      {/* Inspection notice — directly below the CTA */}
+      {order_url && (
+        <table
+          cellPadding="0"
+          cellSpacing="0"
+          border={0}
+          width="100%"
+          style={{ marginBottom: "24px" }}
+        >
+          <tbody>
+            <tr>
+              <td
+                style={{
+                  backgroundColor: "#f7f7f5",
+                  border: "1px solid #e8e8e4",
+                  borderRadius: "4px",
+                  padding: "16px 20px",
+                }}
+              >
+                <p style={{ fontSize: "12px", fontWeight: 600, color: "#2d4a3e", margin: "0 0 8px", letterSpacing: "0.5px" }}>
+                  {t("email.orderConfirmed.inspection.heading")}
+                </p>
+                <p style={{ fontSize: "13px", color: "#555", margin: "0 0 8px", lineHeight: "1.6" }}>
+                  {t("email.orderConfirmed.inspection.inspect")}
+                </p>
+                <p style={{ fontSize: "13px", color: "#555", margin: "0 0 8px", lineHeight: "1.6" }}>
+                  {reportBefore}
+                  <a href="mailto:info@infinytree.com" style={{ color: "#2d4a3e" }}>
+                    info@infinytree.com
+                  </a>
+                  {reportAfter}
+                </p>
+                <p style={{ fontSize: "13px", color: "#555", margin: 0, lineHeight: "1.6" }}>
+                  {t("email.orderConfirmed.inspection.claims")}
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       )}
 
       <p style={{ fontSize: "13px", color: "#888", margin: 0, lineHeight: "1.5" }}>

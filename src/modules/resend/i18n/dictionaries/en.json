@@ -44,6 +44,10 @@
   "email.orderConfirmed.bankTransfer.beneficiary": "Beneficiary",
   "email.orderConfirmed.bankTransfer.reference": "Reference",
   "email.orderConfirmed.bankTransfer.note": "Please include the order number as payment reference. Your order will be processed after payment is received.",
+  "email.orderConfirmed.inspection.heading": "! IMPORTANT – INSPECTION UPON DELIVERY",
+  "email.orderConfirmed.inspection.inspect": "Business customers are required to inspect the shipment upon delivery and unpack and examine the products.",
+  "email.orderConfirmed.inspection.report": "Any visible damage must be reported to the carrier immediately and documented together with the driver on the delivery note or in a damage report. Photographic evidence should also be taken and sent to {email} without delay.",
+  "email.orderConfirmed.inspection.claims": "Failure to properly inspect, report or document transport damage may affect compensation claims under our Terms & Conditions and applicable law.",
 
   "email.payment.paypal": "PayPal",
   "email.payment.applepay": "Apple Pay",

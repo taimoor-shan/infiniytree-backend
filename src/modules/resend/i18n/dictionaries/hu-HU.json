@@ -44,6 +44,10 @@
   "email.orderConfirmed.bankTransfer.beneficiary": "Kedvezményezett",
   "email.orderConfirmed.bankTransfer.reference": "Közlemény",
   "email.orderConfirmed.bankTransfer.note": "Kérjük, tüntesse fel a rendelésszámot a közleményben. Rendelését a fizetés beérkezése után dolgozzuk fel.",
+  "email.orderConfirmed.inspection.heading": "! FONTOS – ÁTVÉTELKORI ELLENŐRZÉS",
+  "email.orderConfirmed.inspection.inspect": "Az üzleti ügyfelek kötelesek a szállítmányt átvételkor ellenőrizni, a termékeket pedig kicsomagolni és megvizsgálni.",
+  "email.orderConfirmed.inspection.report": "Minden látható sérülést azonnal be kell jelenteni a fuvarozónak, és a sofőrrel együtt rögzíteni kell a szállítólevélen vagy kárjegyzőkönyvben. Emellett célszerű fényképes bizonyítékot készíteni, és haladéktalanul elküldeni az {email} címre.",
+  "email.orderConfirmed.inspection.claims": "A szállítás közben keletkezett sérülések szabályszerű ellenőrzésének, bejelentésének vagy dokumentálásának elmulasztása hátrányosan érintheti a kártérítési igényeket az Általános Szerződési Feltételeink és a hatályos jogszabályok szerint.",
 
   "email.payment.paypal": "PayPal",
   "email.payment.applepay": "Apple Pay",

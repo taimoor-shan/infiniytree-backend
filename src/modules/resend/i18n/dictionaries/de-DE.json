@@ -44,6 +44,10 @@
   "email.orderConfirmed.bankTransfer.beneficiary": "Begünstigter",
   "email.orderConfirmed.bankTransfer.reference": "Verwendungszweck",
   "email.orderConfirmed.bankTransfer.note": "Bitte geben Sie die Bestellnummer als Verwendungszweck an. Ihre Bestellung wird nach Zahlungseingang bearbeitet.",
+  "email.orderConfirmed.inspection.heading": "! WICHTIG – PRÜFUNG BEI LIEFERUNG",
+  "email.orderConfirmed.inspection.inspect": "Geschäftskunden sind verpflichtet, die Sendung bei Lieferung zu prüfen sowie die Produkte auszupacken und zu untersuchen.",
+  "email.orderConfirmed.inspection.report": "Sichtbare Schäden sind dem Transportunternehmen sofort zu melden und gemeinsam mit dem Fahrer auf dem Lieferschein oder in einem Schadensprotokoll zu dokumentieren. Zusätzlich sollten Fotos als Nachweis angefertigt und unverzüglich an {email} gesendet werden.",
+  "email.orderConfirmed.inspection.claims": "Werden Transportschäden nicht ordnungsgemäß geprüft, gemeldet oder dokumentiert, kann dies Schadenersatzansprüche nach unseren Allgemeinen Geschäftsbedingungen und nach geltendem Recht beeinträchtigen.",
 
   "email.payment.paypal": "PayPal",
   "email.payment.applepay": "Apple Pay",
