@@ -76,6 +76,7 @@ export function OrderShippedEmail(props: OrderShippedEmailProps) {
             <td align="center">
               <a
                 href={tracking_url || order_url}
+                className="em-px"
                 style={{
                   display: "inline-block",
                   padding: "14px 36px",

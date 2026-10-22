@@ -45,6 +45,7 @@ export function OrderTransferEmail(props: OrderTransferEmailProps) {
           <td style={{ paddingRight: "10px", width: "50%" }}>
             <a
               href={acceptLink}
+              className="em-px"
               style={{
                 display: "block",
                 padding: "14px 24px",
@@ -63,6 +64,7 @@ export function OrderTransferEmail(props: OrderTransferEmailProps) {
           <td style={{ paddingLeft: "10px", width: "50%" }}>
             <a
               href={declineLink}
+              className="em-px"
               style={{
                 display: "block",
                 padding: "14px 24px",

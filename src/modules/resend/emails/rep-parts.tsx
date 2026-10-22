@@ -37,6 +37,7 @@ export function CtaButton({ href, children }: { href: string; children: React.Re
         <td align="center">
           <a
             href={href}
+            className="em-px"
             style={{
               display: "inline-block",
               padding: "14px 36px",
