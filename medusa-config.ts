@@ -102,6 +102,9 @@ module.exports = defineConfig({
       resolve: "./src/modules/page",
     },
     {
+      resolve: "./src/modules/blog",
+    },
+    {
       resolve: "@medusajs/medusa/payment",
       options: {
         providers: [

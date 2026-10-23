@@ -134,6 +134,22 @@
           "enumItems": [],
           "mappedType": "text"
         },
+        "template": {
+          "name": "template",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "unique": false,
+          "length": null,
+          "precision": null,
+          "scale": null,
+          "default": "'default'",
+          "comment": null,
+          "enumItems": [],
+          "mappedType": "text"
+        },
         "seo_title": {
           "name": "seo_title",
           "type": "text",

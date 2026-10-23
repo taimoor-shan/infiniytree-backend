@@ -24,6 +24,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       "excerpt",
       "featured_image",
       "hero_video_url",
+      "template",
       "seo_title",
       "seo_description",
       "status",

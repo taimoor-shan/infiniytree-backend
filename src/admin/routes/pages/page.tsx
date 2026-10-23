@@ -20,7 +20,10 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import ImageUpload from "../../components/image-upload"
 import RichTextEditor from "../../components/rich-text-editor"
+import TranslationsBox from "../../components/translations/translations-box"
 import { sdk } from "../../lib/client"
+import { PAGE_TEMPLATES, localeName } from "../../lib/options"
+import { slugify } from "../../lib/slugify"
 
 type Page = {
   id: string
@@ -31,10 +34,13 @@ type Page = {
   excerpt?: string | null
   featured_image?: string | null
   hero_video_url?: string | null
+  template?: string
   seo_title?: string | null
   seo_description?: string | null
   status: "draft" | "published"
   is_public: boolean
+  /** Languages the page has been translated into (list responses only). */
+  translated_locales?: string[]
   created_at: string
   updated_at: string
 }
@@ -60,7 +66,14 @@ const columns = [
     header: "Slug",
   }),
   columnHelper.accessor("locale", {
-    header: "Locale",
+    header: "Written in",
+    cell: ({ getValue }) => localeName(getValue() ?? "en"),
+  }),
+  columnHelper.display({
+    id: "translations",
+    header: "Translated",
+    cell: ({ row }) =>
+      row.original.translated_locales?.map(localeName).join(", ") || "—",
   }),
   columnHelper.accessor("status", {
     header: "Status",
@@ -83,6 +96,7 @@ type PageFormState = {
   excerpt: string
   featured_image: string
   hero_video_url: string
+  template: string
   seo_title: string
   seo_description: string
   status: "draft" | "published"
@@ -97,6 +111,7 @@ const initialFormState: PageFormState = {
   excerpt: "",
   featured_image: "",
   hero_video_url: "",
+  template: "default",
   seo_title: "",
   seo_description: "",
   status: "draft",
@@ -151,6 +166,7 @@ const PagesRoute = () => {
       excerpt: page.excerpt || "",
       featured_image: page.featured_image || "",
       hero_video_url: page.hero_video_url || "",
+      template: page.template || "default",
       seo_title: page.seo_title || "",
       seo_description: page.seo_description || "",
       status: page.status || "draft",
@@ -296,7 +312,11 @@ const PagesRoute = () => {
               </div>
             </FocusModal.Header>
             <FocusModal.Body className="flex-1 overflow-auto p-6">
-              <PageForm formState={formState} setFormState={setFormState} />
+              <PageForm
+                formState={formState}
+                setFormState={setFormState}
+                isNew
+              />
             </FocusModal.Body>
           </div>
         </FocusModal.Content>
@@ -313,7 +333,14 @@ const PagesRoute = () => {
                 Loading...
               </Text>
             ) : (
-              <PageForm formState={formState} setFormState={setFormState} />
+              <div className="flex flex-col gap-y-8">
+                <PageForm formState={formState} setFormState={setFormState} />
+                <TranslationsBox
+                  reference="page"
+                  recordId={editingId}
+                  listKey="pages"
+                />
+              </div>
             )}
           </Drawer.Body>
           <Drawer.Footer>
@@ -342,10 +369,17 @@ const PagesRoute = () => {
 const PageForm = ({
   formState,
   setFormState,
+  isNew = false,
 }: {
   formState: PageFormState
   setFormState: (state: PageFormState) => void
+  /** A page being created: its slug follows the title until it is edited. */
+  isNew?: boolean
 }) => {
+  const template = PAGE_TEMPLATES.find(
+    (option) => option.value === formState.template
+  )
+
   return (
     <div className="flex flex-col gap-y-6">
       <div className="flex flex-col gap-y-2">
@@ -354,9 +388,19 @@ const PageForm = ({
         </Text>
         <Input
           value={formState.title}
-          onChange={(e) =>
-            setFormState({ ...formState, title: e.target.value })
-          }
+          onChange={(e) => {
+            const title = e.target.value
+            const slugFollowsTitle =
+              isNew &&
+              (formState.slug === "" ||
+                formState.slug === slugify(formState.title))
+
+            setFormState({
+              ...formState,
+              title,
+              ...(slugFollowsTitle ? { slug: slugify(title) } : {}),
+            })
+          }}
         />
       </div>
       <div className="flex flex-col gap-y-2">
@@ -369,10 +413,15 @@ const PageForm = ({
             setFormState({ ...formState, slug: e.target.value })
           }
         />
+        <Text size="small" leading="compact" className="text-ui-fg-subtle">
+          The page is published at /{formState.slug || "your-slug"}. Use a slash
+          for a nested address, for example guides/plant-care. Pages built into
+          the storefront (about, contact, the policies) keep their own address.
+        </Text>
       </div>
       <div className="flex flex-col gap-y-2">
         <Text size="small" leading="compact" weight="plus">
-          Locale
+          Language of the text
         </Text>
         <Select
           value={formState.locale}
@@ -390,6 +439,38 @@ const PageForm = ({
             <Select.Item value="hu-HU">Hungarian (hu-HU)</Select.Item>
           </Select.Content>
         </Select>
+        <Text size="small" leading="compact" className="text-ui-fg-subtle">
+          The language you write this page in. Add the other languages with
+          Translations (shown when you edit a saved page): there is no need for
+          a second copy of the page with the same slug.
+        </Text>
+      </div>
+      <div className="flex flex-col gap-y-2">
+        <Text size="small" leading="compact" weight="plus">
+          Template
+        </Text>
+        <Select
+          value={formState.template}
+          onValueChange={(value) =>
+            setFormState({ ...formState, template: value })
+          }
+        >
+          <Select.Trigger>
+            <Select.Value />
+          </Select.Trigger>
+          <Select.Content>
+            {PAGE_TEMPLATES.map((option) => (
+              <Select.Item key={option.value} value={option.value}>
+                {option.label}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select>
+        {template?.description && (
+          <Text size="small" leading="compact" className="text-ui-fg-subtle">
+            {template.description}
+          </Text>
+        )}
       </div>
       <div className="flex flex-col gap-y-2">
         <Text size="small" leading="compact" weight="plus">

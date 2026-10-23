@@ -18,3 +18,15 @@ process.env.SENDGRID_API_KEY = ""
 process.env.SENDGRID_FROM = ""
 process.env.MAKE_ORDER_WEBHOOK_URL = ""
 process.env.MAKE_WEBHOOK_SECRET = ""
+
+// Auto-translation would call the paid Gemini service with the key from .env.
+// The "echo" provider only prefixes each text with its target locale: no key,
+// no network, and a test can still tell what was translated into what.
+process.env.TRANSLATION_PROVIDER = "echo"
+process.env.AUTO_TRANSLATE_LOCALES = "de,hu"
+process.env.GEMINI_API_KEY = ""
+
+// Admin routes that change CMS content tell the storefront to drop its cache.
+// With no secret they skip that, instead of calling a storefront that may be
+// running on the developer's machine.
+process.env.REVALIDATION_SECRET = ""

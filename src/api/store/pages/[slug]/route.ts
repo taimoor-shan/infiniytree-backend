@@ -1,118 +1,66 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { MedusaError } from "@medusajs/framework/utils"
+import { resolveLocalizedRecord } from "../../../../utils/translations/apply"
+import { requestLocale } from "../../../../utils/translations/request-locale"
 
+const PAGE_FIELDS = [
+  "id",
+  "title",
+  "slug",
+  "locale",
+  "content",
+  "excerpt",
+  "featured_image",
+  "hero_video_url",
+  "template",
+  "seo_title",
+  "seo_description",
+  "status",
+  "is_public",
+  "metadata",
+]
+
+/**
+ * `GET /store/pages/:slug?locale=de-DE`
+ *
+ * A published page in the visitor's language:
+ *
+ *  - A page is written once and translated (Translations box in the admin,
+ *    stored by Medusa's Translation module like products' translations): the
+ *    original comes back with the visitor's translation laid over it, and any
+ *    field with no translation stays in the original language.
+ *  - Pages created before that are one record per language with the same slug.
+ *    A record in the visitor's own language (`de-AT` serves a `de-DE` visitor)
+ *    is returned as it is, so existing content does not change until an editor
+ *    deletes the duplicate in favour of a translation.
+ *  - With neither, English, then whatever language the page has.
+ *
+ * (`src/utils/translations/apply.ts`.)
+ *
+ * No such page: 200 with `page: null`, not 404. The storefront caches this
+ * response in Next.js's data cache, which only ever stores 200s, so after an
+ * editor unpublishes or deletes a page a 404 would never replace the cached
+ * copy and the page would stay online. `retrievePageBySlug` already returns
+ * null for a missing page, so the storefront needs no change.
+ */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve("query")
   const { slug } = req.params
 
-  // Read locale from the request URL directly (Medusa v2 query parsing is unreliable
-  // for dynamic routes without a validated query schema, even with middleware)
-  const urlLocale = new URL(req.url, "http://localhost").searchParams.get("locale")
-  const requestedLocale = urlLocale || "en"
+  // `req.locale`, not `req.query.locale`: Medusa's `applyLocale` middleware
+  // moves it there and deletes it from the query (see `request-locale.ts`).
+  const locale = requestLocale(req) || "en"
 
-  const baseFields = [
-    "id",
-    "title",
-    "slug",
-    "locale",
-    "content",
-    "excerpt",
-    "featured_image",
-    "hero_video_url",
-    "seo_title",
-    "seo_description",
-    "status",
-    "is_public",
-    "metadata",
-  ]
-
-  const baseFilters = {
-    slug,
-    status: "published",
-    is_public: true,
-  }
-
-  // 1. Try: exact locale match
-  const { data: exactPages } = await query.graph({
+  const { data: records } = await query.graph({
     entity: "page",
-    fields: baseFields,
+    fields: PAGE_FIELDS,
     filters: {
-      ...baseFilters,
-      locale: requestedLocale,
+      slug,
+      status: "published",
+      is_public: true,
     },
-    pagination: { take: 1, skip: 0 },
   })
 
-  if (exactPages?.length) {
-    return res.json({ page: exactPages[0] })
-  }
+  const page = await resolveLocalizedRecord(req.scope, records, locale)
 
-  // 2. Try: language-only fallback (e.g. "de-AT" → "de")
-  const lang = requestedLocale.split("-")[0]
-  if (lang !== requestedLocale) {
-    const { data: langPages } = await query.graph({
-      entity: "page",
-      fields: baseFields,
-      filters: {
-        ...baseFilters,
-        locale: lang,
-      },
-      pagination: { take: 1, skip: 0 },
-    })
-
-    if (langPages?.length) {
-      return res.json({ page: langPages[0] })
-    }
-  }
-
-  // 3. Try: another variant of the same language ("de-DE" → "de-AT"), so a
-  //    page written once in German shows in every German-speaking market
-  //    instead of falling back to English. Only a plain language code is
-  //    used, so a `%` or `_` in the query cannot widen the pattern.
-  if (lang !== "en" && /^[a-z]{2,3}$/i.test(lang)) {
-    const { data: variantPages } = await query.graph({
-      entity: "page",
-      fields: baseFields,
-      filters: {
-        ...baseFilters,
-        locale: { $like: `${lang}-%` },
-      },
-      pagination: { take: 1, skip: 0, order: { locale: "ASC" } },
-    })
-
-    if (variantPages?.length) {
-      return res.json({ page: variantPages[0] })
-    }
-  }
-
-  // 4. Fallback: English
-  if (requestedLocale !== "en") {
-    const { data: enPages } = await query.graph({
-      entity: "page",
-      fields: baseFields,
-      filters: {
-        ...baseFilters,
-        locale: "en",
-      },
-      pagination: { take: 1, skip: 0 },
-    })
-
-    if (enPages?.length) {
-      return res.json({ page: enPages[0] })
-    }
-  }
-
-  // 5. Last resort: any page with this slug (regardless of locale)
-  const { data: anyPages } = await query.graph({
-    entity: "page",
-    fields: baseFields,
-    filters: baseFilters,
-    pagination: { take: 1, skip: 0 },
-  })
-
-  if (!anyPages?.length) {
-    throw new MedusaError(MedusaError.Types.NOT_FOUND, "Page not found")
-  }
-
-  return res.json({ page: anyPages[0] })
+  return res.json({ page: page ?? null })
 }

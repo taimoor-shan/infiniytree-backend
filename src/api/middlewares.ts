@@ -1,6 +1,9 @@
 import { defineMiddlewares } from "@medusajs/framework/http"
 import { pageAdminMiddlewares } from "./admin/pages/middlewares"
 import { pageStoreMiddlewares } from "./store/pages/middlewares"
+import { blogAdminMiddlewares } from "./admin/blog/middlewares"
+import { blogStoreMiddlewares } from "./store/blog/middlewares"
+import { contentTranslationsAdminMiddlewares } from "./admin/content-translations/middlewares"
 import { contactStoreMiddlewares } from "./store/contact/middlewares"
 import { notifyMeStoreMiddlewares } from "./store/notify-me/middlewares"
 import { guestOrderMiddlewares } from "./store/orders/guest/[displayId]/middlewares"
@@ -43,6 +46,9 @@ export default defineMiddlewares({
   routes: [
     ...pageAdminMiddlewares,
     ...pageStoreMiddlewares,
+    ...blogAdminMiddlewares,
+    ...blogStoreMiddlewares,
+    ...contentTranslationsAdminMiddlewares,
     ...contactStoreMiddlewares,
     ...notifyMeStoreMiddlewares,
     ...guestOrderMiddlewares,
