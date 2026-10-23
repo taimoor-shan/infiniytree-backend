@@ -3,6 +3,10 @@ import { PAGE_MODULE } from "../../../modules/page"
 import PageModuleService from "../../../modules/page/service"
 import createPageWorkflow from "../../../workflows/create-page"
 import { revalidateStorefrontCache } from "../../../utils/revalidate-cache"
+import {
+  loadTranslationRows,
+  translatedLocales,
+} from "../../../utils/translations/apply"
 import { CreatePageSchema } from "./middlewares"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -25,8 +29,17 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     order: { created_at: "DESC" },
   })
 
+  // Which languages each page has been translated into, for the list.
+  const translations = await loadTranslationRows(
+    req.scope,
+    pages.map((page) => page.id)
+  )
+
   return res.json({
-    pages,
+    pages: pages.map((page) => ({
+      ...page,
+      translated_locales: translatedLocales(translations.get(page.id)),
+    })),
     count,
     limit,
     offset,

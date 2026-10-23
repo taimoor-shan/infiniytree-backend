@@ -14,6 +14,7 @@ import type { TranslationProvider } from "./provider"
 import { GoogleScraperProvider } from "./google-scraper"
 import { LibreTranslateProvider } from "./libretranslate"
 import { GeminiProvider } from "./gemini"
+import { EchoProvider } from "./echo"
 
 // ── Factory (internal) ──────────────────────────────────────────
 
@@ -25,6 +26,9 @@ export function createProvider(name: string): TranslationProvider {
       return new LibreTranslateProvider()
     case "google-scraper":
       return new GoogleScraperProvider()
+    case "echo":
+      // No translation, no network: for tests and dry runs.
+      return new EchoProvider()
     default:
       throw new Error(
         `Unknown translation provider: "${name}". ` +

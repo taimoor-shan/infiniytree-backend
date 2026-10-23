@@ -10,6 +10,7 @@ export type CreatePageStepInput = {
   excerpt?: string | null
   featured_image?: string | null
   hero_video_url?: string | null
+  template?: string
   seo_title?: string | null
   seo_description?: string | null
   status?: "draft" | "published"
