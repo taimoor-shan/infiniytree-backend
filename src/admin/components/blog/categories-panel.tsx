@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import {
   Button,
-  Drawer,
   FocusModal,
   Input,
   Select,
@@ -17,7 +16,7 @@ import { LOCALES, localeName } from "../../lib/options"
 import { slugify } from "../../lib/slugify"
 import TranslationsBox from "../translations/translations-box"
 import { TRANSLATION_QUERY_KEY } from "../translations/types"
-import { Field } from "./fields"
+import { Field } from "../fields"
 import { BLOG_QUERY_KEYS, BlogCategory, CategoriesResponse } from "./types"
 
 type CategoryFormState = {
@@ -47,7 +46,7 @@ type CategoryEditorProps = {
   onClose: () => void
 }
 
-/** New categories open full screen, existing ones in a drawer. */
+/** Categories open full screen, new or saved, like posts and pages. */
 const CategoryEditor = ({
   mode,
   category,
@@ -231,24 +230,40 @@ const CategoryEditor = ({
     </div>
   )
 
-  if (mode === "create") {
-    return (
-      <FocusModal
-        open={open}
-        onOpenChange={(next) => {
-          if (!next) {
-            onClose()
-          }
-        }}
-      >
-        <FocusModal.Content>
-          <div className="flex h-full flex-col overflow-hidden">
-            <FocusModal.Title className="sr-only">New category</FocusModal.Title>
-            <FocusModal.Description className="sr-only">
-              Add a category for blog posts.
-            </FocusModal.Description>
-            <FocusModal.Header>
-              <div className="flex items-center justify-end gap-x-2">
+  return (
+    <FocusModal
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) {
+          onClose()
+        }
+      }}
+    >
+      <FocusModal.Content>
+        <div className="flex h-full flex-col overflow-hidden">
+          <FocusModal.Title className="sr-only">
+            {mode === "create" ? "New category" : "Edit category"}
+          </FocusModal.Title>
+          <FocusModal.Description className="sr-only">
+            {mode === "create"
+              ? "Add a category for blog posts."
+              : "Change this blog category."}
+          </FocusModal.Description>
+          <FocusModal.Header>
+            <div className="flex w-full items-center justify-between gap-x-2">
+              <div>
+                {mode === "edit" && (
+                  <Button
+                    size="small"
+                    variant="danger"
+                    onClick={onDelete}
+                    disabled={busy}
+                  >
+                    Delete
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center gap-x-2">
                 <FocusModal.Close asChild>
                   <Button size="small" variant="secondary">
                     Cancel
@@ -263,78 +278,21 @@ const CategoryEditor = ({
                   Save
                 </Button>
               </div>
-            </FocusModal.Header>
-            <FocusModal.Body className="flex-1 overflow-auto p-6">
-              <div className="mx-auto flex max-w-xl flex-col gap-y-8">
-                {fields}
-                <TranslationsBox
-                  reference="blog_category"
-                  recordId={null}
-                  listKey={BLOG_QUERY_KEYS.categories}
-                />
-              </div>
-            </FocusModal.Body>
-          </div>
-        </FocusModal.Content>
-      </FocusModal>
-    )
-  }
-
-  return (
-    <Drawer
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) {
-          onClose()
-        }
-      }}
-    >
-      <Drawer.Content>
-        <Drawer.Header>
-          <Drawer.Title>Edit category</Drawer.Title>
-          <Drawer.Description className="sr-only">
-            Change this blog category.
-          </Drawer.Description>
-        </Drawer.Header>
-        <Drawer.Body className="flex-1 overflow-auto p-6">
-          <div className="flex flex-col gap-y-8">
-            {fields}
-            <TranslationsBox
-              reference="blog_category"
-              recordId={category?.id ?? null}
-              listKey={BLOG_QUERY_KEYS.categories}
-            />
-          </div>
-        </Drawer.Body>
-        <Drawer.Footer>
-          <div className="flex w-full items-center justify-between">
-            <Button
-              size="small"
-              variant="danger"
-              onClick={onDelete}
-              disabled={busy}
-            >
-              Delete
-            </Button>
-            <div className="flex items-center gap-x-2">
-              <Drawer.Close asChild>
-                <Button size="small" variant="secondary">
-                  Cancel
-                </Button>
-              </Drawer.Close>
-              <Button
-                size="small"
-                onClick={submit}
-                isLoading={save.isPending}
-                disabled={!canSave || busy}
-              >
-                Save
-              </Button>
             </div>
-          </div>
-        </Drawer.Footer>
-      </Drawer.Content>
-    </Drawer>
+          </FocusModal.Header>
+          <FocusModal.Body className="flex-1 overflow-auto p-6">
+            <div className="mx-auto flex max-w-xl flex-col gap-y-8">
+              {fields}
+              <TranslationsBox
+                reference="blog_category"
+                recordId={mode === "edit" ? (category?.id ?? null) : null}
+                listKey={BLOG_QUERY_KEYS.categories}
+              />
+            </div>
+          </FocusModal.Body>
+        </div>
+      </FocusModal.Content>
+    </FocusModal>
   )
 }
 

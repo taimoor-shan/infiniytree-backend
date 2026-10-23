@@ -20,7 +20,7 @@ import ImageUpload from "../image-upload"
 import RichTextEditor from "../rich-text-editor"
 import TranslationsBox from "../translations/translations-box"
 import { TRANSLATION_QUERY_KEY } from "../translations/types"
-import { Box, Field } from "./fields"
+import { Box, Field } from "../fields"
 import {
   BLOG_QUERY_KEYS,
   BlogPost,
@@ -148,7 +148,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
 
   // gcTime 0: the form must start from what is stored now, never from a copy
   // left in the cache by an earlier visit.
-  const { data: detail, isLoading: isLoadingDetail } = useQuery({
+  const { data: detail, isError } = useQuery({
     queryKey: [BLOG_QUERY_KEYS.post, activeId],
     queryFn: () =>
       sdk.client.fetch<PostResponse>(`/admin/blog/posts/${activeId}`),
@@ -228,9 +228,12 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
     },
   })
 
+  // A saved post is editable once its own data is in the form. Until then the
+  // form holds whatever was there before, which must not be saved over it.
+  const ready = !isEdit || loadedId === activeId
   const busy = save.isPending || remove.isPending
   const handleValid = HANDLE_PATTERN.test(form.handle) && form.handle !== "category"
-  const canSave = form.title.trim().length > 0 && handleValid
+  const canSave = ready && form.title.trim().length > 0 && handleValid
 
   const scheduledFor = fromInputValue(form.published_at)
   const state = postState({ status: form.status, published_at: scheduledFor })
@@ -351,13 +354,13 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
             </div>
           </FocusModal.Header>
           <FocusModal.Body className="flex-1 overflow-auto p-6">
-            {isEdit && isLoadingDetail ? (
+            {!ready ? (
               <Text
                 size="small"
                 leading="compact"
                 className="text-ui-fg-subtle"
               >
-                Loading...
+                {isError ? "This post could not be loaded." : "Loading..."}
               </Text>
             ) : (
               <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
