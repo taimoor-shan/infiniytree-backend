@@ -1,6 +1,25 @@
 import React from "react"
 import { createTranslator } from "../i18n"
 
+/** The column's width. At or below it the column fills the screen: a phone. */
+const COLUMN_WIDTH = 600
+
+/**
+ * On a phone no side padding may be wider than 1rem. The layout is inline
+ * styles, which only an `!important` rule can beat, and mail clients don't
+ * reliably resolve rem, so 1rem is 16px. Clients that read a `<style>` (Gmail,
+ * Apple Mail, Outlook for iOS and Android, Yahoo) apply the rule; the few that
+ * drop it keep the roomier desktop padding.
+ *
+ * Every element whose inline padding is wider than 1rem on a side carries
+ * `em-px` (both sides) or `em-pr` (right only); mobile-padding.unit.spec.ts
+ * holds every template to that.
+ */
+const PHONE_CSS = `@media only screen and (max-width: ${COLUMN_WIDTH}px) {
+  .em-px { padding-left: 16px !important; padding-right: 16px !important; }
+  .em-pr { padding-right: 16px !important; }
+}`
+
 /**
  * Shared email layout for all Infinytree transactional emails.
  * Handles doctype, responsive wrapper, branding, and footer.
@@ -23,6 +42,8 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
           <meta name="description" content={preview} />
         )}
         <title>Infinytree</title>
+        {/* Raw, because React would HTML-escape the text of a <style> */}
+        <style dangerouslySetInnerHTML={{ __html: PHONE_CSS }} />
       </head>
       <body
         style={{
@@ -39,7 +60,7 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
           border={0}
           width="100%"
           style={{
-            maxWidth: "600px",
+            maxWidth: `${COLUMN_WIDTH}px`,
             margin: "0 auto",
             backgroundColor: "#ffffff",
           }}
@@ -56,6 +77,7 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
           {/* Header */}
           <tr>
             <td
+              className="em-px"
               style={{
                 padding: "32px 40px 16px",
                 textAlign: "center",
@@ -78,7 +100,7 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
 
           {/* Divider */}
           <tr>
-            <td style={{ padding: "0 40px" }}>
+            <td className="em-px" style={{ padding: "0 40px" }}>
               <table cellPadding="0" cellSpacing="0" border={0} width="100%">
                 <tr>
                   <td
@@ -94,14 +116,14 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
 
           {/* Content */}
           <tr>
-            <td style={{ padding: "24px 40px 32px" }}>
+            <td className="em-px" style={{ padding: "24px 40px 32px" }}>
               {children}
             </td>
           </tr>
 
           {/* Footer divider */}
           <tr>
-            <td style={{ padding: "0 40px" }}>
+            <td className="em-px" style={{ padding: "0 40px" }}>
               <table cellPadding="0" cellSpacing="0" border={0} width="100%">
                 <tr>
                   <td
@@ -118,6 +140,7 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
           {/* Footer */}
           <tr>
             <td
+              className="em-px"
               style={{
                 padding: "24px 40px 32px",
                 textAlign: "center",

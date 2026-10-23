@@ -81,6 +81,7 @@ export function ShippingUpdateEmail(props: ShippingUpdateEmailProps) {
             <td align="center">
               <a
                 href={order_url}
+                className="em-px"
                 style={{
                   display: "inline-block",
                   padding: "14px 36px",

@@ -42,6 +42,7 @@ export function EmailVerificationEmail(props: EmailVerificationEmailProps) {
         <tr>
           <td align="center">
             <p
+              className="em-px"
               style={{
                 display: "inline-block",
                 padding: "16px 40px",
@@ -67,6 +68,7 @@ export function EmailVerificationEmail(props: EmailVerificationEmailProps) {
           <td align="center">
             <a
               href={verifyLink}
+              className="em-px"
               style={{
                 display: "inline-block",
                 padding: "14px 36px",

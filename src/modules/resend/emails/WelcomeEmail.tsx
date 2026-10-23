@@ -27,12 +27,14 @@ export function WelcomeEmail(props: WelcomeEmailProps) {
         {t("email.welcome.body2")}
       </p>
 
-      {/* CTAs */}
+      {/* CTAs. border-box, so that width: 100% includes the padding: otherwise each button is
+          its cell plus its padding wide and the second one runs past the column */}
       <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
         <tr>
           <td style={{ paddingRight: "12px" }}>
             <a
               href={`${storefront_url}/collections`}
+              className="em-px"
               style={{
                 display: "inline-block",
                 padding: "12px 28px",
@@ -44,6 +46,7 @@ export function WelcomeEmail(props: WelcomeEmailProps) {
                 fontWeight: 500,
                 textAlign: "center",
                 width: "100%",
+                boxSizing: "border-box",
               }}
             >
               {t("email.welcome.browseCollections")}
@@ -52,6 +55,7 @@ export function WelcomeEmail(props: WelcomeEmailProps) {
           <td style={{ paddingLeft: "12px" }}>
             <a
               href={`${storefront_url}/account`}
+              className="em-px"
               style={{
                 display: "inline-block",
                 padding: "12px 28px",
@@ -64,6 +68,7 @@ export function WelcomeEmail(props: WelcomeEmailProps) {
                 border: "1px solid #2d4a3e",
                 textAlign: "center",
                 width: "100%",
+                boxSizing: "border-box",
               }}
             >
               {t("email.welcome.yourAccount")}

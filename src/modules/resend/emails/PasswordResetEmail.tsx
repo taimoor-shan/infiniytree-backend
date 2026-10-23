@@ -44,6 +44,7 @@ export function PasswordResetEmail(props: PasswordResetEmailProps) {
           <td align="center">
             <a
               href={resetLink}
+              className="em-px"
               style={{
                 display: "inline-block",
                 padding: "14px 36px",

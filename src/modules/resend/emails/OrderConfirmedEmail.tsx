@@ -126,7 +126,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
       {/* Order Meta */}
       <table cellPadding="0" cellSpacing="0" border={0} width="100%" style={{ marginBottom: "24px" }}>
         <tr>
-          <td style={{ paddingRight: "24px", verticalAlign: "top" }}>
+          <td className="em-pr" style={{ paddingRight: "24px", verticalAlign: "top" }}>
             <p style={{ fontSize: "12px", color: "#999", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
               {t("email.orderConfirmed.orderNumberLabel")}
             </p>
@@ -472,6 +472,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
             <td align="center">
               <a
                 href={invoice_url}
+                className="em-px"
                 style={{
                   display: "inline-block",
                   padding: "12px 32px",
@@ -498,6 +499,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
             <td align="center">
               <a
                 href={order_url}
+                className="em-px"
                 style={{
                   display: "inline-block",
                   padding: "12px 32px",
@@ -532,6 +534,7 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
           <tbody>
             <tr>
               <td
+                className="em-px"
                 style={{
                   backgroundColor: "#f7f7f5",
                   border: "1px solid #e8e8e4",
