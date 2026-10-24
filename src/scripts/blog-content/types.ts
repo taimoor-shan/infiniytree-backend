@@ -14,11 +14,11 @@ export type SeedPost = {
   /** Category handles, the first one is the breadcrumb. */
   categories: string[]
   /**
-   * The product whose thumbnail becomes the featured image, looked up by
-   * handle in the database the script runs against, so the image exists
-   * locally and live alike. Missing product → no image.
+   * The featured photo: a JPEG in `blog-content/images` (sources in its
+   * CREDITS.md). The script uploads it to the storage of the database it runs
+   * against, so the image exists locally and live alike.
    */
-  image_product: string
+  image: string
   /** Search terms the post is written for, kept in `metadata.keywords`. */
   keywords: { en: string[]; de: string[] }
   en: PostText

@@ -6,18 +6,18 @@ export const categories: SeedCategory[] = [
     en: {
       name: "Buying guides",
       description:
-        "How to choose an artificial tree that looks real: sizes, materials, planters and where each tree works best.",
-      seo_title: "Artificial Tree Buying Guides | Infinytree",
+        "How to choose artificial trees, orchids and plants that look real: sizes, materials, planters and the right piece for each room.",
+      seo_title: "Buying Guides for Realistic Artificial Plants | Infinytree",
       seo_description:
-        "How to choose a realistic artificial tree: sizes, real-wood trunks, foliage quality, planters and the right tree for each room.",
+        "How to choose artificial trees, orchids and plants that look real: real wood trunks, foliage quality, sizes, planters and the right spot.",
     },
     de: {
       name: "Kaufberatung",
       description:
-        "So wählen Sie einen Kunstbaum, der echt wirkt: Größen, Materialien, Pflanzgefäße und der richtige Baum für jeden Raum.",
-      seo_title: "Kaufberatung für Kunstbäume | Infinytree",
+        "So wählen Sie Kunstbäume, künstliche Orchideen und Kunstpflanzen, die echt wirken: Größen, Materialien, Pflanzgefäße und das passende Stück für jeden Raum.",
+      seo_title: "Kaufberatung für Kunstpflanzen & Kunstbäume | Infinytree",
       seo_description:
-        "So finden Sie einen Kunstbaum, der echt aussieht: Größen, Stämme aus Echtholz, Laubqualität, Pflanzgefäße und der passende Baum für jeden Raum.",
+        "So finden Sie Kunstpflanzen und Kunstbäume, die echt aussehen: Stamm aus Echtholz, Laub und Blüten, Größen, Pflanzgefäße und der richtige Standort.",
     },
   },
   {
@@ -25,18 +25,18 @@ export const categories: SeedCategory[] = [
     en: {
       name: "Care",
       description:
-        "Keeping artificial plants and trees clean and looking new for years, with no watering and no sunlight.",
-      seo_title: "Artificial Plant Care Guides | Infinytree",
+        "Keeping artificial plants, trees and flowers clean and looking new for years, with no watering and no sunlight.",
+      seo_title: "Care Guides for Artificial Plants & Flowers | Infinytree",
       seo_description:
-        "How to clean, dust and look after artificial plants and trees so they keep looking new for years.",
+        "How to clean, dust and look after artificial plants, trees and flowers so they keep looking new for years, without damaging leaves or blossom.",
     },
     de: {
       name: "Pflege",
       description:
-        "So bleiben Kunstpflanzen und Kunstbäume über Jahre sauber und wie neu, ganz ohne Gießen und ohne Sonnenlicht.",
-      seo_title: "Pflege von Kunstpflanzen | Infinytree",
+        "So bleiben Kunstpflanzen, Kunstbäume und Kunstblumen über Jahre sauber und wie neu, ganz ohne Gießen und ohne Sonnenlicht.",
+      seo_title: "Pflege von Kunstpflanzen & Kunstblumen | Infinytree",
       seo_description:
-        "So reinigen, entstauben und pflegen Sie Kunstpflanzen und Kunstbäume, damit sie über Jahre wie neu aussehen.",
+        "So reinigen, entstauben und pflegen Sie Kunstpflanzen, Kunstbäume und Kunstblumen, damit sie über Jahre wie neu aussehen.",
     },
   },
   {
@@ -44,18 +44,18 @@ export const categories: SeedCategory[] = [
     en: {
       name: "Hotels & offices",
       description:
-        "Greenery for hotels, restaurants, offices and showrooms: planning, safety and the honest comparison with living plants.",
-      seo_title: "Artificial Trees for Hotels & Offices | Infinytree",
+        "Greenery for hotels, restaurants, offices and showrooms: planning, fire safety and an honest comparison with living plants.",
+      seo_title: "Artificial Plants for Hotels & Offices | Infinytree",
       seo_description:
-        "Planning greenery for hotels, restaurants and offices: where artificial trees work, what to check, and how they compare with living plants.",
+        "Planning greenery for hotels, restaurants and offices: where artificial trees work, what to check before ordering, and how they compare with living plants.",
     },
     de: {
       name: "Hotel & Büro",
       description:
-        "Grün für Hotels, Restaurants, Büros und Showrooms: Planung, Sicherheit und der ehrliche Vergleich mit lebenden Pflanzen.",
-      seo_title: "Kunstbäume für Hotel, Gastronomie & Büro | Infinytree",
+        "Grün für Hotels, Restaurants, Büros und Showrooms: Planung, Brandschutz und der ehrliche Vergleich mit lebenden Pflanzen.",
+      seo_title: "Kunstpflanzen für Hotel, Gastronomie & Büro | Infinytree",
       seo_description:
-        "Grün für Hotels, Restaurants und Büros planen: wo Kunstbäume passen, worauf Sie achten sollten und wie sie im Vergleich zu echten Pflanzen abschneiden.",
+        "Kunstpflanzen für Hotel, Gastronomie und Büro: wo sie passen, worauf Sie bei Brandschutz und Pflege achten und was sie gegenüber echten Pflanzen leisten.",
     },
   },
 ]

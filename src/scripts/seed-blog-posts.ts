@@ -1,5 +1,8 @@
+import fs from "fs"
+import path from "path"
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { uploadFilesWorkflow } from "@medusajs/medusa/core-flows"
 import { BLOG_MODULE } from "../modules/blog"
 import BlogModuleService from "../modules/blog/service"
 import { revalidateStorefrontCache } from "../utils/revalidate-cache"
@@ -14,17 +17,24 @@ import { artificialTreesForHotels } from "./blog-content/artificial-trees-for-ho
 import { artificialVsRealPlantsOffice } from "./blog-content/artificial-vs-real-plants-office"
 import { categories } from "./blog-content/categories"
 import { howToCleanArtificialPlants } from "./blog-content/how-to-clean-artificial-plants"
+import { orchidsThatLookReal } from "./blog-content/orchids-that-look-real"
+import { plantsForDarkRooms } from "./blog-content/plants-for-dark-rooms"
 import type { SeedPost } from "./blog-content/types"
 
 /** Newest first: the first post gets the latest publishing date. */
 const POSTS: SeedPost[] = [
   artificialCherryBlossomTree,
+  orchidsThatLookReal,
   artificialTreesForHotels,
+  plantsForDarkRooms,
   howToCleanArtificialPlants,
   artificialVsRealPlantsOffice,
 ]
 
 const AUTHOR = "Infinytree"
+
+/** The posts' photos; postBuild.js copies them beside the built script. */
+const IMAGE_DIR = path.join(__dirname, "blog-content", "images")
 
 /** German as the storefront serves it: de-AT in Austria, de-DE elsewhere. */
 const GERMAN_LOCALES = ["de-AT", "de-DE"]
@@ -43,16 +53,29 @@ const GERMAN_LOCALES = ["de-AT", "de-DE"]
  * Safe to run twice: a post or category whose handle exists is left alone,
  * so edits made in the admin are kept, unless `update` is passed. The
  * German text is saved as the de-AT and the de-DE translation, so Austria and
- * Germany both get it. Featured images are the thumbnails of the products named in each post,
- * looked up here, so they exist on this database's storage.
+ * Germany both get it. Featured images are the photos in
+ * `blog-content/images`, uploaded to this database's storage: once per post,
+ * so a run with `update` keeps the copy a post already shows.
  */
 export default async function seedBlogPosts({ container, args }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
-  const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const blog: BlogModuleService = container.resolve(BLOG_MODULE)
 
   const update = args.includes("update")
   const status = args.includes("draft") ? "draft" : "published"
+
+  // Checked before anything is written: a missing photo is a packaging
+  // mistake (on the server: postBuild.js did not run), not a post without one.
+  const missing = POSTS.filter(
+    (post) => !fs.existsSync(path.join(IMAGE_DIR, post.image))
+  )
+  if (missing.length) {
+    throw new Error(
+      `[seed-blog] Missing photos in ${IMAGE_DIR}: ${missing
+        .map((post) => post.image)
+        .join(", ")}`
+    )
+  }
 
   const known = await knownLocaleCodes(container)
   const germanLocales = GERMAN_LOCALES.filter((code) => known.includes(code))
@@ -73,6 +96,39 @@ export default async function seedBlogPosts({ container, args }: ExecArgs) {
     await saveContentTranslationWorkflow(container).run({
       input: { reference, id, locales: germanLocales, values },
     })
+  }
+
+  // A post keeps the copy of its photo it already shows, so a run with
+  // `update` does not upload the same file again.
+  const featuredImage = async (
+    post: SeedPost,
+    existing?: {
+      featured_image?: string | null
+      metadata?: Record<string, unknown> | null
+    }
+  ) => {
+    if (
+      existing?.featured_image &&
+      existing.metadata?.featured_image_file === post.image
+    ) {
+      return existing.featured_image
+    }
+
+    const { result } = await uploadFilesWorkflow(container).run({
+      input: {
+        files: [
+          {
+            filename: post.image,
+            mimeType: "image/jpeg",
+            content: fs
+              .readFileSync(path.join(IMAGE_DIR, post.image))
+              .toString("base64"),
+            access: "public",
+          },
+        ],
+      },
+    })
+    return result[0].url
   }
 
   // Categories
@@ -119,17 +175,7 @@ export default async function seedBlogPosts({ container, args }: ExecArgs) {
       continue
     }
 
-    const { data: products } = await query.graph({
-      entity: "product",
-      fields: ["thumbnail"],
-      filters: { handle: post.image_product },
-    })
-    const image = products[0]?.thumbnail ?? null
-    if (!image) {
-      logger.warn(
-        `[seed-blog] No thumbnail for product "${post.image_product}": "${post.handle}" has no featured image`
-      )
-    }
+    const image = await featuredImage(post, existing)
 
     const data = {
       ...post.en,
@@ -144,7 +190,11 @@ export default async function seedBlogPosts({ container, args }: ExecArgs) {
         status === "published"
           ? new Date(now - index * 60 * 60 * 1000).toISOString()
           : null,
-      metadata: { keywords: post.keywords, source: "seed-blog-posts" },
+      metadata: {
+        keywords: post.keywords,
+        source: "seed-blog-posts",
+        featured_image_file: post.image,
+      },
       category_ids: post.categories
         .map((handle) => categoryIds.get(handle))
         .filter((id): id is string => !!id),

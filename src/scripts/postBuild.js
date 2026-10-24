@@ -52,6 +52,10 @@ copyDirIfExists('static')
 // compiled code lives at .medusa/server/src/.
 copyDirIfExists('src/utils/invoice/assets')
 
+// Blog import photos (git-tracked) — seed-blog-posts.js reads them from beside
+// itself, which in production is .medusa/server/src/scripts/.
+copyDirIfExists('src/scripts/blog-content/images')
+
 // Plugins vendored as tarballs: package.json points at ./vendor/<name>.tgz, and
 // the install below runs inside .medusa/server, where that path must resolve too.
 copyDirIfExists('vendor')
