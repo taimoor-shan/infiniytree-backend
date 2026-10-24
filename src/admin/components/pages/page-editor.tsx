@@ -15,11 +15,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
 import { LOCALES, PAGE_TEMPLATES } from "../../lib/options"
 import { slugify } from "../../lib/slugify"
+import { pageViewUrl } from "../../lib/storefront"
 import { Box, Field } from "../fields"
+import HiddenTitle from "../hidden-title"
 import ImageUpload from "../image-upload"
 import RichTextEditor from "../rich-text-editor"
 import TranslationsBox from "../translations/translations-box"
 import { TRANSLATION_QUERY_KEY } from "../translations/types"
+import { ViewOnStorefront, useStorefrontLinks } from "../view-on-storefront"
 import {
   PAGE_QUERY_KEYS,
   PAGE_STATE_BADGE,
@@ -84,6 +87,19 @@ const slugProblem = (slug: string): string | null => {
     : "Use letters, numbers, hyphens and underscores, with one slash between parts (guides/plant-care). No spaces, accents, or a slash at the start or end."
 }
 
+/** What is stored for the page, which is what visitors see: only a save changes it. */
+type SavedPage = Pick<Page, "status" | "is_public"> & {
+  slug: string
+  locale: string
+}
+
+const NOT_SAVED: SavedPage = {
+  status: "draft",
+  is_public: false,
+  slug: "",
+  locale: "en",
+}
+
 const fromPage = (page: Page): PageFormState => ({
   title: page.title || "",
   slug: page.slug || "",
@@ -129,11 +145,7 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
   // The slug as stored. An address that was saved before these checks existed
   // is accepted as it is until it is changed.
   const [savedSlug, setSavedSlug] = useState<string | null>(null)
-  // What visitors can see now, which only a save changes.
-  const [saved, setSaved] = useState<Pick<Page, "status" | "is_public">>({
-    status: "draft",
-    is_public: false,
-  })
+  const [saved, setSaved] = useState<SavedPage>(NOT_SAVED)
 
   const isEdit = !!activeId
 
@@ -142,7 +154,7 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
       setActiveId(pageId)
       setLoadedId(null)
       setSavedSlug(null)
-      setSaved({ status: "draft", is_public: false })
+      setSaved(NOT_SAVED)
 
       if (!pageId) {
         setForm(EMPTY_FORM)
@@ -160,6 +172,8 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
     gcTime: 0,
   })
 
+  const links = useStorefrontLinks(open)
+
   // Fill the form once per page. A later refetch must not overwrite what the
   // editor has typed since.
   useEffect(() => {
@@ -169,6 +183,8 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
       setSaved({
         status: detail.page.status || "draft",
         is_public: detail.page.is_public ?? false,
+        slug: detail.page.slug,
+        locale: detail.page.locale || "en",
       })
       setSlugTouched(true)
       setLoadedId(detail.page.id)
@@ -187,7 +203,12 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
       setLoadedId(page.id)
       setSavedSlug(page.slug)
       setSlugTouched(true)
-      setSaved({ status: page.status, is_public: page.is_public })
+      setSaved({
+        status: page.status,
+        is_public: page.is_public,
+        slug: page.slug,
+        locale: page.locale || "en",
+      })
       setForm((current) => ({
         ...current,
         status: page.status,
@@ -237,6 +258,8 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
     !problem
 
   const isLive = isEdit && saved.status === "published"
+  // Only a published, visible page is on the storefront to be looked at.
+  const viewUrl = isLive && saved.is_public ? pageViewUrl(links, saved) : null
   const publishLabel = isLive ? "Update" : "Publish"
 
   const set = <K extends keyof PageFormState>(key: K, value: PageFormState[K]) =>
@@ -297,9 +320,7 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
     >
       <FocusModal.Content>
         <div className="flex h-full flex-col overflow-hidden">
-          <FocusModal.Title className="sr-only">
-            {isEdit ? "Edit page" : "New page"}
-          </FocusModal.Title>
+          <HiddenTitle>{isEdit ? "Edit page" : "New page"}</HiddenTitle>
           <FocusModal.Description className="sr-only">
             Write, translate and publish a page.
           </FocusModal.Description>
@@ -319,6 +340,13 @@ const PageEditor = ({ open, pageId, onClose }: PageEditorProps) => {
                 )}
               </div>
               <div className="flex items-center gap-x-2">
+                {isEdit && (
+                  <ViewOnStorefront
+                    url={viewUrl}
+                    label="View page"
+                    unavailable="Publish the page, and keep it visible on the storefront, to view it there."
+                  />
+                )}
                 <FocusModal.Close asChild>
                   <Button size="small" variant="secondary">
                     Close

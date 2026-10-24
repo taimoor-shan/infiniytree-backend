@@ -15,12 +15,15 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
 import { LOCALES, POST_TEMPLATES } from "../../lib/options"
+import { postViewUrl } from "../../lib/storefront"
 import { slugify } from "../../lib/slugify"
 import ImageUpload from "../image-upload"
 import RichTextEditor from "../rich-text-editor"
 import TranslationsBox from "../translations/translations-box"
 import { TRANSLATION_QUERY_KEY } from "../translations/types"
+import { ViewOnStorefront, useStorefrontLinks } from "../view-on-storefront"
 import { Box, Field } from "../fields"
+import HiddenTitle from "../hidden-title"
 import {
   BLOG_QUERY_KEYS,
   BlogPost,
@@ -104,6 +107,26 @@ const fromPost = (post: BlogPost): PostFormState => ({
   category_ids: (post.categories ?? []).map((category) => category.id),
 })
 
+/** What is stored for the post, which is what visitors see: only a save changes it. */
+type SavedPost = Pick<BlogPost, "status" | "published_at"> & {
+  handle: string
+  locale: string
+}
+
+const NOT_SAVED: SavedPost = {
+  status: "draft",
+  published_at: null,
+  handle: "",
+  locale: "en",
+}
+
+const savedFrom = (post: BlogPost): SavedPost => ({
+  status: post.status,
+  published_at: post.published_at ?? null,
+  handle: post.handle,
+  locale: post.locale || "en",
+})
+
 const truncate = (value: string, max: number) =>
   value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value
 
@@ -130,6 +153,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
   const [form, setForm] = useState<PostFormState>(EMPTY_FORM)
   const [handleTouched, setHandleTouched] = useState(false)
   const [readingTime, setReadingTime] = useState<number | null>(null)
+  const [saved, setSaved] = useState<SavedPost>(NOT_SAVED)
 
   const isEdit = !!activeId
 
@@ -138,6 +162,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
       setActiveId(postId)
       setLoadedId(null)
       setReadingTime(null)
+      setSaved(NOT_SAVED)
 
       if (!postId) {
         setForm(EMPTY_FORM)
@@ -168,6 +193,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
   useEffect(() => {
     if (detail?.post && detail.post.id !== loadedId) {
       setForm(fromPost(detail.post))
+      setSaved(savedFrom(detail.post))
       setReadingTime(detail.post.reading_time ?? null)
       setHandleTouched(true)
       setLoadedId(detail.post.id)
@@ -190,6 +216,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
       setActiveId(post.id)
       setLoadedId(post.id)
       setHandleTouched(true)
+      setSaved(savedFrom(post))
       setReadingTime(post.reading_time ?? null)
       setForm((current) => ({
         ...current,
@@ -240,6 +267,10 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
   const isLive = isEdit && form.status === "published"
   const isFuture = !!scheduledFor && new Date(scheduledFor).getTime() > Date.now()
   const publishLabel = isFuture ? "Schedule" : isLive ? "Update" : "Publish"
+  // Only a post that is published and past its publish date is on the storefront.
+  const links = useStorefrontLinks(open)
+  const viewUrl =
+    isEdit && postState(saved) === "published" ? postViewUrl(links, saved) : null
 
   const set = <K extends keyof PostFormState>(key: K, value: PostFormState[K]) =>
     setForm((current) => ({ ...current, [key]: value }))
@@ -307,9 +338,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
     >
       <FocusModal.Content>
         <div className="flex h-full flex-col overflow-hidden">
-          <FocusModal.Title className="sr-only">
-            {isEdit ? "Edit post" : "New post"}
-          </FocusModal.Title>
+          <HiddenTitle>{isEdit ? "Edit post" : "New post"}</HiddenTitle>
           <FocusModal.Description className="sr-only">
             Write, schedule and publish a blog post.
           </FocusModal.Description>
@@ -329,6 +358,13 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
                 )}
               </div>
               <div className="flex items-center gap-x-2">
+                {isEdit && (
+                  <ViewOnStorefront
+                    url={viewUrl}
+                    label="View post"
+                    unavailable="Publish the post, once its publish date has come, to view it on the storefront."
+                  />
+                )}
                 <FocusModal.Close asChild>
                   <Button size="small" variant="secondary">
                     Close

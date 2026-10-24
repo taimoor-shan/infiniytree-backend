@@ -12,6 +12,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
 import { localeName } from "../../lib/options"
+import HiddenTitle from "../hidden-title"
 import RichTextEditor from "../rich-text-editor"
 import {
   ContentField,
@@ -244,9 +245,7 @@ const TranslationEditor = ({
     >
       <FocusModal.Content>
         <div className="flex h-full flex-col overflow-hidden">
-          <FocusModal.Title className="sr-only">
-            {localeName(locale)} translation
-          </FocusModal.Title>
+          <HiddenTitle>{localeName(locale)} translation</HiddenTitle>
           <FocusModal.Description className="sr-only">
             Translate this content into {localeName(locale)}.
           </FocusModal.Description>
