@@ -13,10 +13,13 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
 import { LOCALES, localeName } from "../../lib/options"
+import { categoryViewUrl } from "../../lib/storefront"
 import { slugify } from "../../lib/slugify"
 import TranslationsBox from "../translations/translations-box"
 import { TRANSLATION_QUERY_KEY } from "../translations/types"
+import { ViewOnStorefront, useStorefrontLinks } from "../view-on-storefront"
 import { Field } from "../fields"
+import HiddenTitle from "../hidden-title"
 import { BLOG_QUERY_KEYS, BlogCategory, CategoriesResponse } from "./types"
 
 type CategoryFormState = {
@@ -121,6 +124,9 @@ const CategoryEditor = ({
       toast.error(error?.message || "Failed to delete the category")
     },
   })
+
+  const links = useStorefrontLinks(open)
+  const viewUrl = mode === "edit" && category ? categoryViewUrl(links, category) : null
 
   const busy = save.isPending || remove.isPending
   const handleValid = HANDLE_PATTERN.test(form.handle)
@@ -241,9 +247,9 @@ const CategoryEditor = ({
     >
       <FocusModal.Content>
         <div className="flex h-full flex-col overflow-hidden">
-          <FocusModal.Title className="sr-only">
+          <HiddenTitle>
             {mode === "create" ? "New category" : "Edit category"}
-          </FocusModal.Title>
+          </HiddenTitle>
           <FocusModal.Description className="sr-only">
             {mode === "create"
               ? "Add a category for blog posts."
@@ -264,6 +270,13 @@ const CategoryEditor = ({
                 )}
               </div>
               <div className="flex items-center gap-x-2">
+                {mode === "edit" && (
+                  <ViewOnStorefront
+                    url={viewUrl}
+                    label="View category"
+                    unavailable="The category page can be viewed once the category is saved."
+                  />
+                )}
                 <FocusModal.Close asChild>
                   <Button size="small" variant="secondary">
                     Cancel

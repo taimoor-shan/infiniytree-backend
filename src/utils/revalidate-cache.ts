@@ -8,10 +8,9 @@
  * emit standard Medusa entity events.
  */
 
-const STOREFRONT_URL =
-  process.env.NEXT_PUBLIC_STOREFRONT_URL ||
-  process.env.STOREFRONT_PUBLIC_URL ||
-  "http://localhost:8000"
+import { storefrontUrl } from "./storefront-url"
+
+const STOREFRONT_URL = storefrontUrl()
 
 const REVALIDATION_SECRET = process.env.REVALIDATION_SECRET || ""
 
