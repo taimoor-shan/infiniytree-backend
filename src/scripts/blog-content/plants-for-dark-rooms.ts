@@ -26,7 +26,7 @@ export const plantsForDarkRooms: SeedPost = {
       "Every plant needs light, and low light still means some daylight. Which living plants cope with a dim room, how to tell how dark your room really is, and what to do in a hallway, bathroom or office with no window at all.",
     featured_image_alt:
       "Dim bathroom with a freestanding stone bathtub, a wooden tray with glass bottles and green plants in the foreground",
-    seo_title: "Plants for Dark Rooms & Rooms Without Windows | Infinytree",
+    seo_title: "Plants for Dark Rooms & Rooms Without Windows | InfinYtree",
     seo_description:
       "Which plants cope with a dark room, how to test your light, which are safe for cats, and what to do in a hallway, bathroom or office without windows.",
     content: `
@@ -98,14 +98,14 @@ export const plantsForDarkRooms: SeedPost = {
   },
   de: {
     title:
-      "Pflanzen für dunkle Räume und Räume ohne Fenster: ein ehrlicher Ratgeber",
+      "Pflanzen für dunkle Räume: Zimmerpflanzen für wenig Licht und Räume ohne Fenster",
     excerpt:
       "Jede Pflanze braucht Licht, und „wenig Licht“ heißt immer noch etwas Tageslicht. Welche Zimmerpflanzen mit einem dunklen Raum zurechtkommen, wie Sie testen, wie dunkel es wirklich ist, und was in Flur, Bad oder Büro ohne Fenster hilft.",
     featured_image_alt:
       "Gedämpft beleuchtetes Bad mit freistehender Steinbadewanne, Holzablage mit Glasflaschen und grünen Pflanzen im Vordergrund",
-    seo_title: "Pflanzen für dunkle Räume & Räume ohne Fenster | Infinytree",
+    seo_title: "Pflanzen für dunkle Räume & wenig Licht | InfinYtree",
     seo_description:
-      "Welche Pflanzen mit dunklen Räumen zurechtkommen, wie Sie das Licht testen, welche katzenfreundlich sind und was in Flur, Bad und Büro ohne Fenster hilft.",
+      "Zimmerpflanzen für wenig Licht und dunkle Ecken: welche Pflanzen zurechtkommen, welche katzenfreundlich sind und was in Räumen ohne Fenster hilft.",
     content: `
 <p>Jede Pflanze lebt von Licht. Wenn auf dem Etikett „verträgt wenig Licht“ steht, ist ein dämmriger Platz mit etwas Tageslicht gemeint, kein Raum ohne Fenster. Dieser Unterschied entscheidet, ob eine Pflanze sich langsam einlebt oder langsam verhungert. So finden Sie heraus, wie dunkel Ihr Raum wirklich ist, welche Pflanzen mit wenig Licht auskommen und was dort hilft, wo nichts Lebendiges wächst.</p>
 
@@ -117,7 +117,7 @@ export const plantsForDarkRooms: SeedPost = {
 </ul>
 <p>Der Abstand zum Fenster zählt mehr, als man denkt: Schon ein paar Schritte vom Fenster entfernt kommt nur noch ein Bruchteil des Lichts auf der Fensterbank an.</p>
 
-<h2>Zimmerpflanzen, die mit wenig Licht auskommen</h2>
+<h2>Zimmerpflanzen für wenig Licht und dunkle Ecken</h2>
 <p>Keine davon wächst in einer dunklen Ecke schnell, aber alle vertragen sie besser als die meisten anderen. Gießen Sie weniger als an einem hellen Platz, denn bei wenig Licht trocknet die Erde langsam.</p>
 <table>
   <thead>

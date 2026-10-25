@@ -31,7 +31,7 @@ const POSTS: SeedPost[] = [
   artificialVsRealPlantsOffice,
 ]
 
-const AUTHOR = "Infinytree"
+const AUTHOR = "InfinYtree"
 
 /** The posts' photos; postBuild.js copies them beside the built script. */
 const IMAGE_DIR = path.join(__dirname, "blog-content", "images")

@@ -26,7 +26,7 @@ export const artificialTreesForHotels: SeedPost = {
       "Lobbies, corridors and dining rooms are where living plants struggle most: little daylight, air conditioning and nobody whose job is watering. How hotels and restaurants plan greenery that looks right every day, from placement and scale to fire safety.",
     featured_image_alt:
       "Hotel lobby with a marble reception desk, a wooden slat wall, pendant lamps and two ferns in raised planters",
-    seo_title: "Hotel Lobby Plants & Restaurant Greenery | Infinytree",
+    seo_title: "Hotel Lobby Plants & Restaurant Greenery | InfinYtree",
     seo_description:
       "Where artificial trees work in hotels and restaurants: lobby, dining room, corridors and suites, sizes, fire safety rules, cleaning and costs.",
     content: `
@@ -93,7 +93,7 @@ export const artificialTreesForHotels: SeedPost = {
       "Lobbys, Flure und Speisesäle sind die Orte, an denen lebende Pflanzen am meisten leiden: wenig Tageslicht, Klimaanlage und niemand, der fürs Gießen zuständig ist. So planen Hotels und Restaurants Grün, das jeden Tag stimmt, vom Standort bis zum Brandschutz.",
     featured_image_alt:
       "Hotellobby mit Empfangstresen aus Marmor, Holzlamellenwand, Pendelleuchten und zwei Farnen in erhöhten Pflanzkästen",
-    seo_title: "Kunstpflanzen für Hotel & Gastronomie | Infinytree",
+    seo_title: "Kunstpflanzen für Hotel & Gastronomie | InfinYtree",
     seo_description:
       "Kunstpflanzen und Kunstbäume für Hotel, Restaurant und Bar: Standorte, Größen, Brandschutz (B1), Reinigung und Kosten im Vergleich zu echten Pflanzen.",
     content: `

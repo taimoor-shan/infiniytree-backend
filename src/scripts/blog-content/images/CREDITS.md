@@ -6,7 +6,7 @@ All of them are from [Unsplash](https://unsplash.com) and free to use under the
 attribution is required, but the photographers are credited here anyway.
 
 They are cropped to 1600 × 1000 (16:10, the blog card's shape) and saved as JPEG.
-The photos show real plants and interiors, not Infinytree products, so each post's
+The photos show real plants and interiors, not InfinYtree products, so each post's
 alt text describes the photo itself.
 
 | File | Post | Photo | Photographer |

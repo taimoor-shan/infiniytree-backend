@@ -62,7 +62,7 @@ describe("the invite email", () => {
         resource_id: "srinv_1",
       })
     )
-    expect(sent[0].content.subject).toBe("Peter Nagy meghívta Önt az Infinytree értékesítői csapatába")
+    expect(sent[0].content.subject).toBe("Peter Nagy meghívta Önt az InfinYtree értékesítői csapatába")
     expect(sent[0].content.html).toContain(`/sales-portal/join/${TOKEN}`)
     expect(sent[0].content.html).toContain("Meghívást kapott értékesítői csapatunkba")
   })
@@ -80,7 +80,7 @@ describe("the invite email", () => {
       locale: null,
     })
 
-    expect(sent[0].content.subject).toBe("Peter Nagy invited you to join Infinytree's sales team")
+    expect(sent[0].content.subject).toBe("Peter Nagy invited you to join InfinYtree's sales team")
   })
 
   it("logs a failure without the token and without throwing", async () => {
@@ -167,7 +167,7 @@ describe("the approval emails", () => {
       ["gabor@example.com", "rep-welcome"],
       ["peter@example.com", "rep-recruit-update"],
     ])
-    expect(sent[0].content.subject).toBe("Willkommen im Vertriebsteam von Infinytree")
+    expect(sent[0].content.subject).toBe("Willkommen im Vertriebsteam von InfinYtree")
     expect(sent[0].content.html).toContain(
       `/sales-portal/reset-password?token=${TOKEN}&amp;email=gabor%40example.com`
     )
@@ -224,7 +224,7 @@ describe("the decline emails", () => {
       ["gabor@example.com", "rep-application-declined"],
       ["peter@example.com", "rep-recruit-update"],
     ])
-    expect(sent[0].content.subject).toBe("Infinytree-s jelentkezése")
+    expect(sent[0].content.subject).toBe("InfinYtree-s jelentkezése")
     expect(sent[1].content.subject).toBe("Tájékoztatás Szabó Gábor meghívásáról")
   })
 

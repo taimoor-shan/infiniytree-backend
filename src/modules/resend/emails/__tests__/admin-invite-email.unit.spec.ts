@@ -26,7 +26,7 @@ describe("AdminInviteEmail", () => {
     const html = await emailOf(props)
 
     expect(hrefs(html)).toContain(INVITE_URL)
-    expect(text(html)).toContain("You're invited to the Infinytree admin")
+    expect(text(html)).toContain("You're invited to the InfinYtree admin")
     expect(text(html)).toContain("Accept invitation")
   })
 

@@ -21,7 +21,7 @@ const PHONE_CSS = `@media only screen and (max-width: ${COLUMN_WIDTH}px) {
 }`
 
 /**
- * Shared email layout for all Infinytree transactional emails.
+ * Shared email layout for all InfinYtree transactional emails.
  * Handles doctype, responsive wrapper, branding, and footer.
  */
 export interface EmailLayoutProps {
@@ -41,7 +41,7 @@ export function EmailLayout({ children, preview, locale }: EmailLayoutProps) {
         {preview && (
           <meta name="description" content={preview} />
         )}
-        <title>Infinytree</title>
+        <title>InfinYtree</title>
         {/* Raw, because React would HTML-escape the text of a <style> */}
         <style dangerouslySetInnerHTML={{ __html: PHONE_CSS }} />
       </head>

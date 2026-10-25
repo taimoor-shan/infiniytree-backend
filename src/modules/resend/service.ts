@@ -233,6 +233,6 @@ export class ResendNotificationService extends AbstractNotificationProviderServi
       "order-delivered": "email.subject.orderDelivered",
     }
     const key = subjectKeys[template]
-    return key ? translate(key, locale) : "Infinytree"
+    return key ? translate(key, locale) : "InfinYtree"
   }
 }

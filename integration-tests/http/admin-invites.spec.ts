@@ -63,7 +63,7 @@ medusaIntegrationTestRunner({
         const invite = await container.resolve(Modules.USER).retrieveInvite(created.data.invite.id)
         const [payload] = (await eventually(() => sentTo(INVITEE), "the invite email")) as [any]
 
-        expect(payload.subject).toBe("You're invited to the Infinytree admin")
+        expect(payload.subject).toBe("You're invited to the InfinYtree admin")
         expect(payload.html).toContain(`/app/invite?token=${invite.token}`)
 
         // The notification log says what was sent, but not the secret link

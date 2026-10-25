@@ -27,7 +27,7 @@ export const howToCleanArtificialPlants: SeedPost = {
       "Artificial plants need no water, but they do collect dust, and dust is what makes them look fake. A few minutes every few weeks keeps leaves, blossom and fake flowers looking new for years. Here is the method, from a quick dust to a deep clean.",
     featured_image_alt:
       "Woman in yellow rubber gloves cleaning a potted plant with a cloth at a white table beside a vase of pale flowers",
-    seo_title: "How to Clean Artificial Plants & Fake Flowers | Infinytree",
+    seo_title: "How to Clean Artificial Plants & Fake Flowers | InfinYtree",
     seo_description:
       "How to clean artificial plants and fake flowers: dust with a brush or cold hair dryer, wipe leaves, refresh yellowed blooms and avoid common mistakes.",
     content: `
@@ -103,7 +103,7 @@ export const howToCleanArtificialPlants: SeedPost = {
       "Kunstpflanzen brauchen kein Wasser, aber sie sammeln Staub, und genau der lässt sie künstlich aussehen. Ein paar Minuten alle paar Wochen halten Blätter, Blüten und Kunstblumen über Jahre wie neu. So geht es, vom schnellen Abstauben bis zur gründlichen Reinigung mit Hausmitteln.",
     featured_image_alt:
       "Frau mit gelben Gummihandschuhen reinigt eine Topfpflanze mit einem Tuch an einem weißen Tisch neben einer Vase mit hellen Blumen",
-    seo_title: "Kunstpflanzen reinigen: Anleitung & Hausmittel | Infinytree",
+    seo_title: "Kunstpflanzen reinigen: Anleitung & Hausmittel | InfinYtree",
     seo_description:
       "Kunstpflanzen und Kunstblumen reinigen: mit Pinsel oder kaltem Föhn entstauben, Blätter abwischen, vergilbte Blüten auffrischen und Fehler vermeiden.",
     content: `

@@ -1,5 +1,5 @@
 /**
- * Design tokens for the Infinytree invoice PDF.
+ * Design tokens for the InfinYtree invoice PDF.
  * Single source of truth — change once, updates everywhere.
  *
  * Colors are softened for paper-print quality (never use pure #000).
@@ -62,12 +62,12 @@ export const theme = {
 
 /** Company / legal constants — single source for Header + Footer */
 export const COMPANY = {
-  displayName: "Infinytree",
+  displayName: "InfinYtree",
   legalName: "Deltalivings Kft.",
   address: ["1065 Budapest", "Podmaniczky utca 19", "Hungary"],
   taxNumber: "32214460-2-42",
   site: "www.infinytree.com",
   email: "info@infinytree.com",
   tagline:
-    "Every Infinytree piece is carefully handcrafted to bring timeless elegance into exceptional interiors.",
+    "Every InfinYtree piece is carefully handcrafted to bring timeless elegance into exceptional interiors.",
 } as const

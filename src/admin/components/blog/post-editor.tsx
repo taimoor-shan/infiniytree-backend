@@ -575,7 +575,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
                   <Box title="Author">
                     <Input
                       value={form.author_name}
-                      placeholder="Infinytree"
+                      placeholder="InfinYtree"
                       onChange={(e) => set("author_name", e.target.value)}
                     />
                   </Box>
@@ -597,7 +597,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
                       >
                         {truncate(
                           form.seo_title ||
-                            (form.title ? `${form.title} | Infinytree` : ""),
+                            (form.title ? `${form.title} | InfinYtree` : ""),
                           SEO_TITLE_MAX
                         ) || "Post title"}
                       </Text>
@@ -618,7 +618,7 @@ const PostEditor = ({ open, postId, onClose }: PostEditorProps) => {
                         value: form.seo_title.length,
                         max: SEO_TITLE_MAX,
                       }}
-                      hint="Leave empty to use the post title followed by “| Infinytree”."
+                      hint="Leave empty to use the post title followed by “| InfinYtree”."
                     >
                       <Input
                         value={form.seo_title}

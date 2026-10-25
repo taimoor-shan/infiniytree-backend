@@ -26,7 +26,7 @@ export const artificialVsRealPlantsOffice: SeedPost = {
       "Living plants need light and regular care; artificial ones need almost none. Which is right for your office depends on daylight, budget and who looks after them. A fair comparison, with a simple way to work out the cost.",
     featured_image_alt:
       "Minimalist reception area with a ribbed wooden desk, a slender potted tree and a long pendant lamp against a light grey wall",
-    seo_title: "Fake vs Real Office Plants: Honest Comparison | Infinytree",
+    seo_title: "Fake vs Real Office Plants: Honest Comparison | InfinYtree",
     seo_description:
       "Artificial or real plants for the office? Light, care, cost, allergies and looks compared honestly, plus a simple sum to see which one pays off for you.",
     content: `
@@ -101,7 +101,7 @@ export const artificialVsRealPlantsOffice: SeedPost = {
       "Lebende Büropflanzen brauchen Licht und Pflege, Kunstpflanzen fast keine. Was für Ihr Büro richtig ist, hängt von Tageslicht, Budget und davon ab, wer sich kümmert. Ein fairer Vergleich, mit einer einfachen Rechnung für die Kosten.",
     featured_image_alt:
       "Minimalistischer Empfangsbereich mit geriffeltem Holztresen, einem schlanken Baum im Topf und einer langen Pendelleuchte vor einer hellgrauen Wand",
-    seo_title: "Büropflanzen echt oder künstlich? Der Vergleich | Infinytree",
+    seo_title: "Büropflanzen echt oder künstlich? Der Vergleich | InfinYtree",
     seo_description:
       "Büropflanzen echt oder künstlich? Licht, Pflege, Kosten, Allergien und Optik im ehrlichen Vergleich, dazu Mietpflanzen und eine einfache Rechnung.",
     content: `

@@ -26,7 +26,7 @@ export const artificialCherryBlossomTree: SeedPost = {
       "A cherry tree in full bloom is one of the most photographed sights of spring, and it lasts about two weeks. Here is how to pick an artificial one that keeps that moment all year, from the trunk and the blossom to size, colour and placement.",
     featured_image_alt:
       "Large arrangement of pink cherry blossom branches in a dark round vase, in a dimly lit room with a staircase and glowing globe lamps",
-    seo_title: "Artificial Cherry Blossom Tree: How to Choose | Infinytree",
+    seo_title: "Artificial Cherry Blossom Tree: How to Choose | InfinYtree",
     seo_description:
       "Large, white or pink and convincing up close: how to choose a fake cherry blossom tree for a living room, lobby or shop, and where it looks best.",
     content: `
@@ -35,7 +35,7 @@ export const artificialCherryBlossomTree: SeedPost = {
 <h2>Five signs of a cherry blossom tree that looks real</h2>
 
 <h3>1. A trunk that grew</h3>
-<p>The trunk gives a fake tree away before anything else. Budget trees have a plastic or foam trunk with printed bark, and it looks flat even from across the room. A <strong>real wood trunk</strong> has cracks, knots and the slight twist of something that grew, and it catches the light the way bark does. Every Infinytree tree is built on a natural wood trunk, which is also why no two of them are exactly alike.</p>
+<p>The trunk gives a fake tree away before anything else. Budget trees have a plastic or foam trunk with printed bark, and it looks flat even from across the room. A <strong>real wood trunk</strong> has cracks, knots and the slight twist of something that grew, and it catches the light the way bark does. Every InfinYtree tree is built on a natural wood trunk, which is also why no two of them are exactly alike.</p>
 
 <h3>2. Blossom in clusters, not a ball</h3>
 <p>On a real sakura, the flowers sit in clusters along the branches. A convincing crown is fuller at the top and lighter towards the tips, with some air between the branches so you can still see the structure. A dense, perfectly round ball of blossom is the clearest sign of a cheap faux tree.</p>
@@ -44,7 +44,7 @@ export const artificialCherryBlossomTree: SeedPost = {
 <p>Look closely at a living cherry and hardly two blooms share the same shade. The same should be true of an artificial one: a little variation from flower to flower, slightly deeper towards the centre. One flat pink over the whole crown is what makes a tree look printed.</p>
 
 <h3>4. A scale that suits the room</h3>
-<p>Tabletop cherry trees are everywhere. A tree that changes a room is a different object: the <a href="/products/cherry-blossom-tree">Infinytree Cherry Blossom Tree</a> stands 220 cm tall including its planter, with a crown about 120 cm across. At that size it reads as a tree rather than as decoration, which is why it suits a hotel lobby as well as a living room with a high ceiling.</p>
+<p>Tabletop cherry trees are everywhere. A tree that changes a room is a different object: the <a href="/products/cherry-blossom-tree">InfinYtree Cherry Blossom Tree</a> stands 220 cm tall including its planter, with a crown about 120 cm across. At that size it reads as a tree rather than as decoration, which is why it suits a hotel lobby as well as a living room with a high ceiling.</p>
 
 <h3>5. A planter with weight</h3>
 <p>A beautiful tree in a thin plastic pot loses half its effect, and a heavy planter keeps a tall tree steady. The Cherry Blossom Tree comes in a glossy black or a white planter, 55 cm high and 66 cm wide, which balances the width of the crown.</p>
@@ -94,7 +94,7 @@ export const artificialCherryBlossomTree: SeedPost = {
       "Kaum ein Baum wird so oft fotografiert wie ein blühender Kirschbaum, und die Blüte dauert nur rund zwei Wochen. So wählen Sie einen künstlichen Kirschblütenbaum, der diesen Moment das ganze Jahr bewahrt: Stamm, Blüten, Größe, Farbe und Standort.",
     featured_image_alt:
       "Großes Arrangement aus rosa Kirschblütenzweigen in einer dunklen, runden Vase in einem gedämpft beleuchteten Raum mit Treppe und leuchtenden Kugellampen",
-    seo_title: "Kirschblütenbaum künstlich: der Kaufratgeber | Infinytree",
+    seo_title: "Kirschblütenbaum künstlich: der Kaufratgeber | InfinYtree",
     seo_description:
       "Groß, weiß oder rosa und auch aus der Nähe überzeugend: So wählen Sie einen künstlichen Kirschbaum für Wohnzimmer, Hotel oder Geschäft.",
     content: `
@@ -103,7 +103,7 @@ export const artificialCherryBlossomTree: SeedPost = {
 <h2>Fünf Merkmale eines Kirschblütenbaums, der echt wirkt</h2>
 
 <h3>1. Ein Stamm, der gewachsen ist</h3>
-<p>Am Stamm verrät sich ein Kunstbaum zuerst. Günstige Modelle haben einen Stamm aus Kunststoff oder Schaum mit aufgedruckter Rinde, der schon aus einigen Metern flach wirkt. Ein <strong>Stamm aus Echtholz</strong> hat Risse, Astansätze und die leichte Drehung eines gewachsenen Baumes und fängt das Licht wie echte Rinde. Jeder Infinytree-Baum steht auf einem natürlichen Holzstamm, deshalb gleicht keiner genau dem anderen.</p>
+<p>Am Stamm verrät sich ein Kunstbaum zuerst. Günstige Modelle haben einen Stamm aus Kunststoff oder Schaum mit aufgedruckter Rinde, der schon aus einigen Metern flach wirkt. Ein <strong>Stamm aus Echtholz</strong> hat Risse, Astansätze und die leichte Drehung eines gewachsenen Baumes und fängt das Licht wie echte Rinde. Jeder InfinYtree-Baum steht auf einem natürlichen Holzstamm, deshalb gleicht keiner genau dem anderen.</p>
 
 <h3>2. Blüten in Büscheln statt als Kugel</h3>
 <p>Beim echten Sakura-Baum sitzen die Blüten in Büscheln entlang der Äste. Eine überzeugende Krone ist oben voller und zu den Spitzen hin lichter, mit etwas Luft zwischen den Ästen, damit die Struktur sichtbar bleibt. Eine dichte, perfekt runde Blütenkugel ist das deutlichste Zeichen für billige Deko.</p>
@@ -112,7 +112,7 @@ export const artificialCherryBlossomTree: SeedPost = {
 <p>Schauen Sie sich einen blühenden Kirschbaum genau an: Kaum zwei Blüten haben denselben Ton. Bei einem künstlichen Kirschbaum sollte es genauso sein, mit leichten Unterschieden von Blüte zu Blüte und einer etwas kräftigeren Mitte. Ein einziger flacher Rosaton über die ganze Krone wirkt wie gedruckt.</p>
 
 <h3>4. Eine Größe, die zum Raum passt</h3>
-<p>Kleine Kirschbäumchen für den Tisch gibt es überall. Ein Baum, der einen Raum verändert, ist etwas anderes: Der <a href="/products/cherry-blossom-tree">Infinytree Kirschblütenbaum</a> ist mit Pflanzgefäß 220 cm hoch, die Krone rund 120 cm breit. In dieser Größe, gut zwei Meter, wirkt er wie ein Baum und nicht wie Dekoration, und er passt in eine Hotellobby ebenso wie in ein Wohnzimmer mit hoher Decke.</p>
+<p>Kleine Kirschbäumchen für den Tisch gibt es überall. Ein Baum, der einen Raum verändert, ist etwas anderes: Der <a href="/products/cherry-blossom-tree">InfinYtree Kirschblütenbaum</a> ist mit Pflanzgefäß 220 cm hoch, die Krone rund 120 cm breit. In dieser Größe, gut zwei Meter, wirkt er wie ein Baum und nicht wie Dekoration, und er passt in eine Hotellobby ebenso wie in ein Wohnzimmer mit hoher Decke.</p>
 
 <h3>5. Ein Gefäß mit Gewicht</h3>
 <p>Ein schöner Baum in einem dünnen Plastiktopf verliert die Hälfte seiner Wirkung, und ein schweres Gefäß gibt einem hohen Baum Standfestigkeit. Den Kirschblütenbaum gibt es mit Pflanzgefäß in Hochglanz Schwarz oder Weiß, 55 cm hoch und 66 cm breit, passend zur Breite der Krone.</p>

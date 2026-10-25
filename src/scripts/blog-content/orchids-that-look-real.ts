@@ -26,7 +26,7 @@ export const orchidsThatLookReal: SeedPost = {
       "Orchids are the flowers people fake most often, and the easiest to get wrong. What separates an artificial orchid that passes for real from one that looks like plastic: petals, buds, leaves, colour and scale, and where each kind works best.",
     featured_image_alt:
       "White phalaenopsis orchid with open flowers and buds on an arching stem, held by a plant clip, against a warm beige wall",
-    seo_title: "Fake Orchids That Look Real: What to Check | Infinytree",
+    seo_title: "Fake Orchids That Look Real: What to Check | InfinYtree",
     seo_description:
       "How to choose artificial orchids that look real: petals, buds, leaves, colour, pot and size, from a single stem on a desk to a 195 cm floor piece.",
     content: `
@@ -87,16 +87,16 @@ export const orchidsThatLookReal: SeedPost = {
       "Orchideen sind die Blumen, die am häufigsten künstlich nachgebildet werden, und die, bei denen man am leichtesten danebengreift. Woran Sie künstliche Orchideen erkennen, die wie echt wirken: Blüten, Knospen, Blätter, Farbe und Größe, und wo welche Variante am besten steht.",
     featured_image_alt:
       "Weiße Phalaenopsis-Orchidee mit offenen Blüten und Knospen an einem gebogenen Stiel mit Pflanzenclip vor einer warmen beigen Wand",
-    seo_title: "Künstliche Orchideen wie echt: Darauf achten | Infinytree",
+    seo_title: "Künstliche Orchideen wie echt: Darauf achten | InfinYtree",
     seo_description:
       "Künstliche Orchideen, die echt aussehen: Blüten, Knospen, Blätter, Farbe, Topf und Größe, vom einzelnen Stiel bis zum 195 cm hohen Bodenstück.",
     content: `
-<p>Orchideen stehen überall: am Empfang, im Restaurant, auf jeder zweiten Fensterbank. Sie sind auch die Blumen, die am häufigsten künstlich nachgebildet werden, und die, bei denen man am leichtesten danebengreift. Eine echte Phalaenopsis ist eine sehr eigene Pflanze, und unser Auge kennt sie gut. Für den Kauf künstlicher Orchideen ist das eine gute Nachricht, denn daraus ergibt sich eine klare Checkliste.</p>
+<p>Orchideen stehen überall: am Empfang, im Restaurant, auf jeder zweiten Fensterbank. Sie sind auch die Blumen, die am häufigsten künstlich nachgebildet werden, und die, bei denen man am leichtesten danebengreift. Eine echte Phalaenopsis ist eine sehr eigene Pflanze, und unser Auge kennt sie gut. Für den Kauf hochwertiger künstlicher Orchideen ist das eine gute Nachricht, denn daraus ergibt sich eine klare Checkliste.</p>
 
 <h2>Warum überhaupt künstliche Orchideen?</h2>
 <p>Eine lebende Phalaenopsis ist auf einer hellen Fensterbank nicht schwer zu halten und kostet wenig. Schwierig wird es dort, wo Orchideen als Dekoration gewünscht sind: am Empfang weit weg vom Fenster, in einem dunklen Speisesaal, in einer Lobby, in der das Arrangement jeden Tag perfekt aussehen und ersetzt werden muss, sobald die Blüten welken. Eine gute Kunstorchidee behält ihre Blüten, braucht weder Wasser noch Licht und trägt keinen Pollen.</p>
 
-<h2>Sieben Merkmale künstlicher Orchideen, die wie echt wirken</h2>
+<h2>Sieben Merkmale hochwertiger künstlicher Orchideen, die wie echt wirken</h2>
 <h3>1. Blütenblätter mit Tiefe</h3>
 <p>Echte Orchideenblüten sind dick und wachsartig, mit feinen Adern und einem leicht durchscheinenden Rand. Achten Sie auf Blüten, die das Licht weich aufnehmen, statt wie Plastik zu glänzen, und auf eine Lippe, das kleine Blütenblatt in der Mitte, mit echter Farbzeichnung.</p>
 <h3>2. Blüten, die nacheinander aufgehen</h3>

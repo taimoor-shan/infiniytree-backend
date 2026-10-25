@@ -16,7 +16,7 @@ export function Footer() {
       <View style={s.footerDivider} />
 
       <Text style={s.footerHeading}>
-        Thank you for choosing Infinytree.
+        Thank you for choosing InfinYtree.
       </Text>
 
       {/* <Text style={s.footerText}>{COMPANY.tagline}</Text> */}

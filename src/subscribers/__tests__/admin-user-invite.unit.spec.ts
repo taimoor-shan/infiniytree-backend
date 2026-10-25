@@ -89,7 +89,7 @@ describe("the admin invite email", () => {
         resource_type: "invite",
       })
     )
-    expect(sent[0].content.subject).toBe("You're invited to the Infinytree admin")
+    expect(sent[0].content.subject).toBe("You're invited to the InfinYtree admin")
     expect(sent[0].content.html).toContain(`http://localhost:9000/app/invite?token=${TOKEN}`)
   })
 
