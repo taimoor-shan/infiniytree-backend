@@ -1,73 +1,40 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { Resend } from "resend"
 import { z } from "zod"
-
-const resend = new Resend(process.env.RESEND_API_KEY || process.env.SENDGRID_API_KEY)
+import createNotifyMeRequestWorkflow from "../../../workflows/create-notify-me-request"
 
 export const NotifyMeSchema = z.object({
   email: z.email({ error: "Invalid email address" }),
   productId: z.string().min(1),
-  variantId: z.string().min(1),
+  // Left out when the whole product is out of stock and there is no option to
+  // choose, so the signup is for the product itself.
+  variantId: z.string().min(1).optional(),
+  productUrl: z.string().max(2000).optional(),
+  // Sent by storefronts built before the names came from the catalog. Medusa
+  // refuses unknown fields, so they stay accepted (and ignored) until every
+  // storefront build has stopped sending them.
   productTitle: z.string().optional(),
   variantTitle: z.string().optional(),
-  productUrl: z.string().optional(),
 })
 
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
-const rateLimitMap = new Map<string, number>()
-
+/**
+ * "Notify me when available": saves the signup (the admin lists it under
+ * Notify me) and emails the shop. Signing up again with the same email for the
+ * same product and variant succeeds without a second entry or email.
+ */
 export async function POST(
   req: MedusaRequest<z.infer<typeof NotifyMeSchema>>,
   res: MedusaResponse
 ) {
-  try {
-    const { email, productId, variantId, productTitle, variantTitle, productUrl } =
-      req.validatedBody
+  const { email, productId, variantId, productUrl } = req.validatedBody
 
-    const lastRequest = rateLimitMap.get(email)
-    if (lastRequest && Date.now() - lastRequest < RATE_LIMIT_WINDOW_MS) {
-      return res.status(429).json({
-        message: "You've already requested a notification. Please check your inbox or try again later.",
-      })
-    }
+  await createNotifyMeRequestWorkflow(req.scope).run({
+    input: {
+      email,
+      product_id: productId,
+      variant_id: variantId,
+      product_url: productUrl,
+    },
+  })
 
-    const subject = productTitle
-      ? `Restock request: ${productTitle}${variantTitle ? ` — ${variantTitle}` : ""}`
-      : `Restock request: ${productId}`
-
-    const text = [
-      "Restock Notification Request",
-      "============================",
-      "",
-      `Product: ${productTitle || productId}${variantTitle ? ` — ${variantTitle}` : ""}`,
-      `Variant ID: ${variantId}`,
-      productUrl ? `URL: ${productUrl}` : "",
-      "",
-      `Customer: ${email}`,
-      `Date: ${new Date().toISOString()}`,
-    ]
-      .filter((line) => line !== null)
-      .join("\n")
-
-    const { data, error } = await resend.emails.send({
-      from:
-        process.env.RESEND_FROM ||
-        process.env.SENDGRID_FROM ||
-        "onboarding@resend.dev",
-      to: process.env.CONTACT_EMAIL || "info@infinytree.com",
-      subject,
-      replyTo: email,
-      text,
-    })
-
-    if (error) {
-      return res.status(400).json({ ...error, message: error.message })
-    }
-
-    rateLimitMap.set(email, Date.now())
-
-    return res.status(200).json({ success: true, data })
-  } catch (error) {
-    return res.status(500).json({ message: "Failed to send message" })
-  }
+  return res.status(200).json({ success: true })
 }

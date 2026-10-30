@@ -6,6 +6,7 @@ import { blogStoreMiddlewares } from "./store/blog/middlewares"
 import { contentTranslationsAdminMiddlewares } from "./admin/content-translations/middlewares"
 import { contactStoreMiddlewares } from "./store/contact/middlewares"
 import { notifyMeStoreMiddlewares } from "./store/notify-me/middlewares"
+import { notifyMeAdminMiddlewares } from "./admin/notify-me/middlewares"
 import { guestOrderMiddlewares } from "./store/orders/guest/[displayId]/middlewares"
 import { guestInvoiceMiddlewares } from "./invoice/guest/[displayId]/middlewares"
 
@@ -51,6 +52,7 @@ export default defineMiddlewares({
     ...contentTranslationsAdminMiddlewares,
     ...contactStoreMiddlewares,
     ...notifyMeStoreMiddlewares,
+    ...notifyMeAdminMiddlewares,
     ...guestOrderMiddlewares,
     ...guestInvoiceMiddlewares,
     {
