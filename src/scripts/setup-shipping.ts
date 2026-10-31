@@ -148,16 +148,16 @@ export async function setupShipping(
   })
 
   for (const location of locations) {
+    // The query's types allow a null in any list, so each item is read with
+    // `?.` and the last `flatMap` drops the nulls.
     const providerIds = (location.fulfillment_providers ?? []).map(
-      (provider: { id: string }) => provider.id
+      (provider) => provider?.id
     )
     // Only a location that delivers (has a provider and a shipping set) is touched.
     const zones = (location.fulfillment_sets ?? [])
-      .filter((set: { type: string }) => set.type === "shipping")
-      .flatMap(
-        (set: { service_zones?: { id: string; name: string }[] }) =>
-          set.service_zones ?? []
-      )
+      .filter((set) => set?.type === "shipping")
+      .flatMap((set) => set?.service_zones ?? [])
+      .flatMap((zone) => (zone ? [zone] : []))
     if (!providerIds.length || !zones.length) {
       continue
     }
@@ -172,14 +172,19 @@ export async function setupShipping(
     for (const zone of zones) {
       for (const delivery of DELIVERY_OPTIONS) {
         const profileId = result.profiles[delivery.profile.type]
-        const [existing] = await fulfillmentService.listShippingOptions(
-          {
+        // Asked of the query rather than the fulfillment service, whose filter
+        // type leaves out `service_zone_id` and `provider_id`.
+        const {
+          data: [existing],
+        } = await query.graph({
+          entity: "shipping_option",
+          fields: ["id"],
+          filters: {
             service_zone_id: zone.id,
             shipping_profile_id: profileId,
             provider_id: TARIFF_PROVIDER_ID,
           },
-          { take: 1 }
-        )
+        })
         if (existing) {
           continue
         }

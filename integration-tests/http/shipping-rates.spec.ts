@@ -319,11 +319,19 @@ medusaIntegrationTestRunner({
       })
 
       it("adds a calculated pallet and carton delivery to both zones", async () => {
-        const fulfillment = getContainer().resolve(Modules.FULFILLMENT)
-        const options = await fulfillment.listShippingOptions(
-          { provider_id: "tariff_rates" },
-          { relations: ["service_zone", "shipping_profile"] }
-        )
+        const { data: options } = await getContainer()
+          .resolve(ContainerRegistrationKeys.QUERY)
+          .graph({
+            entity: "shipping_option",
+            fields: [
+              "name",
+              "price_type",
+              "data",
+              "service_zone.name",
+              "shipping_profile.type",
+            ],
+            filters: { provider_id: "tariff_rates" },
+          })
 
         expect(
           options
