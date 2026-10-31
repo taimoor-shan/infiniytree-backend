@@ -108,6 +108,31 @@ module.exports = defineConfig({
       resolve: "./src/modules/notify-me",
     },
     {
+      // The delivery rates (pallet and carton) the checkout prices from; edited
+      // in the admin under Shipping rates.
+      resolve: "./src/modules/shipping-rates",
+    },
+    {
+      // Medusa's default fulfillment module plus the provider that prices a
+      // delivery from the shipping-rates module. `dependencies` is what lets
+      // the provider reach that module, and the cart module, to learn the
+      // currency of a cart when Medusa does not pass it on.
+      resolve: "@medusajs/medusa/fulfillment",
+      dependencies: ["shippingRates", Modules.CART],
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/fulfillment-manual",
+            id: "manual",
+          },
+          {
+            resolve: "./src/modules/tariff-fulfillment",
+            id: "rates",
+          },
+        ],
+      },
+    },
+    {
       resolve: "@medusajs/medusa/payment",
       options: {
         providers: [

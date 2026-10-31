@@ -18,9 +18,9 @@ import {
 } from "@medusajs/medusa/core-flows"
 import { revalidateStorefrontCache } from "../utils/revalidate-cache"
 import { blueCascade } from "./product-content/blue-cascade"
+import { LEGACY_PALLET_PROFILE_NAME, PALLET_PROFILE } from "./shipping-classes"
 
-/** The shipping class for goods that travel on a pallet, one unit to a pallet. */
-export const PALLET_PROFILE = { name: "Pallet product", type: "pallet" }
+export { PALLET_PROFILE }
 
 /** The shop's category for one-of-a-kind pieces. */
 export const ONE_OF_A_KIND = { name: "One of a kind", handle: "on-of-kind" }
@@ -46,12 +46,12 @@ const isOneOfAKind = (category: { name: string; handle: string }) =>
  * - a "Planter" option (Blue, Gold, White) with one variant each, managed
  *   inventory and no stock, so every choice is unavailable until stock is added;
  * - no price at all, which the storefront shows as "Price on request";
- * - the "Pallet product" shipping class (created if missing);
+ * - the "Pallet products" shipping class (created if missing);
  * - the "One of a kind" category (the existing one; its "On of kind" typo is
  *   corrected, its handle is not touched).
  *
- * Photos and the video are added in the admin. Pallet rates by destination are
- * shipping options on the "Pallet product" class and are set up separately.
+ * Photos and the video are added in the admin. Delivery rates by destination
+ * are set up with `setup-shipping.ts` and edited under Shipping rates.
  */
 export default async function addBlueCascadeScript({
   container,
@@ -164,9 +164,16 @@ async function findOrCreatePalletProfile(
   container: MedusaContainer,
   fulfillmentService: IFulfillmentModuleService
 ): Promise<string> {
-  const [existing] = await fulfillmentService.listShippingProfiles({
-    name: PALLET_PROFILE.name,
+  // Found by type, so renaming the class in the admin does not make a second
+  // one; the name it first had is the fallback.
+  const [byType] = await fulfillmentService.listShippingProfiles({
+    type: PALLET_PROFILE.type,
   })
+  const [existing] = byType
+    ? [byType]
+    : await fulfillmentService.listShippingProfiles({
+        name: [PALLET_PROFILE.name, LEGACY_PALLET_PROFILE_NAME],
+      })
 
   if (existing) {
     return existing.id

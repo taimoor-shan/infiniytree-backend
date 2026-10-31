@@ -213,9 +213,9 @@ medusaIntegrationTestRunner({
         ])
       })
 
-      it("ships on a pallet: the Pallet product class", () => {
+      it("ships on a pallet: the Pallet products class", () => {
         expect(product.shipping_profile).toEqual(
-          expect.objectContaining({ name: "Pallet product", type: "pallet" })
+          expect.objectContaining({ name: "Pallet products", type: "pallet" })
         )
       })
 
@@ -268,7 +268,7 @@ medusaIntegrationTestRunner({
         )
 
         const profiles = (
-          await api.get("/admin/shipping-profiles?name=Pallet product", {
+          await api.get("/admin/shipping-profiles?type=pallet", {
             headers,
           })
         ).data.shipping_profiles
