@@ -25,19 +25,33 @@ export const CARTON_PRODUCT_PATTERN = /rose\s*royal|magnolia/i
 export const PALLET_PRODUCT_PATTERN =
   /cherry\s*blossom|bonsai|maple|orchid|blue\s*cascade/i
 
-/** The delivery option of each class: its name and the rate table it uses. */
+/**
+ * The delivery option of each class: its name and the rate table it uses.
+ * `german` is what German visitors read (see
+ * `translate-blue-cascade-and-delivery.ts`); "Standardversand" is how the
+ * standard option is already named.
+ */
 export const DELIVERY_OPTIONS = [
   {
     profile: PALLET_PROFILE,
     name: "Pallet delivery",
     code: "pallet-delivery",
     description: "Delivered on a pallet: the price depends on the postcode and the number of pallets.",
+    german: {
+      name: "Palettenversand",
+      description:
+        "Lieferung auf einer Palette: Der Preis richtet sich nach der Postleitzahl und der Anzahl der Paletten.",
+    },
   },
   {
     profile: CARTON_PROFILE,
     name: "Carton delivery",
     code: "carton-delivery",
     description: "Delivered in a carton: a fixed charge for each carton.",
+    german: {
+      name: "Kartonversand",
+      description: "Lieferung im Karton: ein fester Betrag je Karton.",
+    },
   },
 ] as const
 
