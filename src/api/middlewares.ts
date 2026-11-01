@@ -4,6 +4,7 @@ import { pageStoreMiddlewares } from "./store/pages/middlewares"
 import { blogAdminMiddlewares } from "./admin/blog/middlewares"
 import { blogStoreMiddlewares } from "./store/blog/middlewares"
 import { contentTranslationsAdminMiddlewares } from "./admin/content-translations/middlewares"
+import { productAdminMiddlewares } from "./admin/products/middlewares"
 import { contactStoreMiddlewares } from "./store/contact/middlewares"
 import { notifyMeStoreMiddlewares } from "./store/notify-me/middlewares"
 import { notifyMeAdminMiddlewares } from "./admin/notify-me/middlewares"
@@ -51,6 +52,7 @@ export default defineMiddlewares({
     ...blogAdminMiddlewares,
     ...blogStoreMiddlewares,
     ...contentTranslationsAdminMiddlewares,
+    ...productAdminMiddlewares,
     ...contactStoreMiddlewares,
     ...notifyMeStoreMiddlewares,
     ...notifyMeAdminMiddlewares,

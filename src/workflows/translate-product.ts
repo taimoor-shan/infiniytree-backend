@@ -30,6 +30,11 @@ export const translateProductWorkflow = createWorkflow(
       // Metadata fields (only string values)
       if (product.metadata) {
         for (const [k, v] of Object.entries(product.metadata)) {
+          // The long description is long HTML, possibly one text per language
+          // as JSON, and has its own "Translate" in the Long description box.
+          // Sent here it would only cost a long request for nothing.
+          if (k === "long_description") continue
+
           if (typeof v === "string" && v.trim() !== "") {
             fields.push({ key: `metadata.${k}`, text: v })
           }
