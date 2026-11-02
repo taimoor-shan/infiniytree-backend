@@ -18,10 +18,22 @@ export type TranslateLongDescriptionSchema = z.infer<
   typeof TranslateLongDescriptionSchema
 >
 
+/** The title of the copy a product is duplicated into. */
+export const DuplicateProductSchema = z.object({
+  title: z.string().trim().min(1, "The copy needs a title").max(255),
+})
+
+export type DuplicateProductSchema = z.infer<typeof DuplicateProductSchema>
+
 export const productAdminMiddlewares: MiddlewareRoute[] = [
   {
     matcher: "/admin/products/:id/translate-long-description",
     method: "POST",
     middlewares: [validateAndTransformBody(TranslateLongDescriptionSchema)],
+  },
+  {
+    matcher: "/admin/products/:id/duplicate",
+    method: "POST",
+    middlewares: [validateAndTransformBody(DuplicateProductSchema)],
   },
 ]
