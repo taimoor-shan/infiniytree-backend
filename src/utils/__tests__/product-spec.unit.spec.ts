@@ -147,6 +147,18 @@ describe("parseProductSpec: refusing", () => {
     expect(errorsOf({ ...minimal, colour: "x" })).toEqual(['Unknown field "colour".'])
   })
 
+  it("points at the field a slip of the pen was meant for", () => {
+    expect(errorsOf({ ...minimal, descripton: "x" })).toEqual([
+      'Unknown field "descripton" (did you mean "description"?).',
+    ])
+    expect(errorsOf({ ...minimal, shippngClass: "pallet" })).toEqual([
+      'Unknown field "shippngClass" (did you mean "shippingClass"?).',
+    ])
+    expect(
+      errorsOf({ ...minimal, options: [{ title: "Size", valus: ["S"] }] })
+    ).toContain('Unknown field "options[0].valus" (did you mean "values"?).')
+  })
+
   it("lets a field starting with an underscore carry a note", () => {
     expect(parse({ ...minimal, _note: "from the brochure" }).plan.title.en).toBe(
       "Olive Tree"

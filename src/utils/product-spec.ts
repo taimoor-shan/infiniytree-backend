@@ -497,9 +497,10 @@ function rejectUnknown(
     if (key.startsWith("_") || key.startsWith("$") || allowed.includes(key)) {
       continue
     }
-    const near = allowed.find(
-      (field) => field.toLowerCase() === key.toLowerCase().replace(/[_\s-]/g, "")
-    )
+    const near =
+      allowed.find(
+        (field) => field.toLowerCase() === key.toLowerCase().replace(/[_\s-]/g, "")
+      ) ?? suggest(key, [...allowed])[0]
     context.errors.push(
       `Unknown field "${path}${key}"${near ? ` (did you mean "${near}"?)` : ""}.`
     )

@@ -369,7 +369,7 @@ async function resolveReferences(
       const names = categories.map((category) => category.name)
       resolved.categories.push({ lang })
       log.warnings.push(
-        `The category "${lang.en}" does not exist, so it will be created${
+        `The category "${lang.en}" is not in the shop yet, so it is made with the product${
           names.length ? ` (the shop has ${list(names)})` : ""
         }.${didYouMean(lang.en, names)}`
       )
@@ -631,7 +631,7 @@ async function createNew(
   const languages = plannedLanguages(plan)
   result.steps.push(row("German", languages.german))
   if (languages.metadata) {
-    result.steps.push(row("Other languages", languages.metadata))
+    result.steps.push(row("Languages", languages.metadata))
   }
 
   if (check) {
@@ -805,7 +805,7 @@ async function topUpExisting(
   )
   result.steps.push(
     row(
-      "Other languages",
+      "Languages",
       done.metadata.length
         ? `${check ? "would add" : "added"} to ${list(done.metadata)}`
         : "nothing to add"
