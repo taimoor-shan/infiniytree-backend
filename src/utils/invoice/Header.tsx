@@ -37,7 +37,7 @@ export function Header({
 
           <View style={{ height: 10 }} />
 
-          <Text style={s.small}>Tax Number</Text>
+          <Text style={s.small}>VAT ID/UID</Text>
           <Text style={s.value}>{COMPANY.taxNumber}</Text>
         </View>
 
