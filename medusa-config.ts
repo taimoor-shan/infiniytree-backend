@@ -108,6 +108,11 @@ module.exports = defineConfig({
       resolve: "./src/modules/notify-me",
     },
     {
+      // Delivery quote requests for European countries the checkout does not
+      // deliver to yet; listed in the admin under Delivery requests.
+      resolve: "./src/modules/delivery-request",
+    },
+    {
       // The delivery rates (pallet and carton) the checkout prices from; edited
       // in the admin under Shipping rates.
       resolve: "./src/modules/shipping-rates",
