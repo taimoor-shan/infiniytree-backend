@@ -65,7 +65,7 @@ export const COMPANY = {
   displayName: "InfinYtree",
   legalName: "Deltalivings Kft.",
   address: ["1065 Budapest", "Podmaniczky utca 19", "Hungary"],
-  taxNumber: "32214460-2-42",
+  taxNumber: "HU32214460",
   site: "www.infinytree.com",
   email: "info@infinytree.com",
   tagline:
