@@ -3,12 +3,15 @@ import {
   ContainerRegistrationKeys,
   MedusaError,
 } from "@medusajs/framework/utils"
+import type { MedusaContainer } from "@medusajs/framework/types"
 import { DELIVERY_REQUEST_MODULE } from "../../modules/delivery-request"
 import DeliveryRequestModuleService from "../../modules/delivery-request/service"
+import { normalizeRepCode } from "../../utils/delivery-request"
 
 export type CreateDeliveryRequestStepInput = {
   cart_id: string
-  email: string
+  /** Optional when a phone is given: the shop then calls instead */
+  email?: string
   first_name?: string
   last_name?: string
   company?: string
@@ -22,6 +25,8 @@ export type CreateDeliveryRequestStepInput = {
   country_code: string
   message?: string
   locale?: string
+  /** The sales rep's client link the customer followed */
+  sales_rep_ref?: string
 }
 
 export type DeliveryRequestItem = {
@@ -37,7 +42,7 @@ export type DeliveryRequestItem = {
 export type DeliveryRequestRecord = {
   id: string
   status: "new" | "handled"
-  email: string
+  email: string | null
   first_name: string | null
   last_name: string | null
   company: string | null
@@ -55,6 +60,8 @@ export type DeliveryRequestRecord = {
   currency_code: string | null
   item_subtotal: number | null
   items: DeliveryRequestItem[] | null
+  sales_rep_ref: string | null
+  sales_rep_name: string | null
   created_at: Date | string
 }
 
@@ -71,6 +78,29 @@ type Compensation =
 const blankToNull = (value?: string) => {
   const trimmed = value?.trim()
   return trimmed ? trimmed : null
+}
+
+/**
+ * The name of the active rep whose client link this is, for the admin and the
+ * shop's email. Null for a code no active rep has, and when the sales
+ * commission plugin is not loaded.
+ */
+const activeRepName = async (
+  container: MedusaContainer,
+  code: string
+): Promise<string | null> => {
+  try {
+    const service = container.resolve("salesCommission") as {
+      listSalesReps: (
+        filters: Record<string, unknown>,
+        config: { take: number }
+      ) => Promise<{ name: string; is_active: boolean }[]>
+    }
+    const [rep] = await service.listSalesReps({ client_link_code: code }, { take: 1 })
+    return rep?.is_active ? rep.name : null
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -133,8 +163,11 @@ export const createDeliveryRequestStep = createStep(
       )
     }
 
+    const repRef = normalizeRepCode(input.sales_rep_ref)
+    const repName = repRef ? await activeRepName(container, repRef) : null
+
     const data = {
-      email: input.email.trim().toLowerCase(),
+      email: input.email?.trim() ? input.email.trim().toLowerCase() : null,
       first_name: blankToNull(input.first_name),
       last_name: blankToNull(input.last_name),
       company: blankToNull(input.company),
@@ -154,6 +187,8 @@ export const createDeliveryRequestStep = createStep(
         cart.item_subtotal == null ? null : Number(cart.item_subtotal),
       // A JSON column; the model types it as an object.
       items: items as unknown as Record<string, unknown>,
+      sales_rep_ref: repRef,
+      sales_rep_name: repName,
     }
 
     const [existing] = await service.listDeliveryRequests(

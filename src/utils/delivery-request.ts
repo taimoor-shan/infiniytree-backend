@@ -3,9 +3,23 @@
  * (`src/utils/__tests__/delivery-request.unit.spec.ts`).
  */
 
+/**
+ * A sales rep's client link code the way the commission plugin reads it
+ * (`normalizeClientLinkCode`): any case, spaces and hyphens ignored, 6 to 12
+ * letters and digits. Null for anything else.
+ */
+export const normalizeRepCode = (value?: string | null): string | null => {
+  if (typeof value !== "string") {
+    return null
+  }
+  const code = value.trim().toUpperCase().replace(/[\s-]/g, "")
+  return /^[A-Z0-9]{6,12}$/.test(code) ? code : null
+}
+
 export type DeliveryRequestEmailInput = {
   id: string
-  email: string
+  /** Null when the customer gave only a phone number */
+  email: string | null
   first_name: string | null
   last_name: string | null
   company: string | null
@@ -30,6 +44,9 @@ export type DeliveryRequestEmailInput = {
         unit_price: number
       }[]
     | null
+  /** The sales rep's client link the customer followed, and its rep's name */
+  sales_rep_ref?: string | null
+  sales_rep_name?: string | null
   created_at: Date | string
 }
 
@@ -70,7 +87,13 @@ export const deliveryRequestEmailText = (
 ): { subject: string; text: string } => {
   const country = countryName(request.country_code)
   const name = [request.first_name, request.last_name].filter(Boolean).join(" ")
-  const who = request.company || name || request.email
+  const who = request.company || name || request.email || request.phone || "a customer"
+
+  const rep = !request.sales_rep_ref
+    ? ""
+    : request.sales_rep_name
+      ? `Sales rep: ${request.sales_rep_name} (link ${request.sales_rep_ref})`
+      : `Sales rep link: ${request.sales_rep_ref} (no active rep has this code)`
 
   const items = (request.items ?? []).map((item) => {
     const what = item.variant_title
@@ -97,7 +120,9 @@ export const deliveryRequestEmailText = (
     "========================",
     "",
     `A customer would like a delivery to ${country}, which the checkout does not deliver to yet.`,
-    "Nothing was ordered or paid. Please send them a delivery quote; replying to this email answers the customer.",
+    request.email
+      ? "Nothing was ordered or paid. Please send them a delivery quote; replying to this email answers the customer."
+      : "Nothing was ordered or paid. They gave no email address, so please call them with a delivery quote.",
     "",
     "Products",
     ...items,
@@ -112,10 +137,11 @@ export const deliveryRequestEmailText = (
     ...address,
     "",
     "Contact",
-    `Email: ${request.email}`,
+    request.email ? `Email: ${request.email}` : "",
     request.phone ? `Phone: ${request.phone}` : "",
     request.vat_number ? `VAT number: ${request.vat_number}` : "",
     request.locale ? `Language: ${request.locale}` : "",
+    rep,
     "",
     request.message ? `Message:\n${request.message}\n` : "",
     `Request: ${request.id} (Admin → Delivery requests)`,

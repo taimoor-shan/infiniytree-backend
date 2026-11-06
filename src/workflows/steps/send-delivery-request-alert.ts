@@ -6,7 +6,8 @@ import { deliveryRequestEmailText } from "../../utils/delivery-request"
 
 /**
  * Emails the shop about a delivery quote request, with the customer as the
- * reply-to address so a representative can answer straight from the inbox.
+ * reply-to address so a representative can answer straight from the inbox
+ * (a customer who gave only a phone number is called instead).
  * The request is already saved and listed in the admin by then, so this is a
  * courtesy: a missing key or a failed send is logged and never fails the
  * customer's request.
@@ -37,7 +38,8 @@ export const sendDeliveryRequestAlertStep = createStep(
           "onboarding@resend.dev",
         to: process.env.CONTACT_EMAIL || "info@infinytree.com",
         subject,
-        replyTo: input.request.email,
+        // No email given: the shop calls the customer instead
+        replyTo: input.request.email ?? undefined,
         text,
       })
 

@@ -58,6 +58,49 @@ describe("delivery request email", () => {
     expect(text).not.toMatch(/\n\n\n/)
   })
 
+  it("tells the shop to answer by email when there is one", () => {
+    const { text } = deliveryRequestEmailText(request)
+
+    expect(text).toContain("Email: anna@example.gr")
+    expect(text).toContain("replying to this email answers the customer")
+  })
+
+  it("gives the phone as the only contact when no email was given", () => {
+    const { subject, text } = deliveryRequestEmailText({
+      ...request,
+      email: null,
+      company: null,
+      first_name: null,
+      last_name: null,
+    })
+
+    expect(subject).toBe("Delivery quote request: Greece — +30 210 1234567")
+    expect(text).not.toContain("Email:")
+    expect(text).not.toContain("replying to this email answers the customer")
+    expect(text).toContain("They gave no email address, so please call them")
+    expect(text).toContain("Phone: +30 210 1234567")
+  })
+
+  it("names the sales rep whose link the customer came through", () => {
+    const { text } = deliveryRequestEmailText({
+      ...request,
+      sales_rep_ref: "K7M2QX9P",
+      sales_rep_name: "Peter Nagy",
+    })
+
+    expect(text).toContain("Sales rep: Peter Nagy (link K7M2QX9P)")
+  })
+
+  it("gives the code alone when it leads to no active rep", () => {
+    const { text } = deliveryRequestEmailText({
+      ...request,
+      sales_rep_ref: "K7M2QX9P",
+      sales_rep_name: null,
+    })
+
+    expect(text).toContain("Sales rep link: K7M2QX9P (no active rep has this code)")
+  })
+
   it("says when a request was sent again", () => {
     const { subject, text } = deliveryRequestEmailText(
       { ...request, company: null },

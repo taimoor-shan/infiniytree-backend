@@ -17,7 +17,8 @@ const DeliveryRequest = model.define("delivery_request", {
   id: model.id({ prefix: "dreq" }).primaryKey(),
   // new: nobody has answered yet; handled: a representative has replied.
   status: model.enum(["new", "handled"]).default("new"),
-  email: model.text(),
+  // A request needs a way to answer it: an email or a phone, at least one.
+  email: model.text().nullable(),
   first_name: model.text().nullable(),
   last_name: model.text().nullable(),
   company: model.text().nullable(),
@@ -37,6 +38,12 @@ const DeliveryRequest = model.define("delivery_request", {
   // Net of VAT and without delivery, in the cart's currency.
   item_subtotal: model.float().nullable(),
   items: model.json().nullable(),
+  // The sales rep's client link the customer followed (the storefront's
+  // `_sales_rep_ref` cookie) and the rep's name when it was sent. Nothing is
+  // linked: a quote is not an account, so the owner assigns the client to the
+  // rep when the quote becomes an order.
+  sales_rep_ref: model.text().nullable(),
+  sales_rep_name: model.text().nullable(),
 })
 
 export default DeliveryRequest

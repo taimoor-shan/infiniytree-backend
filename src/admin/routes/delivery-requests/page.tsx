@@ -31,7 +31,8 @@ type DeliveryRequestItem = {
 type DeliveryRequest = {
   id: string
   status: "new" | "handled"
-  email: string
+  /** Null when the customer gave only a phone number */
+  email: string | null
   first_name: string | null
   last_name: string | null
   company: string | null
@@ -48,6 +49,9 @@ type DeliveryRequest = {
   currency_code: string | null
   item_subtotal: number | null
   items: DeliveryRequestItem[] | null
+  /** The sales rep's client link the customer followed, and its rep */
+  sales_rep_ref: string | null
+  sales_rep_name: string | null
   created_at: string
 }
 
@@ -86,6 +90,9 @@ const money = (amount: number | null, currency: string | null) => {
 const personName = (r: DeliveryRequest) =>
   [r.first_name, r.last_name].filter(Boolean).join(" ")
 
+/** How to reach the customer: their email, or their phone when they gave none */
+const contactOf = (r: DeliveryRequest) => r.email || r.phone || "a customer"
+
 const Details = ({ request }: { request: DeliveryRequest }) => (
   <div className="flex flex-col gap-6">
     <section className="flex flex-col gap-1">
@@ -112,14 +119,20 @@ const Details = ({ request }: { request: DeliveryRequest }) => (
       <Text size="small" weight="plus">
         Contact
       </Text>
-      <Text size="small">
-        <a
-          className="text-ui-fg-interactive hover:underline"
-          href={`mailto:${request.email}`}
-        >
-          {request.email}
-        </a>
-      </Text>
+      {request.email ? (
+        <Text size="small">
+          <a
+            className="text-ui-fg-interactive hover:underline"
+            href={`mailto:${request.email}`}
+          >
+            {request.email}
+          </a>
+        </Text>
+      ) : (
+        <Text size="small" className="text-ui-fg-subtle">
+          No email given: answer by phone.
+        </Text>
+      )}
       {request.phone && (
         <Text size="small">
           <a
@@ -135,6 +148,22 @@ const Details = ({ request }: { request: DeliveryRequest }) => (
       )}
       {request.locale && <Text size="small">Language: {request.locale}</Text>}
     </section>
+    {request.sales_rep_ref && (
+      <section className="flex flex-col gap-1">
+        <Text size="small" weight="plus">
+          Sales rep
+        </Text>
+        <Text size="small">
+          {request.sales_rep_name
+            ? `Came through ${request.sales_rep_name}'s client link (${request.sales_rep_ref}).`
+            : `Came through the client link ${request.sales_rep_ref}, which no active rep has.`}
+        </Text>
+        <Text size="small" className="text-ui-fg-subtle">
+          A quote is not an account, so nobody is linked yet. When it becomes an
+          order, assign the customer to the rep on their customer page.
+        </Text>
+      </section>
+    )}
     <section className="flex flex-col gap-2">
       <Text size="small" weight="plus">
         Products
@@ -238,7 +267,7 @@ const DeliveryRequestsRoute = () => {
   const confirmDelete = async (request: DeliveryRequest) => {
     const confirmed = await prompt({
       title: "Delete this request?",
-      description: `The delivery request of ${request.email} to ${countryName(
+      description: `The delivery request of ${contactOf(request)} to ${countryName(
         request.country_code
       )} will be removed from the list.`,
       confirmText: "Delete",
@@ -269,7 +298,9 @@ const DeliveryRequestsRoute = () => {
           <span>
             {row.original.company || personName(row.original) || "—"}
           </span>
-          <span className="text-ui-fg-subtle">{row.original.email}</span>
+          <span className="text-ui-fg-subtle">
+            {row.original.email || row.original.phone}
+          </span>
         </div>
       ),
     }),
@@ -303,7 +334,7 @@ const DeliveryRequestsRoute = () => {
         <IconButton
           size="small"
           variant="transparent"
-          aria-label={`Delete the request of ${row.original.email}`}
+          aria-label={`Delete the request of ${contactOf(row.original)}`}
           onClick={(e) => {
             e.stopPropagation()
             confirmDelete(row.original)

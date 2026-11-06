@@ -139,6 +139,74 @@ medusaIntegrationTestRunner({
       expect(sendMock).not.toHaveBeenCalled()
     })
 
+    it("takes a request with a phone and no email, and emails the shop without a reply-to", async () => {
+      const cartId = await createCart([{ title: "Bonsai", quantity: 1, unit_price: 900 }])
+
+      const res = await api.post(
+        "/store/delivery-requests",
+        body(cartId, { email: undefined }),
+        { headers: storeHeaders }
+      )
+
+      expect(res.status).toBe(200)
+      const { data } = await api.get("/admin/delivery-requests", { headers })
+      expect(data.requests[0]).toMatchObject({ email: null, phone: "+30 210 1234567" })
+      expect(sendMock).toHaveBeenCalledTimes(1)
+      expect(sendMock.mock.calls[0][0].replyTo).toBeUndefined()
+    })
+
+    it("refuses a request with neither an email nor a phone", async () => {
+      const cartId = await createCart([{ title: "Bonsai", quantity: 1, unit_price: 900 }])
+
+      const res = await api
+        .post(
+          "/store/delivery-requests",
+          body(cartId, { email: undefined, phone: undefined }),
+          { headers: storeHeaders }
+        )
+        .catch((e) => e.response)
+
+      expect(res.status).toBe(400)
+      expect(sendMock).not.toHaveBeenCalled()
+    })
+
+    it("keeps the sales rep link the customer came through, with the rep's name", async () => {
+      const { sales_rep } = (
+        await api.post(
+          "/admin/sales-reps",
+          { name: "Peter Nagy", email: "peter@example.com" },
+          { headers }
+        )
+      ).data
+      const cartId = await createCart([{ title: "Bonsai", quantity: 1, unit_price: 900 }])
+
+      await api.post(
+        "/store/delivery-requests",
+        body(cartId, { sales_rep_ref: ` ${sales_rep.client_link_code.toLowerCase()} ` }),
+        { headers: storeHeaders }
+      )
+
+      const { data } = await api.get("/admin/delivery-requests", { headers })
+      expect(data.requests[0]).toMatchObject({
+        sales_rep_ref: sales_rep.client_link_code,
+        sales_rep_name: "Peter Nagy",
+      })
+      expect(sendMock.mock.calls[0][0].text).toContain(
+        `Sales rep: Peter Nagy (link ${sales_rep.client_link_code})`
+      )
+    })
+
+    it("keeps a code no rep has, without a name", async () => {
+      const cartId = await createCart([{ title: "Bonsai", quantity: 1, unit_price: 900 }])
+
+      await api.post("/store/delivery-requests", body(cartId, { sales_rep_ref: "ZZZZ9999" }), {
+        headers: storeHeaders,
+      })
+
+      const { data } = await api.get("/admin/delivery-requests", { headers })
+      expect(data.requests[0]).toMatchObject({ sales_rep_ref: "ZZZZ9999", sales_rep_name: null })
+    })
+
     it("saves the request even when the email fails", async () => {
       sendMock.mockRejectedValue(new Error("network down"))
       const cartId = await createCart([{ title: "Maple", quantity: 1, unit_price: 700 }])

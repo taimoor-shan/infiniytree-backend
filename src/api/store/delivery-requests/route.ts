@@ -4,23 +4,38 @@ import createDeliveryRequestWorkflow from "../../../workflows/create-delivery-re
 
 const text = (max = 255) => z.string().max(max).optional()
 
-export const DeliveryRequestSchema = z.object({
-  cart_id: z.string().min(1),
-  email: z.email({ error: "Invalid email address" }),
-  first_name: text(),
-  last_name: text(),
-  company: text(),
-  vat_number: text(64),
-  phone: text(64),
-  address_1: text(),
-  address_2: text(),
-  postal_code: text(32),
-  city: text(),
-  province: text(),
-  country_code: z.string().regex(/^[a-zA-Z]{2}$/, "Invalid country"),
-  message: text(2000),
-  locale: text(16),
-})
+// An empty form field means "not given"
+const blankToUndefined = (value: unknown) =>
+  typeof value === "string" && !value.trim() ? undefined : value
+
+export const DeliveryRequestSchema = z
+  .object({
+    cart_id: z.string().min(1),
+    email: z.preprocess(
+      blankToUndefined,
+      z.email({ error: "Invalid email address" }).optional()
+    ),
+    first_name: text(),
+    last_name: text(),
+    company: text(),
+    vat_number: text(64),
+    phone: z.preprocess(blankToUndefined, text(64)),
+    address_1: text(),
+    address_2: text(),
+    postal_code: text(32),
+    city: text(),
+    province: text(),
+    country_code: z.string().regex(/^[a-zA-Z]{2}$/, "Invalid country"),
+    message: text(2000),
+    locale: text(16),
+    // The sales rep's client link the customer followed, if any
+    sales_rep_ref: text(32),
+  })
+  // The shop has to answer: by email, or by phone when no email is given
+  .refine((body) => !!body.email || !!body.phone, {
+    message: "An email address or a phone number is needed",
+    path: ["email"],
+  })
 
 /**
  * "Request a delivery quote": the checkout's answer for a European country
