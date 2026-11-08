@@ -113,3 +113,43 @@ try {
       `Error: ${err.message}`
   )
 }
+
+// The TTFs above hold the letters of Western Europe. Hungarian ő and ű (and
+// Polish ł, Czech č, Romanian ș…) are in the "latin-ext" subset of the same
+// typefaces, kept here as WOFF (SIL OFL, from @fontsource). The font stacks in
+// theme.ts name these families second, so a letter the base font lacks comes
+// from here instead of printing as an empty box.
+//
+// A missing file must not break every invoice: the family then points at the
+// base font, and only the rare letter is lost.
+const extensionFile = (name: string, base: string) => {
+  const file = resolveAsset(`${FONT_DIR}/${name}`)
+  return fs.existsSync(file) ? file : resolveAsset(`${FONT_DIR}/${base}`)
+}
+
+try {
+  Font.register({
+    family: "DM Sans Ext",
+    fonts: [
+      {
+        src: extensionFile("DMSans-LatinExt-Regular.woff", "DMSans-Regular.ttf"),
+        fontWeight: "normal",
+      },
+      {
+        src: extensionFile("DMSans-LatinExt-Bold.woff", "DMSans-Bold.ttf"),
+        fontWeight: "bold",
+      },
+    ],
+  })
+
+  Font.register({
+    family: "Bodoni Moda Ext",
+    fonts: [
+      {
+        src: extensionFile("BodoniModa-LatinExt-Regular.woff", "BodoniModa-Regular.ttf"),
+      },
+    ],
+  })
+} catch (err: any) {
+  console.warn(`[invoice] Latin-ext font registration failed. Error: ${err.message}`)
+}

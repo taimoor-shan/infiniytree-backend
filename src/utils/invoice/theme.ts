@@ -41,10 +41,15 @@ export const theme = {
   },
 
   typography: {
-    /** Serif headings — "Bodoni Moda" when registered, falls back to serif */
-    heading: "Bodoni Moda",
-    /** Sans-serif body — "DM Sans" when registered, falls back to sans-serif */
-    body: "DM Sans",
+    /**
+     * Font stacks: react-pdf takes each letter from the first font of the
+     * stack that has it. The "Ext" twin is the latin-ext subset of the same
+     * typeface (see fonts.ts), for ő, ű, ł, č… which the base font lacks.
+     */
+    /** Serif headings — "Bodoni Moda" */
+    heading: ["Bodoni Moda", "Bodoni Moda Ext"],
+    /** Sans-serif body — "DM Sans" */
+    body: ["DM Sans", "DM Sans Ext"],
     sizes: {
       xs: 8,
       sm: 9,
@@ -64,7 +69,8 @@ export const theme = {
 export const COMPANY = {
   displayName: "InfinYtree",
   legalName: "Deltalivings Kft.",
-  address: ["1065 Budapest", "Podmaniczky utca 19", "Hungary"],
+  // The country is a word, so it comes from the dictionaries (invoice.companyCountry)
+  address: ["1065 Budapest", "Podmaniczky utca 19"],
   taxNumber: "HU32214460",
   site: "www.infinytree.com",
   email: "info@infinytree.com",

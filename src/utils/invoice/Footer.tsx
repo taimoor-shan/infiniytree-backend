@@ -9,18 +9,19 @@ import React from "react"
 import { View, Text } from "./react-pdf"
 import { s } from "./styles"
 import { COMPANY } from "./theme"
+import type { WithLabels } from "./types"
 
-export function Footer() {
+export function Footer({ labels }: WithLabels) {
   return (
     <View style={s.footer}>
       <View style={s.footerDivider} />
 
       <Text style={s.footerHeading}>
-        Thank you for choosing InfinYtree.
+        {labels.thankYou}
       </Text>
 
       {/* <Text style={s.footerText}>{COMPANY.tagline}</Text> */}
-      <Text style={s.footerText}>Payment is due within 14 days unless otherwise agreed.</Text>
+      <Text style={s.footerText}>{labels.paymentTerms}</Text>
 
       <View style={s.footerLinks}>
         <Text style={s.footerLink}>{COMPANY.site}</Text>

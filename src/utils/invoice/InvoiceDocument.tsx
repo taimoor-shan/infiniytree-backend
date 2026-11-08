@@ -46,23 +46,24 @@ export function InvoiceDocument({ invoice }: { invoice: InvoiceViewModel }) {
           orderNumber={invoice.orderNumber}
           issueDate={invoice.issueDate}
           dueDate={invoice.dueDate}
+          labels={invoice.labels}
         />
         <View style={s.financialSection}>
           <View style={s.financialLeft}>
-            <BillingDetails {...invoice.billing} />
+            <BillingDetails {...invoice.billing} labels={invoice.labels} />
           </View>
           <View style={s.financialRight}>
-            <PaymentInformation {...invoice.payment} />
+            <PaymentInformation {...invoice.payment} labels={invoice.labels} />
           </View>
         </View>
 
-        <ProductTable items={invoice.items} />
+        <ProductTable items={invoice.items} labels={invoice.labels} />
 
         {/* Payment + Totals side-by-side */}
 
             <TotalsCard {...invoice.totals} />
 
-        <Footer />
+        <Footer labels={invoice.labels} />
       </Page>
     </Document>
   );

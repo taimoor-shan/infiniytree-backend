@@ -65,7 +65,8 @@ export const s = StyleSheet.create({
     fontFamily: typography.heading,
     fontSize: 16,
     fontWeight:"bold",
-    marginBottom: 20,
+    // Tight enough that a long promo code wrapping its label can't push the footer to page 2
+    marginBottom: 14,
   },
   
   company: {
@@ -127,8 +128,9 @@ export const s = StyleSheet.create({
     width: "44%",
   },
 
+  // Wide enough for "PRO-FORMA-RECHNUNG" on one line
   invoiceColumn: {
-    width: "36%",
+    width: "42%",
   },
 
   logoImage: {
@@ -302,8 +304,9 @@ export const s = StyleSheet.create({
     marginBottom: 0,
   },
 
+  // Wide enough for "Discount (CODE)" and a seven-digit forint amount on one line
   summaryCard: {
-    width: 220,
+    width: 250,
     border: `1pt solid ${colors.border}`,
     borderRadius: 8,
     padding: 12,
@@ -323,12 +326,18 @@ export const s = StyleSheet.create({
     paddingVertical: 3,
   },
 
+  // A long label ("Discount (CODE)") takes the room the amount leaves and
+  // wraps inside it, so it never runs under the amount.
   summaryLabel: {
+    flex: 1,
+    paddingRight: 8,
     fontSize: typography.sizes.md,
     color: colors.secondary,
   },
 
   summaryValue: {
+    flexShrink: 0,
+    textAlign: "right",
     fontSize: typography.sizes.md,
     color: colors.primary,
   },
@@ -378,8 +387,10 @@ export const s = StyleSheet.create({
     borderBottom: `0.25pt solid #E9E6E1`,
   },
 
+  // Wide enough for the longest words in the three languages (Kedvezményezett,
+  // Verwendungszweck) to stay on one line
   paymentLabel: {
-    width: 72,
+    width: 84,
     color: "#777",
     fontSize: typography.sizes.sm,
   },
@@ -403,12 +414,13 @@ export const s = StyleSheet.create({
     marginBottom: 14,
   },
 
+  // The payment card gets the wider share: its 28-character IBAN fills a line
   financialLeft: {
-    width: "48%",
+    width: "44%",
   },
 
   financialRight: {
-    width: "48%",
+    width: "52%",
   },
 
   // -----------------------------------------------------------------------

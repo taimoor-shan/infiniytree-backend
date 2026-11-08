@@ -10,14 +10,15 @@ import { View, Text, Image } from "./react-pdf"
 import { s } from "./styles"
 import { COMPANY } from "./theme"
 import { LOGO_DATA_URI } from "./fonts"
-import type { HeaderProps } from "./types"
+import type { HeaderProps, WithLabels } from "./types"
 
 export function Header({
   invoiceNumber,
   orderNumber,
   issueDate,
   dueDate,
-}: HeaderProps) {
+  labels,
+}: HeaderProps & WithLabels) {
   return (
     <>
       <View style={s.header}>
@@ -29,7 +30,7 @@ export function Header({
 
           {/* <Text style={s.company}>{COMPANY.displayName}</Text> */}
           <Text style={s.companyLegal}>{COMPANY.legalName}</Text>
-          {COMPANY.address.map((line, i) => (
+          {[...COMPANY.address, labels.companyCountry].map((line, i) => (
             <Text key={i} style={s.body}>
               {line}
             </Text>
@@ -37,20 +38,20 @@ export function Header({
 
           <View style={{ height: 10 }} />
 
-          <Text style={s.small}>VAT ID/UID</Text>
+          <Text style={s.small}>{labels.vatId}</Text>
           <Text style={s.value}>{COMPANY.taxNumber}</Text>
         </View>
 
         {/* RIGHT — INVOICE + Metadata */}
         <View style={s.invoiceColumn}>
-          <Text style={s.invoiceTitle}>PRO FORMA INVOICE</Text>
+          <Text style={s.invoiceTitle}>{labels.title}</Text>
           <View style={s.goldDivider} />
 
           <View style={s.metaTable}>
-            <MetaRow label="Invoice Number" value={invoiceNumber} />
-            <MetaRow label="Order Number" value={orderNumber} />
-            <MetaRow label="Issue Date" value={issueDate} />
-            <MetaRow label="Due Date" value={dueDate} />
+            <MetaRow label={labels.invoiceNumber} value={invoiceNumber} />
+            <MetaRow label={labels.orderNumber} value={orderNumber} />
+            <MetaRow label={labels.issueDate} value={issueDate} />
+            <MetaRow label={labels.dueDate} value={dueDate} />
           </View>
         </View>
       </View>

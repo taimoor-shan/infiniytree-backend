@@ -8,14 +8,14 @@
 import React from "react"
 import { View, Text, Image } from "./react-pdf"
 import { s } from "./styles"
-import type { LineItem } from "./types"
+import type { LineItem, WithLabels } from "./types"
 
-export function ProductTable({ items }: { items: LineItem[] }) {
+export function ProductTable({ items, labels }: { items: LineItem[] } & WithLabels) {
   if (!items || items.length === 0) return null
 
   return (
     <View style={s.section}>
-      <Text style={s.sectionHeading}>Order Summary</Text>
+      <Text style={s.sectionHeading}>{labels.orderSummary}</Text>
 
       {items.map((item, index) => (
         <View key={index} style={s.productRow}>
@@ -38,19 +38,19 @@ export function ProductTable({ items }: { items: LineItem[] }) {
 
           {/* Qty */}
           <View style={s.qtyColumn}>
-            <Text style={s.columnLabel}>Qty</Text>
+            <Text style={s.columnLabel}>{labels.qty}</Text>
             <Text style={s.columnValue}>{item.quantity}</Text>
           </View>
 
           {/* Unit Price */}
           <View style={s.priceColumn}>
-            <Text style={s.columnLabel}>Unit Price</Text>
+            <Text style={s.columnLabel}>{labels.unitPrice}</Text>
             <Text style={s.columnValue}>{item.unitPrice}</Text>
           </View>
 
           {/* Total */}
           <View style={s.totalColumn}>
-            <Text style={s.columnLabel}>Total</Text>
+            <Text style={s.columnLabel}>{labels.itemTotal}</Text>
             <Text style={s.productTotal}>{item.total}</Text>
           </View>
         </View>

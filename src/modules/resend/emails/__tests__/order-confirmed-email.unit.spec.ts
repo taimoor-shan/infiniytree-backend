@@ -69,6 +69,80 @@ describe("OrderConfirmedEmail inspection notice", () => {
   })
 })
 
+// What a customer reads: tags gone (React's <!-- --> text separators leave nothing,
+// so "−" and an amount stay together), the no-break spaces Intl puts between digit groups made plain
+const readable = (html: string) =>
+  html
+    .replace(/<!--.*?-->/g, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/[  ]/g, " ")
+    .replace(/&#x27;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+
+// A Hungarian order with a 20% code. Medusa's discount_total (1 385 454) counts the
+// VAT on the discount; discount_subtotal (1 090 909) is the one that fits beside the net rows.
+const discounted = {
+  ...props,
+  currency_code: "huf",
+  items: [{ title: "Red Maple Tree", quantity: 1, unit_price: 5454545 }],
+  shipping_address: { country_code: "hu" },
+  subtotal: 5454545,
+  shipping_total: 20000,
+  discount_total: 1385454.43,
+  discount_subtotal: 1090909,
+  discount_codes: ["Real007"],
+  tax_total: 1183581.72,
+  total: 5567217.72,
+}
+
+describe("OrderConfirmedEmail discount", () => {
+  it("shows the net discount, so the rows add up to the total", () => {
+    const text = readable(emailOf({ ...discounted, locale: "hu-HU" }))
+
+    expect(text).toContain("−1 090 909 Ft")
+    expect(text).not.toContain("1 385 454")
+  })
+
+  it("names the promotion code in the label", () => {
+    expect(readable(emailOf({ ...discounted, locale: "hu-HU" }))).toContain("Kedvezmény (Real007)")
+    expect(readable(emailOf({ ...discounted, locale: "de-DE" }))).toContain("Rabatt (Real007)")
+    expect(readable(emailOf({ ...discounted, locale: "en" }))).toContain("Discount (Real007)")
+  })
+
+  it("names every code when an order used several", () => {
+    const text = readable(emailOf({ ...discounted, discount_codes: ["WELCOME", "VIP"], locale: "en" }))
+
+    expect(text).toContain("Discount (WELCOME, VIP)")
+  })
+
+  it("is only called Discount when no code explains it", () => {
+    const text = readable(emailOf({ ...discounted, discount_codes: undefined, locale: "en" }))
+
+    expect(text).toContain("Discount −")
+  })
+
+  it("falls back to the discount with VAT for an email queued before the net one was sent", () => {
+    const { discount_subtotal: _net, discount_codes: _codes, ...old } = discounted
+
+    expect(readable(emailOf({ ...old, locale: "hu-HU" }))).toContain("−1 385 454 Ft")
+  })
+
+  it("has no discount row for an order without one", () => {
+    const none = { ...discounted, discount_total: 0, discount_subtotal: 0, discount_codes: [] }
+
+    expect(readable(emailOf({ ...none, locale: "hu-HU" }))).not.toContain("Kedvezmény")
+  })
+
+  it("writes the VAT row in the customer's language", () => {
+    expect(readable(emailOf({ ...discounted, locale: "hu-HU" }))).toContain("ÁFA (27%)")
+    expect(readable(emailOf({ ...discounted, locale: "en" }))).toContain("VAT (27%)")
+
+    const abroad = { ...discounted, shipping_address: { country_code: "de" } }
+    expect(readable(emailOf({ ...abroad, locale: "de-DE" }))).toContain("MwSt. (0%)")
+  })
+})
+
 describe("the inspection notice dictionary entries", () => {
   const keys = (dictionary: Record<string, string>) =>
     Object.keys(dictionary).filter((key) => key.startsWith("email.orderConfirmed.inspection."))

@@ -7,7 +7,7 @@
 import React from "react"
 import { View, Text } from "./react-pdf"
 import { s } from "./styles"
-import type { BillingDetailsProps } from "./types"
+import type { BillingDetailsProps, WithLabels } from "./types"
 
 export function BillingDetails({
   company,
@@ -19,7 +19,8 @@ export function BillingDetails({
   postalCode,
   country,
   vat,
-}: BillingDetailsProps) {
+  labels,
+}: BillingDetailsProps & WithLabels) {
   const hasName = firstName || lastName
   const hasAddress = address1 || city || country
 
@@ -29,7 +30,7 @@ export function BillingDetails({
 
   return (
     <View>
-      <Text style={s.sectionHeading}>Bill To</Text>
+      <Text style={s.sectionHeading}>{labels.billTo}</Text>
 
       <View style={s.billToWrapper}>
         <View style={s.customerCard}>
@@ -56,7 +57,7 @@ export function BillingDetails({
 
           {vat ? (
             <View style={s.vatRow}>
-              <Text style={s.small}>VAT Number</Text>
+              <Text style={s.small}>{labels.vatNumber}</Text>
               <Text style={s.vatValue}>{vat}</Text>
             </View>
           ) : null}

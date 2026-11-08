@@ -9,6 +9,7 @@
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
+import { discountFields } from "../utils/order-discount"
 import { execSync } from "child_process"
 import fs from "fs"
 import path from "path"
@@ -71,6 +72,7 @@ export default async function testInvoice({ container }: ExecArgs) {
       "display_id",
       "created_at",
       "currency_code",
+      "locale",
       "total",
       "subtotal",
       "item_subtotal",
@@ -99,6 +101,7 @@ export default async function testInvoice({ container }: ExecArgs) {
     created_at: order.created_at?.toString(),
     currency_code: order.currency_code,
     email: order.email,
+    locale: (order as any).locale || undefined,
     shipping_address: order.shipping_address as any,
     items: ((order.items as any[]) || []).map((item: any) => ({
       title: item.title,
@@ -116,6 +119,7 @@ export default async function testInvoice({ container }: ExecArgs) {
       (order as any).shipping_subtotal ?? (order as any).shipping_total
     ),
     discount_total: toNum((order as any).discount_total),
+    ...discountFields(order),
     tax_total: toNum((order as any).tax_total),
     vat_number: vatNumber,
     item_subtotal: toNum((order as any).item_subtotal),

@@ -20,8 +20,10 @@ import {
   getVatNote,
   getVatNumber,
 } from "./helpers"
-import type { InvoiceOrderData, InvoiceViewModel, LineItem } from "./types"
+import type { InvoiceLabels, InvoiceOrderData, InvoiceViewModel, LineItem } from "./types"
 import type { BankDetails } from "../bank-details"
+import { discountLabel } from "../order-discount"
+import { createTranslator, resolveLocale } from "../../modules/resend/i18n"
 
 // ---------------------------------------------------------------------------
 // Placeholder product image (SVG — no binary file needed)
@@ -50,6 +52,9 @@ export function mapOrderToInvoice(
   const currency = order.currency_code || "eur"
   const isHuf = currency.toLowerCase() === "huf"
   const displayId = getDisplayId(order)
+  // The customer's language (an order from before the shop stored one reads as English)
+  const locale = resolveLocale(order.locale)
+  const t = createTranslator(locale)
   const { subtotal, shipping, discount, tax, total } = getTotals(order)
   console.log("[mapper-debug] getTotals result:", { subtotal, shipping, discount, tax, total })
   console.log("[mapper-debug] raw order totals:", {
@@ -83,8 +88,8 @@ export function mapOrderToInvoice(
       subtitle: item.variant?.title || (item as any).variant_title || undefined,
       sku: item.variant?.sku || (item as any).variant_sku || undefined,
       quantity: qty,
-      unitPrice: isHuf ? fmtAmount(price, currency) : fmt(price, currency),
-      total: isHuf ? fmtAmount(price * qty, currency) : fmt(price * qty, currency),
+      unitPrice: isHuf ? fmtAmount(price, currency, locale) : fmt(price, currency, locale),
+      total: isHuf ? fmtAmount(price * qty, currency, locale) : fmt(price * qty, currency, locale),
       image: PLACEHOLDER_IMAGE,
     }
   })
@@ -93,14 +98,44 @@ export function mapOrderToInvoice(
   }
 
   // ---- Totals ----
+  // Every row is net except the VAT row, so the discount is the net one and
+  // the rows add up to the total. The promotion code(s) name the discount.
   const totals = {
-    subtotal: fmt(subtotal, currency),
-    ...(shipping > 0 ? { shipping: fmt(shipping, currency) } : {}),
-    ...(discount > 0 ? { discount: fmt(discount, currency) } : {}),
-    vatLabel: getVatLabel(order),
-    vat: fmt(tax, currency),
-    total: fmt(total, currency),
-    vatNote: getVatNote(order),
+    subtotalLabel: t("invoice.subtotal"),
+    subtotal: fmt(subtotal, currency, locale),
+    shippingLabel: t("invoice.shipping"),
+    ...(shipping > 0 ? { shipping: fmt(shipping, currency, locale) } : {}),
+    discountLabel: discountLabel(t("invoice.discount"), order.discount_codes),
+    ...(discount > 0 ? { discount: fmt(discount, currency, locale) } : {}),
+    vatLabel: getVatLabel(order, t),
+    vat: fmt(tax, currency, locale),
+    totalLabel: t("invoice.total"),
+    total: fmt(total, currency, locale),
+    vatNote: getVatNote(order, t),
+  }
+
+  // ---- Fixed words ----
+  const labels: InvoiceLabels = {
+    title: t("invoice.title"),
+    vatId: t("invoice.vatId"),
+    companyCountry: t("invoice.companyCountry"),
+    invoiceNumber: t("invoice.number"),
+    orderNumber: t("invoice.orderNumber"),
+    issueDate: t("invoice.issueDate"),
+    dueDate: t("invoice.dueDate"),
+    billTo: t("invoice.billTo"),
+    vatNumber: t("invoice.vatNumber"),
+    orderSummary: t("invoice.orderSummary"),
+    qty: t("invoice.qty"),
+    unitPrice: t("invoice.unitPrice"),
+    itemTotal: t("invoice.itemTotal"),
+    paymentInformation: t("invoice.paymentInformation"),
+    beneficiary: t("invoice.beneficiary"),
+    bank: t("invoice.bank"),
+    bic: t("invoice.bic"),
+    reference: t("invoice.reference"),
+    thankYou: t("invoice.thankYou"),
+    paymentTerms: t("invoice.paymentTerms"),
   }
 
   // ---- Payment ----
@@ -114,10 +149,12 @@ export function mapOrderToInvoice(
   }
 
   return {
+    locale,
+    labels,
     invoiceNumber: `INV-${displayId}`,
     orderNumber: `#${displayId}`,
-    issueDate: fmtDate(order.created_at),
-    dueDate: dueDate(order.created_at),
+    issueDate: fmtDate(order.created_at, locale),
+    dueDate: dueDate(order.created_at, locale),
     currency,
     billing: {
       company: addr?.company || undefined,
