@@ -18,11 +18,23 @@ export const ZERO_DECIMAL_CURRENCIES = new Set([
   "CLP", "PYG", "UGX", "RWF", "UZS", "KES",
 ])
 
-/** Format a number as currency (en-US, defaults to EUR). Zero-decimal currencies (HUF etc.) omit fraction digits. */
-export function fmt(amount: number, currency: string): string {
+/** Translates a key from the dictionaries the emails use (`createTranslator`, modules/resend/i18n). */
+export type Translate = (key: string, params?: Record<string, string | number>) => string
+
+/**
+ * The invoice is written in the language the customer ordered in (en, de-AT,
+ * de-DE or hu-HU, the email dictionaries' codes), and its numbers and dates
+ * follow that country: 1.234,56 €, 5 454 545 Ft, 2026. november 7.
+ * English keeps the format it always had, US numbers and a British date.
+ */
+const NUMBER_LOCALE: Record<string, string> = { en: "en-US" }
+const DATE_LOCALE: Record<string, string> = { en: "en-GB" }
+
+/** Format a number as currency (defaults to EUR). Zero-decimal currencies (HUF etc.) omit fraction digits. */
+export function fmt(amount: number, currency: string, locale = "en"): string {
   const c = (currency || "EUR").toUpperCase()
   const zeroDecimals = ZERO_DECIMAL_CURRENCIES.has(c)
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(NUMBER_LOCALE[locale] ?? locale, {
     style: "currency",
     currency: c,
     minimumFractionDigits: zeroDecimals ? 0 : 2,
@@ -31,19 +43,19 @@ export function fmt(amount: number, currency: string): string {
 }
 
 /** Format a number WITHOUT the currency symbol/code — for product table cells where space is tight. */
-export function fmtAmount(amount: number, currency: string): string {
+export function fmtAmount(amount: number, currency: string, locale = "en"): string {
   const c = (currency || "EUR").toUpperCase()
   const zeroDecimals = ZERO_DECIMAL_CURRENCIES.has(c)
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(NUMBER_LOCALE[locale] ?? locale, {
     minimumFractionDigits: zeroDecimals ? 0 : 2,
     maximumFractionDigits: zeroDecimals ? 0 : 2,
   }).format(amount)
 }
 
-/** Format an ISO date string as a human-readable date (en-GB long format). */
-export function fmtDate(iso?: string): string {
+/** Format an ISO date string as a human-readable long date (7 November 2026). */
+export function fmtDate(iso?: string, locale = "en"): string {
   if (!iso) return "—"
-  return new Date(iso).toLocaleDateString("en-GB", {
+  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? locale, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -51,11 +63,11 @@ export function fmtDate(iso?: string): string {
 }
 
 /** Add 14 days to an ISO date and return formatted. */
-export function dueDate(iso?: string): string {
+export function dueDate(iso?: string, locale = "en"): string {
   if (!iso) return "—"
   const d = new Date(iso)
   d.setDate(d.getDate() + 14)
-  return fmtDate(d.toISOString())
+  return fmtDate(d.toISOString(), locale)
 }
 
 /** Extract a stable display ID from an order. */
@@ -68,7 +80,9 @@ export function getTotals(order: InvoiceOrderData) {
   return {
     subtotal: order.item_subtotal ?? order.subtotal ?? 0,
     shipping: order.shipping_subtotal ?? order.shipping_total ?? 0,
-    discount: order.discount_total ?? 0,
+    // Net, like the subtotal, shipping and VAT beside it. `discount_total` also
+    // counts the VAT on the discount, so with it the rows would not add up.
+    discount: order.discount_subtotal ?? order.discount_total ?? 0,
     tax: order.tax_total ?? 0,
     total: order.total ?? 0,
   }
@@ -80,15 +94,13 @@ export function isHungarian(order: InvoiceOrderData): boolean {
 }
 
 /** VAT label for the totals section. */
-export function getVatLabel(order: InvoiceOrderData): string {
-  return isHungarian(order) ? "VAT (27%)" : "VAT (0%)"
+export function getVatLabel(order: InvoiceOrderData, t: Translate): string {
+  return `${t("invoice.vat")} (${isHungarian(order) ? 27 : 0}%)`
 }
 
-/** Legal VAT note — both variants are preserved verbatim from the current invoice. */
-export function getVatNote(order: InvoiceOrderData): string {
-  return isHungarian(order)
-    ? "Includes 27% VAT per Hungarian VAT law."
-    : "Reverse charge applies (Art. 196 VAT Directive) — VAT not charged."
+/** Legal VAT note — the wording of the current invoice, in the customer's language. */
+export function getVatNote(order: InvoiceOrderData, t: Translate): string {
+  return t(isHungarian(order) ? "invoice.vatNote.domestic" : "invoice.vatNote.reverseCharge")
 }
 
 /** Extract VAT number from order or shipping-address metadata. */

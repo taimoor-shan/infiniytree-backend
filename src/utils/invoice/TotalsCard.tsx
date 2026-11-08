@@ -33,11 +33,15 @@ function Row({
 }
 
 export function TotalsCard({
+  subtotalLabel,
   subtotal,
+  shippingLabel,
   shipping,
+  discountLabel,
   discount,
   vatLabel,
   vat,
+  totalLabel,
   total,
   vatNote,
 }: TotalsCardProps) {
@@ -46,17 +50,17 @@ export function TotalsCard({
       <View style={s.summaryCard}>
         {/* <Text style={s.summaryHeading}>Order Total</Text> */}
 
-        <Row label="Subtotal" value={subtotal} />
+        <Row label={subtotalLabel} value={subtotal} />
 
-        {shipping ? <Row label="Shipping" value={shipping} /> : null}
+        {shipping ? <Row label={shippingLabel} value={shipping} /> : null}
 
-        {discount ? <Row label="Discount" value={`-${discount}`} /> : null}
+        {discount ? <Row label={discountLabel} value={`-${discount}`} /> : null}
 
         <Row label={vatLabel} value={vat} />
 
         <View style={s.summaryDivider} />
 
-        <Row label="Total" value={total} strong valueStyle={s.total} />
+        <Row label={totalLabel} value={total} strong valueStyle={s.total} />
 
         <Text style={s.vatNote}>{vatNote}</Text>
       </View>

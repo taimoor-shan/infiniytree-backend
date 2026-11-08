@@ -2,6 +2,7 @@ import React from "react"
 import { EmailLayout } from "./layout"
 import { createTranslator, resolveLocale } from "../i18n"
 import { formatPrice } from "../i18n/money"
+import { discountLabel } from "../../../utils/order-discount"
 
 export interface OrderConfirmedEmailProps {
   id: string
@@ -31,7 +32,12 @@ export interface OrderConfirmedEmailProps {
   total?: number
   subtotal?: number
   shipping_total?: number
+  /** The discount with the VAT on it: only the fallback for `discount_subtotal` */
   discount_total?: number
+  /** The discount without VAT, which is what fits beside the net rows of the totals */
+  discount_subtotal?: number
+  /** The promotion codes behind the discount, named in its label */
+  discount_codes?: string[]
   tax_total?: number
   payment_method?: {
     provider_id: string
@@ -80,6 +86,8 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
     subtotal,
     shipping_total,
     discount_total,
+    discount_subtotal,
+    discount_codes,
     tax_total,
     payment_method,
     order_url,
@@ -95,7 +103,11 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
 
   const orderNumber = display_id || id?.slice(-8) || "—"
   const isHU = shipping_address?.country_code?.toLowerCase() === "hu"
-  const vatLabel = isHU ? "VAT (27%)" : "VAT (0%)"
+  const vatLabel = `${t("email.orderConfirmed.vat")} (${isHU ? 27 : 0}%)`
+  // Every row of the totals is net, so the discount is too: `discount_total`
+  // also counts the VAT on it and would not add up (it serves orders queued
+  // before the net figure was sent)
+  const discount = discount_subtotal ?? discount_total
   const orderDate = created_at
     ? new Date(created_at).toLocaleDateString(resolvedLocale, {
         year: "numeric",
@@ -283,13 +295,13 @@ export function OrderConfirmedEmail(props: OrderConfirmedEmailProps) {
               </td>
             </tr>
           )}
-          {discount_total != null && discount_total > 0 && (
+          {discount != null && discount > 0 && (
             <tr>
               <td style={{ fontSize: "14px", color: "#d44", padding: "3px 0" }}>
-                {t("email.orderConfirmed.discount")}
+                {discountLabel(t("email.orderConfirmed.discount"), discount_codes)}
               </td>
               <td style={{ fontSize: "14px", color: "#d44", textAlign: "right", padding: "3px 0" }}>
-                −{fmt(discount_total)}
+                −{fmt(discount)}
               </td>
             </tr>
           )}

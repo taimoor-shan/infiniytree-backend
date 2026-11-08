@@ -2,6 +2,7 @@ import { Modules } from "@medusajs/framework/utils"
 import { IOrderModuleService } from "@medusajs/framework/types"
 import { generateAccessToken, buildOrderAccessUrl, orderHasAccount } from "../utils/order-url"
 import { getBankDetails } from "../utils/bank-details"
+import { discountFields } from "../utils/order-discount"
 
 export default async function orderPlacedHandler({
   event,
@@ -134,6 +135,8 @@ export default async function orderPlacedHandler({
       subtotal: toNum((order as any).item_subtotal ?? (order as any).subtotal),
       shipping_total: toNum((order as any).shipping_subtotal ?? (order as any).shipping_total),
       discount_total: toNum((order as any).discount_total),
+      // the net discount and the codes: the email's rows are net, and it names the code
+      ...discountFields(order),
       tax_total: toNum((order as any).tax_total),
       payment_method: payment
         ? {

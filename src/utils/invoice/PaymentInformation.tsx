@@ -7,7 +7,7 @@
 import React from "react"
 import { View, Text } from "./react-pdf"
 import { s } from "./styles"
-import type { PaymentInformationProps } from "./types"
+import type { PaymentInformationProps, WithLabels } from "./types"
 
 function PaymentRow({
   label,
@@ -31,17 +31,18 @@ export function PaymentInformation({
   bic,
   beneficiary,
   reference,
-}: PaymentInformationProps) {
+  labels,
+}: PaymentInformationProps & WithLabels) {
   return (
     <View style={s.paymentSection}>
-      <Text style={s.sectionHeading}>Payment Information</Text>
+      <Text style={s.sectionHeading}>{labels.paymentInformation}</Text>
 
       <View style={s.paymentCard}>
-        <PaymentRow label="Beneficiary" value={beneficiary} />
-        <PaymentRow label="Bank" value={bank} />
+        <PaymentRow label={labels.beneficiary} value={beneficiary} />
+        <PaymentRow label={labels.bank} value={bank} />
         <PaymentRow label={ibanLabel} value={iban} />
-        <PaymentRow label="BIC / SWIFT" value={bic} />
-        <PaymentRow label="Reference" value={reference} />
+        <PaymentRow label={labels.bic} value={bic} />
+        <PaymentRow label={labels.reference} value={reference} />
       </View>
     </View>
   )
