@@ -38,15 +38,18 @@ export const sendWithdrawalEmailsStep = createStep(
         const { error } = await resend.emails.send({ from, ...message })
         if (error) {
           logger.warn(`[withdrawal] ${label} was refused: ${error.message}`)
+          return false
         }
+        return true
       } catch (err) {
         logger.warn(
           `[withdrawal] ${label} failed: ${err instanceof Error ? err.message : String(err)}`
         )
+        return false
       }
     }
 
-    await send("Confirmation email", {
+    const confirmationSent = await send("Confirmation email", {
       to: request.email,
       replyTo: shop,
       ...withdrawalConfirmationEmail(request),
@@ -54,7 +57,7 @@ export const sendWithdrawalEmailsStep = createStep(
     await send("Shop alert", {
       to: shop,
       replyTo: request.email,
-      ...withdrawalAlertEmail(request),
+      ...withdrawalAlertEmail(request, { confirmationSent }),
     })
 
     return new StepResponse(null)

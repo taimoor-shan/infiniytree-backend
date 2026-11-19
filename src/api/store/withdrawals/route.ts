@@ -12,7 +12,12 @@ export const WithdrawalSchema = z.object({
   order_number: z.string().trim().min(1).max(40),
   items: z.string().max(2000).optional(),
   message: z.string().max(2000).optional(),
-  locale: z.string().max(16).optional(),
+  // A language tag ("de-AT"): nothing else reaches the CSV export or the emails.
+  locale: z
+    .string()
+    .regex(/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/)
+    .max(16)
+    .optional(),
 })
 
 /**

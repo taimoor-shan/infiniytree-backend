@@ -8,7 +8,12 @@ export const NewsletterSignupSchema = z.object({
     (v) => (typeof v === "string" ? v.trim() : v),
     z.email({ error: "Invalid email address" })
   ),
-  locale: z.string().max(16).optional(),
+  // A language tag ("de-AT"): nothing else reaches the CSV export or the emails.
+  locale: z
+    .string()
+    .regex(/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/)
+    .max(16)
+    .optional(),
 })
 
 export const NewsletterTokenSchema = z.object({

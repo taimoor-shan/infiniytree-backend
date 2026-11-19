@@ -1,5 +1,5 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Badge, Button, Container, Heading, Table, Text } from "@medusajs/ui"
+import { Badge, Button, Container, Heading, Table, Text, toast } from "@medusajs/ui"
 import { EnvelopeSolid } from "@medusajs/icons"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
@@ -27,14 +27,22 @@ const STATUS: Record<Subscriber["status"], { label: string; color: "green" | "or
  * token for the link every newsletter needs.
  */
 const NewsletterRoute = () => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["newsletter-subscribers"],
     queryFn: () =>
       sdk.client.fetch<{ subscribers: Subscriber[]; count: number }>("/admin/newsletter"),
   })
 
   const download = async () => {
-    const response = await fetch("/admin/newsletter?format=csv", { credentials: "include" })
+    // Same backend address as the SDK, which may not be this page's origin.
+    const base = (import.meta.env.VITE_BACKEND_URL || "").replace(/\/+$/, "")
+    const response = await fetch(`${base}/admin/newsletter?format=csv`, {
+      credentials: "include",
+    }).catch(() => null)
+    if (!response?.ok) {
+      toast.error("The download did not work. Please try again.")
+      return
+    }
     const blob = await response.blob()
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
@@ -61,6 +69,13 @@ const NewsletterRoute = () => {
       </div>
       {isLoading ? (
         <Text className="px-6 py-4">Loading…</Text>
+      ) : isError ? (
+        <div className="flex items-center gap-3 px-6 py-4">
+          <Text className="text-ui-fg-error">The sign-ups could not be loaded.</Text>
+          <Button size="small" variant="secondary" onClick={() => refetch()}>
+            Try again
+          </Button>
+        </div>
       ) : !rows.length ? (
         <Text className="px-6 py-4 text-ui-fg-subtle">No sign-ups yet.</Text>
       ) : (
@@ -92,6 +107,11 @@ const NewsletterRoute = () => {
             ))}
           </Table.Body>
         </Table>
+      )}
+      {data && data.count > rows.length && (
+        <Text size="small" className="px-6 py-3 text-ui-fg-subtle">
+          Showing the newest {rows.length} of {data.count}. The CSV has every confirmed address.
+        </Text>
       )}
     </Container>
   )

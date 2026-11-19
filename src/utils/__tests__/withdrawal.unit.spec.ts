@@ -4,6 +4,7 @@ import {
   withdrawalConfirmationEmail,
   withdrawalLanguage,
 } from "../withdrawal"
+import { parseOrderNumber } from "../../workflows/steps/create-withdrawal-request"
 
 const request = {
   id: "wdr_123",
@@ -56,5 +57,24 @@ describe("withdrawal emails", () => {
     })
     expect(subject).toContain("not matched")
     expect(text).toContain("check by hand")
+  })
+
+  it("says so when the customer's confirmation could not be sent", () => {
+    expect(withdrawalAlertEmail(request).text).toContain("has been sent a confirmation")
+    const { text } = withdrawalAlertEmail(request, { confirmationSent: false })
+    expect(text).toContain("could NOT be sent")
+    expect(text).not.toContain("has been sent a confirmation")
+  })
+})
+
+describe("parseOrderNumber", () => {
+  it("reads one order number with decoration", () => {
+    expect(parseOrderNumber("#1042")).toBe(1042)
+    expect(parseOrderNumber("Nr. 1042 ")).toBe(1042)
+  })
+
+  it("does not join separate numbers into another order", () => {
+    expect(parseOrderNumber("#1 / #2")).toBeNull()
+    expect(parseOrderNumber("no number")).toBeNull()
   })
 })

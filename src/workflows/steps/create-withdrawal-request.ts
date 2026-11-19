@@ -18,13 +18,16 @@ export type WithdrawalRequestRecord = WithdrawalEmailInput & {
   order_id: string | null
 }
 
-/** "#1042", "1042 " and "Nr. 1042" all mean order 1042. */
+/**
+ * "#1042", "1042 " and "Nr. 1042" all mean order 1042. Text with more than
+ * one number ("#1 / #2") is not guessed at: it stays unlinked for a person.
+ */
 export const parseOrderNumber = (value: string): number | null => {
-  const digits = value.replace(/\D/g, "")
-  if (!digits || digits.length > 9) {
+  const numbers = value.match(/\d+/g)
+  if (!numbers || numbers.length !== 1 || numbers[0].length > 9) {
     return null
   }
-  return Number(digits)
+  return Number(numbers[0])
 }
 
 /**

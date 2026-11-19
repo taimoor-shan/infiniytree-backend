@@ -1,6 +1,7 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Badge, Button, Container, Heading, Table, Text, toast } from "@medusajs/ui"
 import { ArrowUturnLeft } from "@medusajs/icons"
+import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
 
@@ -21,6 +22,7 @@ type Withdrawal = {
 type WithdrawalsResponse = { withdrawals: Withdrawal[]; count: number }
 
 const QUERY_KEY = ["withdrawals"]
+const PAGE_SIZE = 100
 
 /**
  * Declarations of withdrawal sent with the storefront's "Withdraw from
@@ -30,11 +32,12 @@ const QUERY_KEY = ["withdrawals"]
  */
 const WithdrawalsRoute = () => {
   const queryClient = useQueryClient()
-  const { data, isLoading } = useQuery({
-    queryKey: QUERY_KEY,
+  const [offset, setOffset] = useState(0)
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: [...QUERY_KEY, offset],
     queryFn: () =>
       sdk.client.fetch<WithdrawalsResponse>("/admin/withdrawals", {
-        query: { limit: 100 },
+        query: { limit: PAGE_SIZE, offset },
       }),
   })
 
@@ -62,6 +65,13 @@ const WithdrawalsRoute = () => {
       </div>
       {isLoading ? (
         <Text className="px-6 py-4">Loading…</Text>
+      ) : isError ? (
+        <div className="flex items-center gap-3 px-6 py-4">
+          <Text className="text-ui-fg-error">The withdrawals could not be loaded.</Text>
+          <Button size="small" variant="secondary" onClick={() => refetch()}>
+            Try again
+          </Button>
+        </div>
       ) : !rows.length ? (
         <Text className="px-6 py-4 text-ui-fg-subtle">No withdrawals yet.</Text>
       ) : (
@@ -140,6 +150,31 @@ const WithdrawalsRoute = () => {
             ))}
           </Table.Body>
         </Table>
+      )}
+      {data && data.count > PAGE_SIZE && (
+        <div className="flex items-center justify-between px-6 py-3">
+          <Text size="small" className="text-ui-fg-subtle">
+            {offset + 1}–{Math.min(offset + PAGE_SIZE, data.count)} of {data.count}
+          </Text>
+          <div className="flex gap-2">
+            <Button
+              size="small"
+              variant="secondary"
+              disabled={offset === 0}
+              onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
+            >
+              Newer
+            </Button>
+            <Button
+              size="small"
+              variant="secondary"
+              disabled={offset + PAGE_SIZE >= data.count}
+              onClick={() => setOffset(offset + PAGE_SIZE)}
+            >
+              Older
+            </Button>
+          </div>
+        </div>
       )}
     </Container>
   )

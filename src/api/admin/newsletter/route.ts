@@ -2,6 +2,9 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { NEWSLETTER_MODULE } from "../../../modules/newsletter"
 import NewsletterModuleService from "../../../modules/newsletter/service"
 
+/** Visitor-typed text: a leading = + - @ would run as a formula in a spreadsheet. */
+const csvText = (value: string): string => (/^[=+\-@\t\r]/.test(value) ? `'${value}` : value)
+
 /**
  * Newsletter sign-ups, newest first. `?format=csv` gives the confirmed
  * addresses with their unsubscribe token, to import into a mailing tool.
@@ -17,7 +20,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const rows = [
       "email,locale,confirmed_at,unsubscribe_token",
       ...confirmed.map((s) =>
-        [s.email, s.locale ?? "", s.confirmed_at ? new Date(s.confirmed_at).toISOString() : "", s.unsubscribe_token ?? ""]
+        [
+          csvText(s.email),
+          csvText(s.locale ?? ""),
+          s.confirmed_at ? new Date(s.confirmed_at).toISOString() : "",
+          s.unsubscribe_token ?? "",
+        ]
           .map((v) => `"${String(v).replace(/"/g, '""')}"`)
           .join(",")
       ),

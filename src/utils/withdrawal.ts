@@ -124,7 +124,8 @@ export const withdrawalConfirmationEmail = (
 
 /** The shop's alert, always in English like its other alerts. */
 export const withdrawalAlertEmail = (
-  request: WithdrawalEmailInput
+  request: WithdrawalEmailInput,
+  { confirmationSent = true }: { confirmationSent?: boolean } = {}
 ): { subject: string; text: string } => {
   const matched = request.order_display_id !== null
   const lines = [
@@ -141,7 +142,9 @@ export const withdrawalAlertEmail = (
     `Language: ${request.locale || "en"}`,
     `Reference: ${request.id}`,
     "",
-    "The customer has been sent a confirmation of receipt. Admin: Withdrawals.",
+    confirmationSent
+      ? "The customer has been sent a confirmation of receipt. Admin: Withdrawals."
+      : "The confirmation of receipt to the customer could NOT be sent: send it by hand (the law requires one). Admin: Withdrawals.",
   ]
   return {
     subject: `Withdrawal from order ${request.order_number}${matched ? "" : " (not matched)"}`,
