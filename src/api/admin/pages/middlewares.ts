@@ -30,12 +30,14 @@ const RESERVED_FIRST_SEGMENTS = [
   "categories",
   "checkout",
   "collections",
+  "newsletter",
   "order",
   "pages",
   "products",
   "sales-portal",
   "store",
   "team",
+  "withdrawal",
 ]
 
 const slugSchema = z
