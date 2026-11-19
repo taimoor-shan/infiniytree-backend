@@ -287,6 +287,28 @@ export const quoteDelivery = (
 }
 
 /**
+ * The cheapest and dearest a delivery of `units` costs across the table's
+ * zones, in euro: what a product page can say before the postcode is known
+ * ("delivery from 95 €"). Null when no zone has a price for it.
+ */
+export const deliveryPriceRange = (
+  table: RateTable,
+  units = 1
+): { min: number; max: number } | null => {
+  let min: number | null = null
+  let max: number | null = null
+  for (const zone of table.zones) {
+    const cover = coverUnits(table.tiers, zone.id, units)
+    if (!cover) {
+      continue
+    }
+    min = min === null ? cover.amount : Math.min(min, cover.amount)
+    max = max === null ? cover.amount : Math.max(max, cover.amount)
+  }
+  return min === null || max === null ? null : { min, max }
+}
+
+/**
  * A euro amount in the cart's currency. `rates` is units of a currency per
  * euro, keyed by lower-case currency code.
  */

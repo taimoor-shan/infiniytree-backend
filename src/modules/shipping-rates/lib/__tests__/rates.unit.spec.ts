@@ -385,3 +385,37 @@ describe("saving a table", () => {
     )
   })
 })
+
+describe("deliveryPriceRange", () => {
+  const { deliveryPriceRange } = require("../rates")
+
+  it("gives the cheapest and dearest zone for one unit", () => {
+    const t = table("pallet", "at")
+    const prices = t.zones.map(
+      (zone) =>
+        quoteDelivery(t, {
+          postcode: zone.is_fallback ? null : zone.postcodes.split(/[ ,;]+/)[0],
+          units: 1,
+        }).amount
+    )
+    expect(deliveryPriceRange(t, 1)).toEqual({
+      min: Math.min(...prices),
+      max: Math.max(...prices),
+    })
+  })
+
+  it("is a single figure for a fixed price per unit", () => {
+    const t = table("carton", "de")
+    const range = deliveryPriceRange(t, 1)
+    expect(range).not.toBeNull()
+    expect(range.min).toBe(range.max)
+    expect(deliveryPriceRange(t, 2).min).toBe(range.min * 2)
+  })
+
+  it("is null when no row is on", () => {
+    const t = table("carton", "de")
+    expect(
+      deliveryPriceRange({ ...t, tiers: t.tiers.map((x) => ({ ...x, active: false })) })
+    ).toBeNull()
+  })
+})
