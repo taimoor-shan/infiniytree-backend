@@ -47,10 +47,11 @@ export const createWithdrawalRequestStep = createStep(
       const { data } = await query.graph({
         entity: "order",
         fields: ["id", "display_id", "email"],
-        filters: { display_id: displayId },
+        // The generated filter type reads display_id as a string; the column is a number.
+        filters: { display_id: displayId } as Record<string, unknown>,
         pagination: { take: 1, skip: 0 },
       })
-      const found = data?.[0] as
+      const found = data?.[0] as unknown as
         | { id: string; display_id: number; email?: string | null }
         | undefined
       if (found && found.email?.trim().toLowerCase() === email.toLowerCase()) {
