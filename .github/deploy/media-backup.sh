@@ -76,7 +76,7 @@ REMOTE="r2:$BUCKET"
 TODAY="$(date +%F)"
 # One folder per run under the day, so a second run the same day (the setup
 # run, a manual one) never overwrites what the first one archived.
-RUN_ID="$(date +%H%M%S)"
+RUN_ID="$(date +%H%M%S)-$$-$(od -An -N4 -tx4 /dev/urandom | tr -d " ")"
 
 log "uploads: $UPLOAD_DIR ($(du -sh "$UPLOAD_DIR" | cut -f1)) -> $REMOTE/uploads"
 # A file that is deleted or replaced locally is moved to deleted/<today>/
