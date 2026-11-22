@@ -7,6 +7,9 @@ name: Deploy production
 #   mode = inspect   read-only check of the server (start here)
 #   mode = deploy    backend: pull master, database backup, build, migrate,
 #                    restart, health check; then storefront: pull, build, restart
+#   mode = media-backup  install the nightly off-site media backup (cron) and
+#                    run it once; needs the MEDIA_BACKUP_R2_* keys in the
+#                    backend's .env (target is ignored)
 #
 # One-time setup (see .github/deploy/README.md):
 #   secrets   DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER, DEPLOY_KNOWN_HOSTS, DEPLOY_PORT (optional)
@@ -16,9 +19,9 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "inspect (read-only) or deploy"
+        description: "inspect (read-only), deploy, or media-backup (set up the nightly media backup)"
         type: choice
-        options: [inspect, deploy]
+        options: [inspect, deploy, media-backup]
         default: inspect
       target:
         description: "What to deploy (backend always goes before storefront)"
