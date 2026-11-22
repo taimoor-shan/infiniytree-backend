@@ -48,6 +48,12 @@ wait_for_http() { # url seconds label
 
 pull_master() { # dir
   cd "$1"
+  # Next.js rewrites next-env.d.ts on every build (dev vs build route types),
+  # so a tracked copy is always "changed" on the server. Put it back.
+  if [ -f next-env.d.ts ] && ! git diff --quiet -- next-env.d.ts; then
+    echo "restoring next-env.d.ts (rewritten by the last Next.js build)"
+    git checkout -- next-env.d.ts
+  fi
   if ! git diff --quiet || ! git diff --cached --quiet; then
     git status --short
     fail "$1 has uncommitted changes to tracked files. Nothing was changed; commit or stash them on the server first."
