@@ -92,7 +92,7 @@ const EmptyRow = ({
   loading,
 }: {
   colSpan: number
-  query: { isLoading: boolean; isError: boolean; refetch: () => unknown }
+  query: { isPending: boolean; isError: boolean; refetch: () => unknown }
   empty: string
   loading: string
 }) => (
@@ -100,7 +100,7 @@ const EmptyRow = ({
     <td colSpan={colSpan} className="px-6">
       <div className="flex flex-col items-center gap-2 py-6">
         <Text size="small" className={query.isError ? "text-ui-fg-error" : "text-ui-fg-subtle"}>
-          {query.isError ? "This list could not be loaded." : query.isLoading ? loading : empty}
+          {query.isError ? "This list could not be loaded." : query.isPending ? loading : empty}
         </Text>
         {query.isError && (
           <Button size="small" variant="secondary" onClick={() => query.refetch()}>
