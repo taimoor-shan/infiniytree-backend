@@ -70,6 +70,7 @@ This is an **Infinytree Medusa v2 backend** with custom modules, translation sup
 | `src/admin/i18n/` | Admin i18n translations (react-i18next) |
 | `src/scripts/` | Seed scripts, postbuild deployment, translation service health check, `setup-shipping.ts` (shipping classes, rates and delivery options; `shipping-classes.ts` holds the classes) `add-blue-cascade.ts` (the Blue Cascade product) and `translate-blue-cascade-and-delivery.ts` (the German of that product and of the delivery options), and the product tooling: `add-product.ts` (any product from a JSON spec), `check-product.ts`, `list-catalog.ts`, `set-product-status.ts` (see "Adding a product from a spec" under Products) |
 | `product-specs/` | One JSON file per product entered with `add-product.ts`: its English, German and Hungarian text, prices, options, shipping class and stock, kept as the record of what was entered. `blue-cascade.json` is the worked example and the fixture of the tests |
+| `.github/workflows/deploy-production.yml`, `.github/deploy/` | Deploy the live server from GitHub Actions over SSH (no laptop): `inspect` (read-only) or `deploy` both/backend/storefront, backend first with a `pg_dump` backup and `db:migrate`. Setup (secrets, variables) in `.github/deploy/README.md` |
 | `src/jobs/` | Scheduled jobs |
 | `www/` | Frontend static assets (app metadata) |
 | `static/` | Uploaded media files (local storage fallback) |

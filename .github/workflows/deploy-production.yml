@@ -1,0 +1,89 @@
+name: Deploy production
+
+# Started by hand (Actions → Deploy production → Run workflow), from GitHub or a
+# Claude cloud session; nothing runs on a laptop. GitHub's runner opens an SSH
+# connection to the server and runs .github/deploy/remote-deploy.sh there.
+#
+#   mode = inspect   read-only check of the server (start here)
+#   mode = deploy    backend: pull master, database backup, build, migrate,
+#                    restart, health check; then storefront: pull, build, restart
+#
+# One-time setup (see .github/deploy/README.md):
+#   secrets   DEPLOY_SSH_KEY, DEPLOY_HOST, DEPLOY_USER, DEPLOY_KNOWN_HOSTS, DEPLOY_PORT (optional)
+#   variables BACKEND_DIR, STOREFRONT_DIR, STOREFRONT_PM2, BACKEND_PM2 (optional)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "inspect (read-only) or deploy"
+        type: choice
+        options: [inspect, deploy]
+        default: inspect
+      target:
+        description: "What to deploy (backend always goes before storefront)"
+        type: choice
+        options: [both, backend, storefront]
+        default: both
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          for v in DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS DEPLOY_HOST DEPLOY_USER; do
+            [ -n "${!v}" ] || { echo "::error::Secret $v is not set. See .github/deploy/README.md"; exit 1; }
+          done
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Run on server (${{ inputs.mode }} ${{ inputs.target }})
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          MODE: ${{ inputs.mode }}
+          TARGET: ${{ inputs.target }}
+          BACKEND_DIR: ${{ vars.BACKEND_DIR }}
+          STOREFRONT_DIR: ${{ vars.STOREFRONT_DIR }}
+          BACKEND_PM2: ${{ vars.BACKEND_PM2 }}
+          STOREFRONT_PM2: ${{ vars.STOREFRONT_PM2 }}
+        run: |
+          remote_env=""
+          for v in BACKEND_DIR STOREFRONT_DIR BACKEND_PM2 STOREFRONT_PM2; do
+            [ -n "${!v}" ] && remote_env+="$v=$(printf '%q' "${!v}") "
+          done
+          ssh -i ~/.ssh/deploy_key -p "${DEPLOY_PORT:-22}" \
+            -o StrictHostKeyChecking=yes -o BatchMode=yes \
+            -o ServerAliveInterval=30 -o ConnectTimeout=20 \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "${remote_env}bash -s -- $(printf '%q' "$MODE") $(printf '%q' "$TARGET")" \
+            < .github/deploy/remote-deploy.sh
+
+      - name: Check the public site
+        if: inputs.mode == 'deploy'
+        run: |
+          for url in https://infinytree.com/; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -H 'User-Agent: deploy-check' --max-time 20 "$url" || true)
+            echo "$url -> $code"
+          done
