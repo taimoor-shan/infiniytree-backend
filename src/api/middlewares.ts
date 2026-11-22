@@ -20,6 +20,7 @@ import { deliveryEstimateStoreMiddlewares } from "./store/delivery-estimate/midd
 import { withdrawalStoreMiddlewares } from "./store/withdrawals/middlewares"
 import { withdrawalAdminMiddlewares } from "./admin/withdrawals/middlewares"
 import { newsletterStoreMiddlewares } from "./store/newsletter/middlewares"
+import { mediaAdminMiddlewares } from "./admin/media/middlewares"
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 
@@ -66,6 +67,7 @@ export default defineMiddlewares({
     ...contactStoreMiddlewares,
     ...notifyMeStoreMiddlewares,
     ...notifyMeAdminMiddlewares,
+    ...mediaAdminMiddlewares,
     ...deliveryRequestStoreMiddlewares,
     ...deliveryRequestAdminMiddlewares,
     ...shippingRatesAdminMiddlewares,
