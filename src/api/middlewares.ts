@@ -16,6 +16,10 @@ import { guestOrderMiddlewares } from "./store/orders/guest/[displayId]/middlewa
 import { guestInvoiceMiddlewares } from "./invoice/guest/[displayId]/middlewares"
 import { customerPrivacyStoreMiddlewares } from "./store/customer-privacy/middlewares"
 import { accountStatusStoreMiddlewares } from "./store/checkout/account-status/middlewares"
+import { deliveryEstimateStoreMiddlewares } from "./store/delivery-estimate/middlewares"
+import { withdrawalStoreMiddlewares } from "./store/withdrawals/middlewares"
+import { withdrawalAdminMiddlewares } from "./admin/withdrawals/middlewares"
+import { newsletterStoreMiddlewares } from "./store/newsletter/middlewares"
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 
@@ -69,6 +73,10 @@ export default defineMiddlewares({
     ...guestInvoiceMiddlewares,
     ...customerPrivacyStoreMiddlewares,
     ...accountStatusStoreMiddlewares,
+    ...deliveryEstimateStoreMiddlewares,
+    ...withdrawalStoreMiddlewares,
+    ...withdrawalAdminMiddlewares,
+    ...newsletterStoreMiddlewares,
     {
       matcher: "/admin/uploads",
       method: "POST",

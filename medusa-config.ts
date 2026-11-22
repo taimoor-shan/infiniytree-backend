@@ -113,6 +113,15 @@ module.exports = defineConfig({
       resolve: "./src/modules/delivery-request",
     },
     {
+      // Consumers' declarations of withdrawal, sent with the storefront's
+      // "Withdraw from contract" function; listed in the admin under Withdrawals.
+      resolve: "./src/modules/withdrawal",
+    },
+    {
+      // Newsletter sign-ups with double opt-in; listed in the admin under Newsletter.
+      resolve: "./src/modules/newsletter",
+    },
+    {
       // The delivery rates (pallet and carton) the checkout prices from; edited
       // in the admin under Shipping rates.
       resolve: "./src/modules/shipping-rates",
