@@ -313,3 +313,81 @@ describe("admin display helpers", () => {
     ).toBe("Order (2), Product")
   })
 })
+
+describe("review fixes", () => {
+  let root: string
+  let uploadDir: string
+  let trashDir: string
+
+  beforeEach(async () => {
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "media-fix-"))
+    uploadDir = path.join(root, "uploads")
+    trashDir = path.join(root, "uploads-trash")
+    await fs.mkdir(uploadDir, { recursive: true })
+  })
+
+  afterEach(async () => {
+    await fs.rm(root, { recursive: true, force: true })
+  })
+
+  it("keeps a file whose name has an apostrophe, stored in JSON", () => {
+    const fileName = old("kid's room.jpg")
+    const stored = JSON.stringify({ url: `https://api.example.com${staticPath(fileName)}` })
+    const refs = extractStaticReferences(stored)
+    expect(refs.has(fileName)).toBe(true)
+
+    const entries = classifyFiles(
+      [{ name: fileName, size: 1, modified_at: new Date(OLD_MS) }],
+      new Map([...refs].map((r) => [r, [{ table: "t", column: "c", id: null, product_id: null }]])),
+      NOW,
+      7
+    )
+    expect(entries[0].status).toBe("used")
+  })
+
+  it("finds URLs in single-quoted attributes and URLs that run together", () => {
+    const refs = extractStaticReferences(
+      `<img src='/static/${old("a.jpg")}'>['/static/${old("b.jpg")}','/static/${old("c.jpg")}']`
+    )
+    for (const n of ["a.jpg", "b.jpg", "c.jpg"]) expect(refs.has(old(n))).toBe(true)
+  })
+
+  it("gives a restored file a fresh grace period", async () => {
+    await fs.writeFile(path.join(uploadDir, old("a.jpg")), "a")
+    const past = new Date(OLD_MS)
+    await fs.utimes(path.join(uploadDir, old("a.jpg")), past, past)
+    const { moved } = await moveToTrash(uploadDir, trashDir, [old("a.jpg")])
+    await restoreFromTrash(uploadDir, trashDir, [moved[0].id])
+    const [file] = await listFiles(uploadDir)
+    expect(Date.now() - file.modified_at.getTime()).toBeLessThan(60 * 1000)
+    expect(selectOrphans([file], () => false, new Date(), 7)).toEqual([])
+  })
+
+  it("goes on with the other files when one cannot be moved", async () => {
+    await fs.writeFile(path.join(uploadDir, old("a.jpg")), "a")
+    await fs.mkdir(path.join(uploadDir, "sub"))
+    await fs.writeFile(path.join(uploadDir, "sub", old("b.jpg")), "b")
+    // A file where the trash needs a folder: the move of sub/… fails
+    const stamp = NOW.getTime()
+    await fs.mkdir(path.join(trashDir, String(stamp)), { recursive: true })
+    await fs.writeFile(path.join(trashDir, String(stamp), "sub"), "blocker")
+
+    const result = await moveToTrash(uploadDir, trashDir, [`sub/${old("b.jpg")}`, old("a.jpg")], NOW)
+    expect(result.failed.map((f) => f.name)).toEqual([`sub/${old("b.jpg")}`])
+    expect(result.moved.map((m) => m.name)).toEqual([old("a.jpg")])
+  })
+
+  it("never deletes through a symbolic link in the trash", async () => {
+    const outside = path.join(root, "outside")
+    await fs.mkdir(outside)
+    await fs.writeFile(path.join(outside, "keep.jpg"), "k")
+    await fs.mkdir(path.join(trashDir, "123"), { recursive: true })
+    await fs.symlink(outside, path.join(trashDir, "123", "link"))
+    await expect(deleteFromTrash(trashDir, ["123/link/keep.jpg"])).rejects.toThrow(MediaPathError)
+    expect(await fs.readFile(path.join(outside, "keep.jpg"), "utf8")).toBe("k")
+  })
+
+  it("refuses to classify when the database has no tables to scan", async () => {
+    await expect(scanDatabaseReferences(fakeDb({}))).rejects.toThrow(/no tables/)
+  })
+})

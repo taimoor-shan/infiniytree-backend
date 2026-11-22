@@ -11,6 +11,8 @@ export type CleanupSummary = {
   trashed: string[]
   /** Trash items deleted for good because they passed the retention period. */
   purged: string[]
+  /** Files that could not be moved; the rest of the run went on. */
+  failed: { name: string; error: string }[]
 }
 
 type Logger = { info: (msg: string) => void; warn: (msg: string) => void }
@@ -38,6 +40,7 @@ export async function runMediaCleanup(
     unused_bytes: 0,
     trashed: [],
     purged: [],
+    failed: [],
   }
   if (mode === "off") return summary
 
@@ -55,13 +58,20 @@ export async function runMediaCleanup(
     return summary
   }
 
-  const { moved } = await moveToTrash(
+  const { moved, failed } = await moveToTrash(
     settings.uploadDir,
     settings.trashDir,
     unused.map((f) => f.name),
     now
   )
   summary.trashed = moved.map((m) => m.name)
+  summary.failed = failed
+  if (failed.length) {
+    log?.warn(
+      `[media] could not move ${failed.length} file(s): ` +
+        failed.slice(0, 20).map((f) => `${f.name} (${f.error})`).join(", ")
+    )
+  }
 
   const purged = await purgeExpiredTrash(settings.trashDir, settings.trashRetentionDays, now)
   summary.purged = purged.map((p) => p.id)

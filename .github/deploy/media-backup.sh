@@ -19,7 +19,7 @@
 #
 # Bucket layout:
 #   uploads/                  mirror of UPLOAD_DIR
-#   deleted/<YYYY-MM-DD>/     files that left UPLOAD_DIR (or were changed) that night
+#   deleted/<YYYY-MM-DD>/<HHMMSS>/  files that left UPLOAD_DIR (or were changed) in that run
 #   database/<stamp>.dump     pg_dump --format=custom
 #
 # Restore a file:   rclone copy r2:<bucket>/uploads/<file> "$UPLOAD_DIR"/
@@ -74,12 +74,15 @@ export RCLONE_CONFIG_R2_ACL=private
 
 REMOTE="r2:$BUCKET"
 TODAY="$(date +%F)"
+# One folder per run under the day, so a second run the same day (the setup
+# run, a manual one) never overwrites what the first one archived.
+RUN_ID="$(date +%H%M%S)"
 
 log "uploads: $UPLOAD_DIR ($(du -sh "$UPLOAD_DIR" | cut -f1)) -> $REMOTE/uploads"
 # A file that is deleted or replaced locally is moved to deleted/<today>/
 # instead of being removed from the bucket. Hidden files are not uploads.
 rclone sync "$UPLOAD_DIR" "$REMOTE/uploads" \
-  --backup-dir "$REMOTE/deleted/$TODAY" \
+  --backup-dir "$REMOTE/deleted/$TODAY/$RUN_ID" \
   --exclude ".*" --exclude ".*/**" \
   --fast-list --transfers 4 --stats-one-line --stats 0 -v 2>&1 | tail -5
 

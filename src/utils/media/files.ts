@@ -1,4 +1,5 @@
 import fs from "fs/promises"
+import { constants as fsConstants } from "fs"
 import path from "path"
 
 /**
@@ -97,17 +98,33 @@ export async function listFiles(root: string): Promise<MediaFile[]> {
   return out
 }
 
-/** Move a file, across disks too (rename, else copy and delete). Keeps the mtime. */
+/**
+ * Move a file, across disks too, keeping its mtime. It never replaces a file
+ * at `to`: a hard link (or, across disks, a copy with COPYFILE_EXCL) fails
+ * with EEXIST as one operation, so a file that appears at the destination
+ * between a check and the move is not overwritten.
+ */
 async function moveFile(from: string, to: string) {
   await fs.mkdir(path.dirname(to), { recursive: true })
   try {
-    await fs.rename(from, to)
+    await fs.link(from, to)
   } catch (e: any) {
-    if (e?.code !== "EXDEV") throw e
+    if (e?.code !== "EXDEV" && e?.code !== "EPERM" && e?.code !== "ENOTSUP") throw e
     const stat = await fs.stat(from)
-    await fs.copyFile(from, to)
+    await fs.copyFile(from, to, fsConstants.COPYFILE_EXCL)
     await fs.utimes(to, stat.atime, stat.mtime)
-    await fs.unlink(from)
+  }
+  await fs.unlink(from)
+}
+
+/** True when `full` (a file path) sits in a real folder under `root`, symlinks resolved. */
+async function physicallyInside(root: string, full: string): Promise<boolean> {
+  try {
+    const realRoot = await fs.realpath(root)
+    const realParent = await fs.realpath(path.dirname(full))
+    return realParent === realRoot || realParent.startsWith(realRoot + path.sep)
+  } catch {
+    return false
   }
 }
 
@@ -125,7 +142,12 @@ async function pruneEmptyDirs(dir: string, root: string) {
   }
 }
 
-export type TrashResult = { moved: TrashItem[]; missing: string[] }
+export type TrashResult = {
+  moved: TrashItem[]
+  missing: string[]
+  /** Files that could not be moved (permissions, disk); the others still were. */
+  failed: { name: string; error: string }[]
+}
 
 export async function moveToTrash(
   uploadDir: string,
@@ -136,6 +158,7 @@ export async function moveToTrash(
   const stamp = String(now.getTime())
   const moved: TrashItem[] = []
   const missing: string[] = []
+  const failed: TrashResult["failed"] = []
 
   for (const name of names) {
     const from = resolveInside(uploadDir, name)
@@ -153,11 +176,16 @@ export async function moveToTrash(
       missing.push(name)
       continue
     }
-    await moveFile(from, to)
+    try {
+      await moveFile(from, to)
+    } catch (e: any) {
+      failed.push({ name, error: e?.code || e?.message || String(e) })
+      continue
+    }
     await pruneEmptyDirs(path.dirname(from), uploadDir)
     moved.push({ id, name, size, trashed_at: now })
   }
-  return { moved, missing }
+  return { moved, missing, failed }
 }
 
 function parseTrashId(id: string): { stamp: number; name: string } | null {
@@ -211,7 +239,19 @@ export async function restoreFromTrash(
       result.conflicts.push(id)
       continue
     }
-    await moveFile(from, to)
+    try {
+      await moveFile(from, to)
+    } catch (e: any) {
+      if (e?.code === "EEXIST") {
+        result.conflicts.push(id)
+        continue
+      }
+      throw e
+    }
+    // A fresh mtime gives the restored file a new grace period, so the next
+    // cleanup does not move it straight back if the scan still misses it.
+    const restoredAt = new Date()
+    await fs.utimes(to, restoredAt, restoredAt)
     await pruneEmptyDirs(path.dirname(from), trashDir)
     result.restored.push(parsed.name)
   }
@@ -227,6 +267,13 @@ export async function deleteFromTrash(
   for (const id of ids) {
     if (!parseTrashId(id)) throw new MediaPathError(`Invalid trash id: ${id}`)
     const full = resolveInside(trashDir, id)
+    if (!(await exists(full))) {
+      missing.push(id)
+      continue
+    }
+    if (!(await physicallyInside(trashDir, full))) {
+      throw new MediaPathError(`Invalid trash id: ${id}`)
+    }
     try {
       await fs.unlink(full)
       deleted.push(id)

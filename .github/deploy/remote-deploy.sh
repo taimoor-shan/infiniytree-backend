@@ -155,7 +155,11 @@ media_backup_setup() {
 
   step "cron"
   mkdir -p "$(dirname "$MEDIA_BACKUP_LOG")"
-  local line="15 3 * * * BACKEND_DIR=$BACKEND_DIR /bin/bash $script >> $MEDIA_BACKUP_LOG 2>&1 # infinytree-media-backup"
+  # Quote every path for the shell cron starts, and escape % (cron turns it
+  # into a newline).
+  local cmd line
+  cmd="BACKEND_DIR=$(printf '%q' "$BACKEND_DIR") /bin/bash $(printf '%q' "$script") >> $(printf '%q' "$MEDIA_BACKUP_LOG") 2>&1"
+  line="15 3 * * * ${cmd//%/\\%} # infinytree-media-backup"
   { crontab -l 2>/dev/null | grep -v "infinytree-media-backup" || true; echo "$line"; } | crontab -
   crontab -l | grep "infinytree-media-backup"
   endstep

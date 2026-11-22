@@ -77,6 +77,11 @@ async function listTextColumns(db: RawQueryRunner): Promise<Map<string, TableCol
   for (const [table, entry] of tables) {
     if (!entry.columns.length) tables.delete(table)
   }
+  // An empty result means a wrong schema or a role without rights, not "no
+  // references": refuse, or every upload would look unused.
+  if (!tables.size) {
+    throw new Error("[media] no tables found to scan for references; refusing to classify files")
+  }
   return tables
 }
 

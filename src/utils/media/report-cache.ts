@@ -9,6 +9,8 @@ import { RawQueryRunner } from "./scan"
 const TTL_MS = 30 * 1000
 
 let cached: { report: MediaReport; at: number } | null = null
+/** Bumped by every clear, so a scan that started before a change is not cached. */
+let generation = 0
 
 export async function getMediaReport(
   db: RawQueryRunner,
@@ -17,11 +19,13 @@ export async function getMediaReport(
   if (!options.refresh && cached && Date.now() - cached.at < TTL_MS) {
     return cached.report
   }
+  const startedAt = generation
   const report = await buildMediaReport(db, getMediaSettings())
-  cached = { report, at: Date.now() }
+  if (startedAt === generation) cached = { report, at: Date.now() }
   return report
 }
 
 export function clearMediaReport() {
+  generation++
   cached = null
 }

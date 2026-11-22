@@ -11,14 +11,18 @@
  */
 
 /**
- * Stops at characters that cannot be part of a stored file URL: quotes and
- * angle brackets (HTML attributes, JSON strings), a backslash (escaped JSON),
- * whitespace, and the query or fragment of a URL.
+ * The file part after `/static/`. It stops at characters that cannot be part
+ * of a stored file URL: double quotes and angle brackets (HTML attributes,
+ * JSON strings), a backslash (escaped JSON), whitespace, and the query or
+ * fragment of a URL. An apostrophe does not stop it, because an upload can be
+ * named `kid's.jpg` and `encodeURIComponent` leaves `'` as it is; the spellings
+ * cut at each apostrophe are added as candidates instead, which covers a URL
+ * in a single-quoted attribute.
  */
-const STATIC_REF = /\/static\/([^\s"'<>\\?#`]+)/g
+const FILE_PART = /^[^\s"<>\\?#`]+/
 
 /** Characters a URL can be followed by in prose, CSS or Markdown. */
-const TRAILING_PUNCTUATION = /[),.;:!\]]+$/
+const TRAILING_PUNCTUATION = /[),.;:!\]']+$/
 
 function safeDecode(value: string): string {
   try {
@@ -30,23 +34,38 @@ function safeDecode(value: string): string {
 
 /**
  * Every file path that `text` refers to under `/static/`, in each spelling it
- * might have on disk: as written, URL-decoded (`%20` → space), and without
- * punctuation that may follow a URL (`url(/static/a.jpg)`). Comparing these
- * against the real file names means an extra spelling can never mark a file
- * that does not exist, and a file is kept if any spelling matches.
+ * might have on disk: as written, URL-decoded (`%20` → space), cut at an
+ * apostrophe, and without punctuation that may follow a URL
+ * (`url(/static/a.jpg)`). Comparing these against the real file names means
+ * an extra spelling can never mark a file that does not exist, and a file is
+ * kept if any spelling matches. Each `/static/` is read on its own, so two
+ * URLs that run together (`'/static/a.jpg','/static/b.jpg'`) are both found.
  */
 export function extractStaticReferences(text: string): Set<string> {
   const found = new Set<string>()
-  if (!text || text.indexOf("/static/") === -1) return found
+  if (!text) return found
 
-  for (const match of text.matchAll(STATIC_REF)) {
-    const raw = match[1]
-    const trimmed = raw.replace(TRAILING_PUNCTUATION, "")
-    for (const candidate of [raw, trimmed]) {
-      if (!candidate) continue
-      found.add(candidate)
-      found.add(safeDecode(candidate))
+  const marker = "/static/"
+  let at = text.indexOf(marker)
+  while (at !== -1) {
+    const match = FILE_PART.exec(text.slice(at + marker.length, at + marker.length + 2048))
+    if (match) {
+      const raw = match[0]
+      const candidates = new Set<string>([raw, raw.replace(TRAILING_PUNCTUATION, "")])
+      let quote = raw.indexOf("'")
+      while (quote > 0) {
+        const cut = raw.slice(0, quote)
+        candidates.add(cut)
+        candidates.add(cut.replace(TRAILING_PUNCTUATION, ""))
+        quote = raw.indexOf("'", quote + 1)
+      }
+      for (const candidate of candidates) {
+        if (!candidate) continue
+        found.add(candidate)
+        found.add(safeDecode(candidate))
+      }
     }
+    at = text.indexOf(marker, at + marker.length)
   }
   return found
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import {
   ArrowPath,
@@ -83,6 +83,34 @@ const Preview = ({ file }: { file: { name: string; url?: string } }) => {
     </span>
   )
 }
+
+/** What an empty table shows: loading, a failed request with Retry, or the empty text. */
+const EmptyRow = ({
+  colSpan,
+  query,
+  empty,
+  loading,
+}: {
+  colSpan: number
+  query: { isLoading: boolean; isError: boolean; refetch: () => unknown }
+  empty: string
+  loading: string
+}) => (
+  <Table.Row>
+    <td colSpan={colSpan} className="px-6">
+      <div className="flex flex-col items-center gap-2 py-6">
+        <Text size="small" className={query.isError ? "text-ui-fg-error" : "text-ui-fg-subtle"}>
+          {query.isError ? "This list could not be loaded." : query.isLoading ? loading : empty}
+        </Text>
+        {query.isError && (
+          <Button size="small" variant="secondary" onClick={() => query.refetch()}>
+            Retry
+          </Button>
+        )}
+      </div>
+    </td>
+  </Table.Row>
+)
 
 const Stat = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
   <div className="flex flex-col gap-1 rounded-lg border px-4 py-3">
@@ -214,6 +242,12 @@ const MediaRoute = () => {
   const files = media.data?.files || []
   const count = media.data?.count || 0
   const pages = Math.max(1, Math.ceil(count / PAGE_SIZE))
+
+  // After a file leaves the list (trash, cleanup) the current page can be past
+  // the end: step back to the last page that exists.
+  useEffect(() => {
+    if (media.data && page > 0 && page >= pages) setPage(pages - 1)
+  }, [media.data, page, pages])
 
   const confirmTrash = async (file: MediaFile) => {
     const ok = await prompt({
@@ -456,13 +490,7 @@ const MediaRoute = () => {
                   )
                 })}
                 {!files.length && (
-                  <Table.Row>
-                    <td colSpan={6} className="px-6">
-                      <Text size="small" className="py-6 text-center text-ui-fg-subtle">
-                        {media.isLoading ? "Scanning..." : "No files match."}
-                      </Text>
-                    </td>
-                  </Table.Row>
+                  <EmptyRow colSpan={6} query={media} loading="Scanning..." empty="No files match." />
                 )}
               </Table.Body>
             </Table>
@@ -537,13 +565,7 @@ const MediaRoute = () => {
                   </Table.Row>
                 ))}
                 {!trash.data?.items.length && (
-                  <Table.Row>
-                    <td colSpan={5} className="px-6">
-                      <Text size="small" className="py-6 text-center text-ui-fg-subtle">
-                        The trash is empty.
-                      </Text>
-                    </td>
-                  </Table.Row>
+                  <EmptyRow colSpan={5} query={trash} loading="Loading..." empty="The trash is empty." />
                 )}
               </Table.Body>
             </Table>
