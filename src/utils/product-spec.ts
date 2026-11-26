@@ -64,7 +64,7 @@ export type ProductPlan = {
     depth?: string
     unit: string
   }
-  /** Medusa's own fields: cm and grams. */
+  /** Medusa's own fields: cm, and the weight in kilograms (the storefront shows it as kg). */
   dimensions: { height?: number; width?: number; length?: number; weight?: number }
   material?: string
   originCountry?: string
@@ -395,7 +395,7 @@ function readDimensions(
   }
   if (!isObject(value)) {
     context.errors.push(
-      `dimensions must be { "height": 220, "width": 120, "length": 120 } in centimetres (weight in grams).`
+      `dimensions must be { "height": 220, "width": 120, "length": 120 } in centimetres (weight in kilograms).`
     )
     return dimensions
   }
