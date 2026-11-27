@@ -27,7 +27,7 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { sdk } from "../lib/client"
 import {
   OPTION_ORDER_KEY,
@@ -77,6 +77,7 @@ const SortableRow = ({
   onMove,
   children,
   strong = false,
+  disabled = false,
 }: {
   id: string
   label: string
@@ -85,6 +86,7 @@ const SortableRow = ({
   onMove: (from: number, to: number) => void
   children?: React.ReactNode
   strong?: boolean
+  disabled?: boolean
 }) => {
   const {
     attributes,
@@ -94,7 +96,7 @@ const SortableRow = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id })
+  } = useSortable({ id, disabled })
 
   return (
     <li
@@ -108,6 +110,7 @@ const SortableRow = ({
           size="small"
           variant="transparent"
           type="button"
+          disabled={disabled}
           className="cursor-grab active:cursor-grabbing"
           aria-label={`Drag ${label}`}
           {...attributes}
@@ -127,7 +130,7 @@ const SortableRow = ({
           size="small"
           variant="transparent"
           type="button"
-          disabled={index === 0}
+          disabled={disabled || index === 0}
           onClick={() => onMove(index, index - 1)}
           aria-label={`Move ${label} up`}
         >
@@ -137,7 +140,7 @@ const SortableRow = ({
           size="small"
           variant="transparent"
           type="button"
-          disabled={index === count - 1}
+          disabled={disabled || index === count - 1}
           onClick={() => onMove(index, index + 1)}
           aria-label={`Move ${label} down`}
         >
@@ -192,7 +195,16 @@ const OptionOrderBox = ({ product }: { product: HttpTypes.AdminProduct }) => {
     [data]
   )
   const [shown, setShown] = useState<OrderOption[]>(saved)
-  useEffect(() => setShown(saved), [saved])
+  // What Medusa holds, as last copied into the box. When it is read again the
+  // box shows it, except after a failed save: the draft then stays for another
+  // try, and Reset goes back to what Medusa really holds now.
+  const [baseline, setBaseline] = useState(saved)
+  const [keepDraft, setKeepDraft] = useState(false)
+  if (baseline !== saved) {
+    setBaseline(saved)
+    if (keepDraft) setKeepDraft(false)
+    else setShown(saved)
+  }
 
   const changes = useMemo(
     () => (data ? optionOrderChanges(shown, data) : { optionOrder: null, ranks: [] }),
@@ -216,13 +228,22 @@ const OptionOrderBox = ({ product }: { product: HttpTypes.AdminProduct }) => {
         metadata: { [OPTION_ORDER_KEY]: shown.map((option) => option.id) },
       })
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] })
-      queryClient.invalidateQueries({ queryKey: ["product_options"] })
+    // Awaited, so the box stays locked until it shows what was saved.
+    onSuccess: async () => {
+      setKeepDraft(false)
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["product_options"] }),
+      ])
       toast.success("Option order saved")
     },
     onError: (error: Error) => {
-      toast.error("Could not save the option order", { description: error.message })
+      // A save is several requests, so part of it may have gone through.
+      setKeepDraft(true)
+      queryClient.invalidateQueries({ queryKey: ["products", product.id, "option-order"] })
+      toast.error("Could not save the option order", {
+        description: `${error.message} Some of the changes may already be saved; your order is still here, so try Save again.`,
+      })
     },
   })
 
@@ -268,6 +289,7 @@ const OptionOrderBox = ({ product }: { product: HttpTypes.AdminProduct }) => {
             count={shown.length}
             onMove={move}
             strong
+            disabled={save.isPending}
           >
             <div className="pb-3 pl-10 pr-2">
               {option.is_exclusive === false && (
@@ -287,6 +309,7 @@ const OptionOrderBox = ({ product }: { product: HttpTypes.AdminProduct }) => {
                     index={valueIndex}
                     count={option.values.length}
                     onMove={moveValue}
+                    disabled={save.isPending}
                   />
                 )}
               />
